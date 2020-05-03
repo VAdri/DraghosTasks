@@ -1,0 +1,11 @@
+## Interface: 80300
+## Title: Draghos Task Tracker UI
+## Author: Draghos
+## Version: 0.0.1
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## Dependencies: Blizzard_ObjectiveTracker, Draghos_TaskLog
+
+Localization.lua
+Localization-frFR.lua
+Draghos_TaskObjectiveTracker.xml

@@ -1,3 +1,11 @@
 {
-  "vscode-lua-format.configPath": ".lua-format"
+  "vscode-lua-format.configPath": ".lua-format",
+  "Lua.diagnostics.globals": [
+    "CreateFrame",
+    "GetLocale",
+    "ObjectiveTracker_AddBlock",
+    "ObjectiveTracker_GetModuleInfoTable",
+    "ObjectiveTracker_Update",
+    "ObjectiveTrackerFrame"
+  ]
 }

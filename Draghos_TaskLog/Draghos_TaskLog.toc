@@ -1,0 +1,12 @@
+## Interface: 80300
+## Title: Draghos Task Log
+## Author: Draghos
+## Version: 0.0.1
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: TaskLogSaved
+
+_Mixin.lua
+_ObjectCache_Create.lua
+Task.lua
+Draghos_TaskLog.lua
