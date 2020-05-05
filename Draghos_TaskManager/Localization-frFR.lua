@@ -1,6 +1,9 @@
 local function UseThisLocalization()
-    TRACKER_HEADER_TASKS = "Tâches";
-    OBJECTIVES_VIEW_TASK = "Ouvrir la tâche";
+    TASK_MANAGER_TITLE = "Journal des tâches";
+    TASKLOG_ADD_NEW_TASK = "Nouvelle tâche";
+    TASKLOG_TASK_TITLE = "Intitulé de la tâche";
+    CALENDAR_REPEAT_DAILY = "Tous les jours";
+    TASK_REPEAT = "Répétition";
 end
 
 local Locale = GetLocale();

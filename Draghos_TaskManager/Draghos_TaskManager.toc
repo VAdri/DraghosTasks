@@ -1,0 +1,11 @@
+## Interface: 80300
+## Title: Draghos Task Manager UI
+## Author: Draghos
+## Version: 0.0.1
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## Dependencies: Draghos_TaskLog
+
+Localization.lua
+Localization-frFR.lua
+Draghos_TaskManager.xml

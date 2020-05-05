@@ -1,0 +1,135 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+ 
+	<Script file="Draghos_TaskManager.lua"/>
+
+	<Button name="TaskManagerSummaryLineTemplate" mixin="TaskManagerSummaryLineMixin" inherits="ScrollListLineTextTemplate" virtual="true">
+		<Layers>
+			<Layer level="BORDER">
+				<Texture parentKey="Icon">
+					<Size x="14" y="14"/>
+					<Anchors>
+						<Anchor point="LEFT" x="8" y="0"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="IconBorder" atlas="auctionhouse-itemicon-small-border" useAtlasSize="false">
+					<Size x="16" y="16"/>
+					<Anchors>
+						<Anchor point="CENTER" relativeKey="$parent.Icon"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad method="OnLoad"/>
+		</Scripts>
+		<HighlightTexture parentKey="HighlightTexture" atlas="auctionhouse-ui-row-highlight" useAtlasSize="false" alphaMode="ADD">
+			<Anchors>
+				<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+				<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+			</Anchors>
+		</HighlightTexture>
+	</Button>
+
+	<Frame name="TaskManagerFrame" enableMouse="true" toplevel="true" parent="UIParent" hidden="true" frameStrata="MEDIUM" inherits="ButtonFrameTemplate" mixin="TaskManagerMixin">
+		<Size x="646" y="468"/>
+		<Anchors>
+			<Anchor point="TOPLEFT" x="100" y="-84"/>
+		</Anchors>
+		<Frames>
+			<Frame parentKey="SummaryList" inherits="ScrollListTemplate" mixin="TaskManagerFrameSummaryListMixin" useParentLevel="true">
+				<KeyValues>
+					<KeyValue key="backgroundAtlas" value="auctionhouse-background-summarylist" type="string"/>
+				</KeyValues>
+				<Size x="168" y="0"/>
+				<Anchors>
+					<Anchor point="TOP" relativeKey="$parent" relativePoint="BOTTOM" x="0" y="2"/>
+					<Anchor point="BOTTOM" relativeKey="$parent.TopTileStreaks" relativePoint="BOTTOM"/>
+					<Anchor point="LEFT" x="-1"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad method="OnLoad"/>
+				</Scripts>
+			</Frame>
+			<EditBox parentKey="TitleEditBox" letters="64" autoFocus="false" inherits="InputBoxTemplate" mixin="TaskManagerFormMixin">
+				<Size>
+					<AbsDimension x="150" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.SummaryList" relativePoint="TOPRIGHT" x="20" y="-25"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<FontString inherits="GameFontNormalSmall" text="TASKLOG_TASK_TITLE">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
+									<Offset x="0" y="2"/>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnTextChanged method="UpdateFormStatus"/>
+				</Scripts>
+			</EditBox>
+			<CheckButton parentKey="ActivateCheckButton" name="$parentActivateCheckButton" inherits="OptionsSmallCheckButtonTemplate" mixin="TaskManagerFormMixin">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.TitleEditBox" relativePoint="BOTTOMLEFT" x="-8" y="-15"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						_G[self:GetName().."Text"]:SetText(ACTIVATE);
+					</OnLoad>
+					<OnClick method="UpdateFormStatus"/>
+				</Scripts>
+			</CheckButton>
+			<Frame parentKey="RepeatDropDown" inherits="UIDropDownMenuTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.ActivateCheckButton" relativePoint="BOTTOMLEFT" x="-18" y="-25"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<FontString name="$parentLabel" inherits="GameFontNormalSmall" text="TASK_REPEAT">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="16" y="3"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Button parentKey="SaveButton" inherits="UIPanelButtonTemplate" text="SAVE" mixin="TaskManagerSaveButtonMixin">
+				<Size>
+					<AbsDimension x="78" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.RepeatDropDown" relativePoint="BOTTOMLEFT" x="18" y="-15"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad method="OnLoad"/>
+					<OnClick method="OnClick"/>
+				</Scripts>
+			</Button>
+			<Button parentKey="RemoveButton" inherits="UIPanelButtonTemplate" text="REMOVE" mixin="TaskManagerRemoveButtonMixin">
+				<Size>
+					<AbsDimension x="78" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.SaveButton" relativePoint="RIGHT" x="20" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad method="OnLoad"/>
+					<OnClick method="OnClick"/>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnShow method="OnShow"/>
+			<OnHide method="OnHide"/>
+			<OnLoad method="OnLoad"/>
+			<OnEvent method="OnEvent"/>
+		</Scripts>
+	</Frame>
+</Ui>

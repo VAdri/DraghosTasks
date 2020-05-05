@@ -10,9 +10,13 @@ TASK_TRACKER_MODULE.buttonOffsets = {groupFinder = {7, 4}, useItem = {3, 1}};
 
 TASK_TRACKER_MODULE.paddingBetweenButtons = 2;
 
--- *****************************************************************************************************
+local TaskManagerFrame_SelectTask = TaskManagerFrame_SelectTask or function()
+    return; --[[Do nothing]]
+end;
+
+-- *********************************************************************************************************************
 -- ***** INITIALIZATION
--- *****************************************************************************************************
+-- *********************************************************************************************************************
 
 function TaskObjectiveTracker_OnLoad(self, ...)
     self:RegisterEvent("PLAYER_ENTERING_WORLD");
@@ -43,13 +47,20 @@ function TaskObjectiveTrackerInitialize(self)
 
     ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_TASK);
 
+    -- Function called when the task store is updated
+    Draghos_TaskLog:Subscribe(
+        function()
+            ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_TASK);
+        end
+    );
+
     self:UnregisterEvent("PLAYER_ENTERING_WORLD");
     self.initialized = true;
 end
 
--- *****************************************************************************************************
+-- *********************************************************************************************************************
 -- ***** ANIMATIONS
--- *****************************************************************************************************
+-- *********************************************************************************************************************
 
 function TaskObjectiveTracker_FinishGlowAnim(line)
     if (line.state == "ADDING") then
@@ -78,33 +89,24 @@ function TaskObjectiveTracker_FinishFadeOutAnim(line)
     ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_TASK);
 end
 
--- *****************************************************************************************************
+-- *********************************************************************************************************************
 -- ***** UPDATE FUNCTIONS
--- *****************************************************************************************************
-
-local function CompareTaskWatchInfos(info1, info2)
-    return info1.index < info2.index;
-end
+-- *********************************************************************************************************************
 
 function TASK_TRACKER_MODULE:ShouldDisplayTask(task)
-    -- TODO
-    return true;
+    return not task:IsCompleted();
 end
 
 function TASK_TRACKER_MODULE:BuildTaskWatchInfos()
     local infos = {};
 
     for i = 1, Draghos_TaskLog:GetNumTaskWatches() do
-        local taskID = Draghos_TaskLog:GetTaskIDForTaskWatchIndex(i);
-        if taskID then
-            local task = TaskCache:Get(taskID);
-            if self:ShouldDisplayTask(task) then
-                table.insert(infos, {task = task, index = i});
-            end
+        local task = Draghos_TaskLog:GetTaskForTaskWatchIndex(i);
+        if task and self:ShouldDisplayTask(task) then
+            table.insert(infos, {task = task, index = i});
         end
     end
 
-    table.sort(infos, CompareTaskWatchInfos);
     return infos;
 end
 
@@ -121,9 +123,10 @@ function TASK_TRACKER_MODULE:UpdateSingle(task)
     local taskID = task:GetID();
 
     local block = self:GetBlock(taskID);
+    block.id = taskID;
 
     self:SetBlockHeader(block, task.title);
-    self:AddObjective(block, "TaskTest", "Test");
+    -- self:AddObjective(block, "TaskTest", "Test");
 
     block:SetHeight(block.height);
 
@@ -136,10 +139,51 @@ function TASK_TRACKER_MODULE:UpdateSingle(task)
     end
 end
 
+function TASK_TRACKER_MODULE:OnBlockHeaderClick(block, mouseButton)
+    if mouseButton == "LeftButton" then
+        TaskManagerFrame_SelectTask(block.id);
+    elseif mouseButton == "RightButton" then
+        ObjectiveTracker_ToggleDropDown(block, TaskObjectiveTracker_OnOpenDropDown);
+    end
+end
+
 function TASK_TRACKER_MODULE:Update()
     self:BeginLayout();
 
     self:EnumTaskWatchData(self.UpdateSingle);
 
     self:EndLayout();
+end
+
+-- *********************************************************************************************************************
+-- ***** BLOCK DROPDOWN FUNCTIONS
+-- *********************************************************************************************************************
+
+function TaskObjectiveTracker_OnOpenDropDown(self)
+    local block = self.activeFrame;
+    local task = Draghos_TaskLog:GetTaskByTaskID(block.id);
+
+    local info = UIDropDownMenu_CreateInfo();
+    info.text = task.title;
+    info.isTitle = 1;
+    info.notCheckable = 1;
+    UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL);
+
+    info = UIDropDownMenu_CreateInfo();
+    info.text = OBJECTIVES_VIEW_TASK;
+    info.notCheckable = 1;
+    info.arg1 = block.id;
+    info.func = function()
+        TaskManagerFrame_SelectTask(block.id);
+    end;
+    info.checked = false;
+    UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL);
+
+    info.text = OBJECTIVES_STOP_TRACKING;
+    info.arg1 = block.id;
+    info.func = function()
+        task:StopTracking();
+    end
+    info.checked = false;
+    UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL);
 end
