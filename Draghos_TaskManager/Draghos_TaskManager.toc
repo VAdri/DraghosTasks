@@ -6,6 +6,5 @@
 ## LoadOnDemand: 0
 ## Dependencies: Draghos_TaskLog
 
-Localization.lua
-Localization-frFR.lua
+Locales.xml
 Draghos_TaskManager.xml

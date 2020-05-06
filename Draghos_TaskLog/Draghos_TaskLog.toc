@@ -6,8 +6,7 @@
 ## LoadOnDemand: 0
 ## SavedVariables: TaskLogSaved
 
-Localization.lua
-Localization-frFR.lua
+Locales.xml
 Utils.lua
 Step.lua
 Task.lua

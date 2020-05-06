@@ -6,6 +6,5 @@
 ## LoadOnDemand: 0
 ## Dependencies: Blizzard_ObjectiveTracker, Draghos_TaskLog
 
-Localization.lua
-Localization-frFR.lua
+Locales.xml
 Draghos_TaskObjectiveTracker.xml
