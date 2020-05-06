@@ -1,9 +1,11 @@
 local function UseThisLocalization()
+    STEP_COMPLETION_TYPE = "Type de complétion";
+    TASK_MANAGER_STEPS_GROUPBOX_TITLE = "Étapes";
+    TASK_MANAGER_STEP_DIALOG_TITLE = "Étape";
     TASK_MANAGER_TITLE = "Journal des tâches";
+    TASK_REPEAT = "Répétition";
     TASKLOG_ADD_NEW_TASK = "Nouvelle tâche";
     TASKLOG_TASK_TITLE = "Intitulé de la tâche";
-    CALENDAR_REPEAT_DAILY = "Tous les jours";
-    TASK_REPEAT = "Répétition";
 end
 
 local Locale = GetLocale();

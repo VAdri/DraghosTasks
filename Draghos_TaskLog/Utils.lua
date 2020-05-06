@@ -46,6 +46,24 @@ function Map(t, f)
     return _t;
 end
 
+--- @param t table
+--- @param f function|any
+--- @return boolean
+function Any(t, f)
+    local _f = f;
+    if type(f) ~= "function" then
+        _f = function (v)
+            return v == f;
+        end;
+    end
+    for index, value in pairs(t) do
+        if _f(value, index) then
+            return true;
+        end
+    end
+    return false;
+end
+
 --- @param s string
 --- @return boolean
 function IsBlankString(s)

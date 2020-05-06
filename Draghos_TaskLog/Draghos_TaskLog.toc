@@ -6,6 +6,9 @@
 ## LoadOnDemand: 0
 ## SavedVariables: TaskLogSaved
 
+Localization.lua
+Localization-frFR.lua
 Utils.lua
+Step.lua
 Task.lua
 Draghos_TaskLog.lua

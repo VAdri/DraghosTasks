@@ -119,6 +119,7 @@ function TASK_TRACKER_MODULE:EnumTaskWatchData(func)
     end
 end
 
+--- @param task Task
 function TASK_TRACKER_MODULE:UpdateSingle(task)
     local taskID = task:GetID();
 
@@ -126,7 +127,10 @@ function TASK_TRACKER_MODULE:UpdateSingle(task)
     block.id = taskID;
 
     self:SetBlockHeader(block, task.title);
-    -- self:AddObjective(block, "TaskTest", "Test");
+
+    for key, step in pairs(task.steps) do
+        self:AddObjective(block, taskID .. ":" .. key, step:GetLabel());
+    end
 
     block:SetHeight(block.height);
 

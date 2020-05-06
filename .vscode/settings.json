@@ -38,6 +38,12 @@
         "CreateAndInitFromMixin",
         "ObjectiveTracker_ToggleDropDown",
         "UIDROPDOWN_MENU_LEVEL",
-        "OBJECTIVES_STOP_TRACKING"
+        "OBJECTIVES_STOP_TRACKING",
+        "HybridScrollFrame_OnLoad",
+        "HybridScrollFrame_CreateButtons",
+        "STRIPE_COLOR",
+        "HybridScrollFrame_GetOffset",
+        "HybridScrollFrame_Update",
+        "UNKNOWN"
     ]
 }
