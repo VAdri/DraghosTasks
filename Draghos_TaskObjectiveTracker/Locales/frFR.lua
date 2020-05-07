@@ -1,6 +1,7 @@
 local function UseThisLocalization()
-    TRACKER_HEADER_TASKS = "Tâches";
+    OBJECTIVES_MARK_STEP_AS_COMPLETE = "Indiquer une étape terminée";
     OBJECTIVES_VIEW_TASK = "Ouvrir la tâche";
+    TRACKER_HEADER_TASKS = "Tâches";
 end
 
 local Locale = GetLocale();

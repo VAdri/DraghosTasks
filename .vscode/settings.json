@@ -44,6 +44,8 @@
         "STRIPE_COLOR",
         "HybridScrollFrame_GetOffset",
         "HybridScrollFrame_Update",
-        "UNKNOWN"
+        "UNKNOWN",
+        "C_DateAndTime",
+        "time"
     ]
 }

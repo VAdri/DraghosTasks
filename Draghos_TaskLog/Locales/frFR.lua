@@ -1,7 +1,7 @@
 local function UseThisLocalization()
     CALENDAR_REPEAT_DAILY = "Tous les jours";
     STEP_SUMMARY = "%s : %s";
-    STEP_TYPE_OPTION_MANUAL = "Manuel";
+    STEP_TYPE_MANUAL_LABEL = "Manuel";
 end
 
 local Locale = GetLocale();

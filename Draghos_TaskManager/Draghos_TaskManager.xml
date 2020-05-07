@@ -41,20 +41,28 @@
 					</Anchors>
 				</Texture>
 			</Layer>
-			<Layer level="BORDER">
-				<Texture name="$parentCheck" file="Interface\Buttons\UI-CheckBox-Check" parentKey="Check" hidden="true">
-					<Size x="16" y="16"/>
-					<Anchors>
-						<Anchor point="LEFT">
-							<Offset x="8" y="0"/>
-						</Anchor>
-					</Anchors>
-				</Texture>
-			</Layer>
 			<Layer level="OVERLAY">
 				<Texture name="$parentSelectedBar" parentKey="SelectedBar" file="Interface\FriendsFrame\UI-FriendsFrame-HighlightBar" alpha="0.4" alphaMode="ADD" hidden="true"/>
 			</Layer>
 		</Layers>
+		<Frames>
+			<CheckButton parentKey="Check" name="$parentCheck">
+				<Size x="26" y="26"/>
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="LEFT" x="15" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						TaskManagerFrameSteps_ToggleCompleted(self);
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+				<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+				<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+				<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+			</CheckButton>
+		</Frames>
 		<Scripts>
 			<OnLoad>
 				SetClampedTextureRotation(self.BgBottom, 180);
@@ -65,7 +73,7 @@
 		</Scripts>
 		<ButtonText name="$parentTitleText" inherits="GameFontNormalSmallLeft" justifyH="LEFT" parentKey="text">
 			<Anchors>
-				<Anchor point="LEFT" relativeTo="$parentCheck" relativePoint="RIGHT" x="3" y="0"/>
+				<Anchor point="LEFT" relativeKey="$parent.Check" relativePoint="RIGHT" x="3" y="0"/>
 				<Anchor point="RIGHT" x="-3" y="0"/>
 			</Anchors>
 		</ButtonText>

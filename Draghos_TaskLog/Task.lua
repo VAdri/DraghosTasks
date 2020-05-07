@@ -13,11 +13,54 @@ TASK_REPEAT_BIWEEKLY = 4;
 TASK_REPEAT_MONTHLY = 5;
 
 TaskRepeats = {
-    [TASK_REPEAT_NEVER] = {Label = CALENDAR_REPEAT_NEVER},
-    [TASK_REPEAT_DAILY] = {Label = CALENDAR_REPEAT_DAILY},
-    [TASK_REPEAT_WEEKLY] = {Label = CALENDAR_REPEAT_WEEKLY},
-    [TASK_REPEAT_BIWEEKLY] = {Label = CALENDAR_REPEAT_BIWEEKLY},
-    [TASK_REPEAT_MONTHLY] = {Label = CALENDAR_REPEAT_MONTHLY}
+    [TASK_REPEAT_NEVER] = {
+        Label = CALENDAR_REPEAT_NEVER,
+        --- @param step Step
+        --- @return boolean
+        IsCompleted = function(step)
+            return not not step.lastCompleted;
+        end
+    },
+    [TASK_REPEAT_DAILY] = {
+        Label = CALENDAR_REPEAT_DAILY,
+        --- @param step Step
+        --- @return boolean
+        IsCompleted = function(step)
+            local currentTime = time();
+            local elapsed = Elapsed(step.lastCompleted, currentTime);
+            return not (elapsed.years > 0 or elapsed.months > 0 or elapsed.days > 0);
+        end
+    },
+    [TASK_REPEAT_WEEKLY] = {
+        Label = CALENDAR_REPEAT_WEEKLY,
+        --- @param step Step
+        --- @return boolean
+        IsCompleted = function(step)
+            local currentTime = time();
+            local elapsed = Elapsed(step.lastCompleted, currentTime);
+            return not (elapsed.years >= 0 or elapsed.months >= 0 or elapsed.days >= 7);
+        end
+    },
+    [TASK_REPEAT_BIWEEKLY] = {
+        Label = CALENDAR_REPEAT_BIWEEKLY,
+        --- @param step Step
+        --- @return boolean
+        IsCompleted = function(step)
+            local currentTime = time();
+            local elapsed = Elapsed(step.lastCompleted, currentTime);
+            return not (elapsed.years >= 0 or elapsed.months >= 0 or elapsed.days >= 15);
+        end
+    },
+    [TASK_REPEAT_MONTHLY] = {
+        Label = CALENDAR_REPEAT_MONTHLY,
+        --- @param step Step
+        --- @return boolean
+        IsCompleted = function(step)
+            local currentTime = time();
+            local elapsed = Elapsed(step.lastCompleted, currentTime);
+            return not (elapsed.years >= 0 or elapsed.months >= 0);
+        end
+    }
 }
 
 local function AsStepMixin(step)
@@ -40,6 +83,7 @@ function TaskMixin:Init(task)
     return true;
 end
 
+--- @returns number
 function TaskMixin:IsValid()
     if IsBlankString(self.title) then
         return false;
@@ -77,10 +121,12 @@ function TaskMixin:Save()
     end
 end
 
+--- @returns number
 function TaskMixin:GetID()
     return self.taskID;
 end
 
+--- @returns boolean
 function TaskMixin:IsCompleted()
     local function IsStepCompleted(step)
         return step:IsCompleted();
@@ -88,6 +134,7 @@ function TaskMixin:IsCompleted()
     return #self.steps > 0 and not Any(Map(self.steps, IsStepCompleted), false);
 end
 
+--- @returns boolean
 function TaskMixin:IsModified()
     local storedTask = Draghos_TaskLog:GetTaskByTaskID(self.taskID);
     if not storedTask then
@@ -107,6 +154,11 @@ function TaskMixin:IsModified()
     end
 end
 
+--- @returns boolean
+local function IsManual(step)
+    return step.type == STEP_TYPE_MANUAL;
+end
+
 function TaskMixin:StopTracking()
     self.isActive = false;
     self:Save();
@@ -124,4 +176,22 @@ end
 
 function TaskMixin:RemoveStep(index)
     table.remove(self.steps, index);
+end
+
+--- @returns Step[]
+function TaskMixin:GetSteps()
+    local function CreateStep(step)
+        return CreateAndInitFromMixin(StepMixin, step);
+    end
+    return Map(self.steps, CreateStep);
+end
+
+--- @returns Step[]
+function TaskMixin:GetManualSteps()
+    return FilterIndexed(self.steps, IsManual);
+end
+
+--- @returns boolean
+function TaskMixin:HasManualSteps()
+    return Any(self.steps, IsManual);
 end

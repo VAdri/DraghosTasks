@@ -52,8 +52,21 @@ function TaskManagerMixin:OnEvent(event, ...)
 
         -- Function called when the task store is updated
         Draghos_TaskLog:Subscribe(
-            function()
-                TaskManagerFrame.SummaryList:Update();
+            function(objectType, ...)
+                if objectType == TaskMixin then
+                    TaskManagerFrame.SummaryList:RefreshScrollFrame();
+                    TaskManagerFrame_OnSummaryLineSelectedChanged();
+                elseif objectType == StepMixin then
+                    TaskManagerFrame.SummaryList:RefreshScrollFrame();
+                    local taskID, stepIndex, changes = ...;
+                    if #changes == 1 and changes[1] == "lastCompleted" then
+                        -- Avoid updating the whole form when the event comes from another event
+                        TaskManagerFrame.StepsGroupBox.StepsScrollFrame:UpdateStep(taskID, stepIndex);
+                    else
+                        -- Otherwise we can refresh the form
+                        TaskManagerFrame_OnSummaryLineSelectedChanged();
+                    end
+                end
             end
         );
     end
@@ -84,7 +97,7 @@ local function GetTaskFromListIndex(listIndex)
     return nil;
 end
 
-local function OnSummaryLineSelectedChanged(listIndex)
+function TaskManagerFrame_OnSummaryLineSelectedChanged(listIndex)
     if not listIndex then
         listIndex = TaskManagerFrame.SummaryList:GetSelectedListIndex();
     end
@@ -98,7 +111,7 @@ end
 
 function TaskManagerFrame_InitializeSummaryList()
     TaskManagerFrame.SummaryList:SetGetNumResultsFunction(GetNumResultsFunction);
-    TaskManagerFrame.SummaryList:SetSelectionCallback(OnSummaryLineSelectedChanged);
+    TaskManagerFrame.SummaryList:SetSelectionCallback(TaskManagerFrame_OnSummaryLineSelectedChanged);
     TaskManagerFrame.SummaryList:SetLineTemplate("TaskManagerSummaryLineTemplate", TaskManagerFrame);
 
     TaskManagerFrame.SummaryList:SetSelectedListIndex(1);
@@ -111,11 +124,6 @@ function TaskManagerFrameSummaryListMixin:OnLoad()
     selectedHighlight:SetAtlas("auctionhouse-ui-row-select", true);
     selectedHighlight:SetBlendMode("ADD");
     selectedHighlight:SetAlpha(0.8);
-end
-
-function TaskManagerFrameSummaryListMixin:Update()
-    TaskManagerFrame.SummaryList:RefreshScrollFrame();
-    OnSummaryLineSelectedChanged();
 end
 
 TaskManagerSummaryLineMixin = {};
@@ -211,7 +219,7 @@ function TaskManagerFrame_SetFormData(task)
         TaskManagerFrame.ActivateCheckButton:SetChecked(task.isActive);
         UIDropDownMenu_SetSelectedValue(TaskManagerFrame.RepeatDropDown, task.repeating);
         TaskManagerFrame.RemoveButton:Show();
-        TaskManagerFrame.StepsGroupBox.StepsScrollFrame.steps = task.steps;
+        TaskManagerFrame.StepsGroupBox.StepsScrollFrame.steps = task:GetSteps();
     else
         TaskManagerFrame.taskID = nil;
         TaskManagerFrame.TitleEditBox:SetText("");
@@ -257,11 +265,8 @@ function TaskManagerFrameSteps_UpdateScrollFrame()
             buttons[i].text:SetText(step:GetSummary());
             buttons[i].stepIndex = stepIndex;
 
-            if (step:IsCompleted()) then
-                buttons[i].Check:Show();
-            else
-                buttons[i].Check:Hide();
-            end
+            buttons[i].Check:SetChecked(step:IsCompleted());
+            buttons[i].Check:EnableMouse(step:IsManual());
 
             if (scrollFrame.selected == stepIndex) then
                 buttons[i].SelectedBar:Show();
@@ -304,6 +309,14 @@ function TaskManagerFrameSteps_SelectStep(button)
     TaskManagerFrameSteps_UpdateScrollFrame();
 end
 
+function TaskManagerFrameSteps_ToggleCompleted(button)
+    local step = TaskManagerFrame.StepsGroupBox.StepsScrollFrame.steps[button:GetParent().stepIndex];
+    if step then
+        step:ToggleCompleted();
+        TaskManagerFrame_UpdateFormStatus();
+    end
+end
+
 function TaskManagerStepsScrollFrameMixin:OnLoad()
     HybridScrollFrame_OnLoad(self);
     self.update = TaskManagerFrameSteps_UpdateScrollFrame;
@@ -312,16 +325,32 @@ end
 
 function TaskManagerStepsScrollFrameMixin:Update()
     local scrollFrame = TaskManagerFrame.StepsGroupBox.StepsScrollFrame;
-    -- scrollFrame.steps = GetFormTask().steps;
 
     HybridScrollFrame_Update(scrollFrame, #scrollFrame.steps * STEP_TITLE_HEIGHT + 20, scrollFrame:GetHeight());
     TaskManagerFrameSteps_UpdateScrollFrame();
 end
 
+function TaskManagerStepsScrollFrameMixin:UpdateStep(taskID, stepIndex)
+    local step = TaskManagerFrame.StepsGroupBox.StepsScrollFrame.steps[stepIndex];
+    local storedStep = Draghos_TaskLog:GetStep(taskID, stepIndex);
+    if step and step.taskID == taskID and storedStep then
+        step.lastCompleted = storedStep.lastCompleted;
+        local buttons = self.buttons;
+        local numButtons = #buttons;
+        for i = 1, numButtons do
+            if buttons[i].stepIndex == stepIndex then
+                buttons[i].Check:SetChecked(storedStep:IsCompleted());
+                return;
+            end
+        end
+    end
+end
+
 TaskManagerAddStepButtonMixin = {};
 
 function TaskManagerAddStepButtonMixin:OnClick()
-    TaskManagerFrame.StepModalDialog.stepIndex = TaskManagerFrame.StepModalDialog:Show();
+    TaskManagerFrame.StepModalDialog.stepIndex = self.stepIndex;
+    TaskManagerFrame.StepModalDialog:Show();
 end
 
 TaskManagerSaveButtonMixin = {};
@@ -375,6 +404,7 @@ end
 --- @return Step
 local function GetFormStep()
     local step = {
+        taskID = TaskManagerFrame.taskID,
         type = UIDropDownMenu_GetSelectedValue(TaskManagerFrame.StepModalDialog.StepTypeDropDown),
         label = TaskManagerFrame.StepModalDialog.ManualStep.StepEditBox:GetText()
     }

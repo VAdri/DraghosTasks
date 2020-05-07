@@ -43,9 +43,9 @@ function Draghos_TaskLog:GetTasks()
     return self.TaskCache;
 end
 
-function Draghos_TaskLog:RaiseChange()
+function Draghos_TaskLog:RaiseChange(objectType, ...)
     for _, handler in pairs(self.Subscribers) do
-        handler();
+        handler(objectType, ...);
     end
 end
 
@@ -64,11 +64,15 @@ function Draghos_TaskLog:UpdateTask(task, index)
     if not TaskLogSaved then
         TaskLogSaved = {};
     end
+    local changes = {};
     for key, value in pairs(task) do
-        TaskLogSaved[index][key] = value;
+        if TaskLogSaved[index][key] ~= value then
+            TaskLogSaved[index][key] = value;
+            table.insert(changes, key);
+        end
     end
     self.TaskCache = nil;
-    self:RaiseChange();
+    self:RaiseChange(TaskMixin, task.taskID, changes);
 end
 
 --- @param task Task
@@ -79,7 +83,7 @@ function Draghos_TaskLog:AddTask(task)
     task.taskID = NewTaskID();
     table.insert(TaskLogSaved, task);
     self.TaskCache = nil;
-    self:RaiseChange();
+    self:RaiseChange(TaskMixin, task.taskID);
 end
 
 --- @param taskID number
@@ -91,11 +95,50 @@ function Draghos_TaskLog:RemoveTaskByID(taskID)
     if index then
         table.remove(TaskLogSaved, index);
         self.TaskCache = nil;
-        self:RaiseChange();
+        self:RaiseChange(TaskMixin, taskID);
         return true;
     else
         return false;
     end
+end
+
+--- @param taskID number
+--- @param step Step
+--- @param stepIndex number
+function Draghos_TaskLog:UpdateStep(taskID, step, stepIndex)
+    if not TaskLogSaved or not taskID or not step then
+        return;
+    end
+
+    local taskIndex = Draghos_TaskLog:GetTaskIndexByTaskID(taskID);
+    local storedStep = (TaskLogSaved[taskIndex] and TaskLogSaved[taskIndex].steps) and
+                           TaskLogSaved[taskIndex].steps[stepIndex];
+
+    if not storedStep then
+        return false;
+    end
+
+    local changes = {};
+
+    -- Removes in the store the keys that have been deleted
+    for key, _ in pairs(storedStep) do
+        if step[key] == nil then
+            TaskLogSaved[taskIndex].steps[stepIndex][key] = nil;
+            table.insert(changes, key);
+        end
+    end
+
+    -- Applies modifications
+    for key, value in pairs(step) do
+        if TaskLogSaved[taskIndex].steps[stepIndex][key] ~= value then
+            TaskLogSaved[taskIndex].steps[stepIndex][key] = value;
+            table.insert(changes, key);
+        end
+    end
+
+    self.TaskCache = nil;
+    self:RaiseChange(StepMixin, taskID, stepIndex, changes);
+    return true;
 end
 
 -- *********************************************************************************************************************
@@ -134,4 +177,14 @@ end
 --- @return Task|nil
 function Draghos_TaskLog:GetTaskByTaskID(taskID)
     return Find(self:GetTasks(), FindByTaskID(taskID));
+end
+
+--- @param taskID number
+--- @param stepIndex number
+--- @return Step|nil
+function Draghos_TaskLog:GetStep(taskID, stepIndex)
+    local task = Draghos_TaskLog:GetTaskByTaskID(taskID);
+    if task then
+        return task.steps[stepIndex];
+    end
 end

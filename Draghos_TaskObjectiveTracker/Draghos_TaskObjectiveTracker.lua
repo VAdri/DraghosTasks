@@ -163,7 +163,27 @@ end
 -- ***** BLOCK DROPDOWN FUNCTIONS
 -- *********************************************************************************************************************
 
-function TaskObjectiveTracker_OnOpenDropDown(self)
+local MANUAL_STEPS_MENU_LIST = 1;
+
+local function TaskObjectiveTracker_ShowManualStepsDropDown(self, level)
+    local block = self.activeFrame;
+    local task = Draghos_TaskLog:GetTaskByTaskID(block.id);
+
+    local info = UIDropDownMenu_CreateInfo();
+
+    local manualSteps = task:GetManualSteps();
+    for index, step in pairs(manualSteps) do
+        info.text = step:GetLabel();
+        info.func = function()
+            step:ToggleCompleted();
+            step:SaveModifications(index);
+        end;
+        info.checked = step:IsCompleted();
+        UIDropDownMenu_AddButton(info, level);
+    end
+end
+
+local function TaskObjectiveTracker_ShowDropDown(self)
     local block = self.activeFrame;
     local task = Draghos_TaskLog:GetTaskByTaskID(block.id);
 
@@ -183,6 +203,18 @@ function TaskObjectiveTracker_OnOpenDropDown(self)
     info.checked = false;
     UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL);
 
+    if task:HasManualSteps() then
+        info.text = OBJECTIVES_MARK_STEP_AS_COMPLETE;
+        info.arg1 = task.taskID;
+        info.hasArrow = true;
+        info.menuList = MANUAL_STEPS_MENU_LIST;
+        info.func = nil;
+        info.checked = false;
+        UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL);
+        info.hasArrow = false;
+        info.menuList = nil;
+    end
+
     info.text = OBJECTIVES_STOP_TRACKING;
     info.arg1 = block.id;
     info.func = function()
@@ -190,4 +222,12 @@ function TaskObjectiveTracker_OnOpenDropDown(self)
     end
     info.checked = false;
     UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL);
+end
+
+function TaskObjectiveTracker_OnOpenDropDown(self, level, menuList)
+    if level == 1 then
+        TaskObjectiveTracker_ShowDropDown(self);
+    elseif level == 2 and menuList == MANUAL_STEPS_MENU_LIST then
+        TaskObjectiveTracker_ShowManualStepsDropDown(self, level);
+    end
 end
