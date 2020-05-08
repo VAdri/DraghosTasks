@@ -47,6 +47,8 @@
         "UNKNOWN",
         "C_DateAndTime",
         "time",
-        "OBJECTIVE_TRACKER_UPDATE_REASON"
+        "OBJECTIVE_TRACKER_UPDATE_REASON",
+        "OBJECTIVE_DASH_STYLE_HIDE",
+        "OBJECTIVE_TRACKER_COLOR"
     ]
 }

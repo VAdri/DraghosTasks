@@ -51,6 +51,7 @@ function TaskObjectiveTrackerInitialize(self)
     Draghos_TaskLog:Subscribe(
         function()
             ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_TASK);
+            TASK_TRACKER_MODULE:ResetAnimations();
         end
     );
 
@@ -61,6 +62,8 @@ end
 -- *********************************************************************************************************************
 -- ***** ANIMATIONS
 -- *********************************************************************************************************************
+
+local LINE_TYPE_ANIM = {template = "TaskObjectiveAnimLineTemplate", freeLines = {}};
 
 function TaskObjectiveTracker_FinishGlowAnim(line)
     if (line.state == "ADDING") then
@@ -119,17 +122,72 @@ function TASK_TRACKER_MODULE:EnumTaskWatchData(func)
     end
 end
 
+function TASK_TRACKER_MODULE:ResetAnimations()
+    for _, block in pairs(TASK_TRACKER_MODULE.usedBlocks) do
+        local task = Draghos_TaskLog:GetTaskByTaskID(block.id);
+        for _, line in pairs(block.lines) do
+            local step = task.steps[line.index]
+            if (step and not step:IsCompleted() and line.state == "COMPLETED") then
+                line.state = nil;
+            end
+        end
+    end
+end
+
 --- @param task Task
 function TASK_TRACKER_MODULE:UpdateSingle(task)
     local taskID = task:GetID();
+
+    local isNewBlock = self:GetExistingBlock(taskID) == nil;
 
     local block = self:GetBlock(taskID);
     block.id = taskID;
 
     self:SetBlockHeader(block, task.title);
 
-    for key, step in pairs(task.steps) do
-        self:AddObjective(block, taskID .. ":" .. key, step:GetLabel());
+    for index, step in pairs(task.steps) do
+        local line;
+        if (step:IsCompleted()) then
+            line = self:AddObjective(
+                       block, taskID .. ":" .. index, step:GetLabel(), LINE_TYPE_ANIM, nil, OBJECTIVE_DASH_STYLE_HIDE,
+                       OBJECTIVE_TRACKER_COLOR["Complete"]
+                   );
+
+            if step:IsManual() then
+                line.Check:Hide();
+                line.CheckButton:Show();
+                line.CheckButton:SetChecked(true);
+            else
+                line.Check:Show();
+                line.CheckButton:Hide();
+            end
+
+            if isNewBlock then
+                -- Avoid to show the animation when the block is first shown
+                line.state = "COMPLETED";
+            end
+
+            if (not line.state or line.state == "PRESENT") then
+                line.Sheen.Anim:Play();
+                line.Glow.Anim:Play();
+                line.CheckFlash.Anim:Play();
+                line.state = "COMPLETING";
+            end
+        else
+            line = self:AddObjective(block, taskID .. ":" .. index, step:GetLabel(), LINE_TYPE_ANIM);
+
+            line.Check:Hide();
+
+            if step:IsManual() then
+                line.CheckButton:Show();
+                line.CheckButton:SetChecked(false);
+            else
+                line.CheckButton:Hide();
+            end
+        end
+
+        line.block = block;
+        line.index = index;
     end
 
     block:SetHeight(block.height);
@@ -157,6 +215,20 @@ function TASK_TRACKER_MODULE:Update()
     self:EnumTaskWatchData(self.UpdateSingle);
 
     self:EndLayout();
+end
+
+function TASK_TRACKER_MODULE:ToggleStep(button)
+    local line = button:GetParent();
+    local taskID = line.block and line.block.id;
+    local stepIndex = line.index;
+    if taskID and stepIndex then
+        local task = Draghos_TaskLog:GetTaskByTaskID(taskID);
+        local step = task and task.steps[stepIndex];
+        if step then
+            step:ToggleCompleted();
+            step:SaveModifications(stepIndex);
+        end
+    end
 end
 
 -- *********************************************************************************************************************

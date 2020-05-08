@@ -86,6 +86,24 @@
 				</Scripts>
 			</AnimationGroup>
 		</Animations>
+		<Frames>
+			<CheckButton parentKey="CheckButton" hidden="true">
+				<Size x="20" y="20"/>
+				<Anchors>
+						<Anchor point="TOPLEFT" x="-12" y="3"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						TASK_TRACKER_MODULE:ToggleStep(self);
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+				<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+				<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+				<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+			</CheckButton>
+		</Frames>
 	</Frame>
 
 	<Frame name="TaskObjectiveWaypointLineTemplate" inherits="ObjectiveTrackerLineTemplate" virtual="true">
