@@ -1,4 +1,5 @@
 local function UseThisLocalization()
+    MODIFY = not MODIFY and "Modifier";
     STEP_COMPLETION_TYPE = "Type de complétion";
     TASK_MANAGER_STEPS_GROUPBOX_TITLE = "Étapes";
     TASK_MANAGER_STEP_DIALOG_TITLE = "Étape";

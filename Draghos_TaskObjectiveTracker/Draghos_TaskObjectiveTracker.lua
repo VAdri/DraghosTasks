@@ -36,11 +36,11 @@ function TaskObjectiveTrackerInitialize(self)
     end
 
     local taskHeaderFrame = CreateFrame(
-                                "Frame", "TaskHeader", ObjectiveTrackerFrame.BlocksFrame,
+                                "Frame", "ObjectiveTrackerBlocksFrame.TaskHeader", ObjectiveTrackerFrame.BlocksFrame,
                                 "ObjectiveTrackerHeaderTemplate"
                             );
 
-    TASK_TRACKER_MODULE:SetHeader(taskHeaderFrame, TRACKER_HEADER_TASKS, 0);
+    TASK_TRACKER_MODULE:SetHeader(taskHeaderFrame, TRACKER_HEADER_TASKS, OBJECTIVE_TRACKER_UPDATE_REASON);
 
     table.insert(ObjectiveTrackerFrame.MODULES, TASK_TRACKER_MODULE);
     table.insert(ObjectiveTrackerFrame.MODULES_UI_ORDER, TASK_TRACKER_MODULE);

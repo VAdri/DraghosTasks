@@ -219,6 +219,7 @@ function TaskManagerFrame_SetFormData(task)
         TaskManagerFrame.ActivateCheckButton:SetChecked(task.isActive);
         UIDropDownMenu_SetSelectedValue(TaskManagerFrame.RepeatDropDown, task.repeating);
         TaskManagerFrame.RemoveButton:Show();
+        TaskManagerFrame.StepsGroupBox.StepsScrollFrame.selected = nil;
         TaskManagerFrame.StepsGroupBox.StepsScrollFrame.steps = task:GetSteps();
     else
         TaskManagerFrame.taskID = nil;
@@ -226,11 +227,12 @@ function TaskManagerFrame_SetFormData(task)
         TaskManagerFrame.ActivateCheckButton:SetChecked(true);
         UIDropDownMenu_SetSelectedValue(TaskManagerFrame.RepeatDropDown, TASK_REPEAT_NEVER);
         TaskManagerFrame.RemoveButton:Hide();
+        TaskManagerFrame.StepsGroupBox.StepsScrollFrame.selected = nil;
         TaskManagerFrame.StepsGroupBox.StepsScrollFrame.steps = {};
     end
     TaskManagerFrame_UpdateFormStatus();
     TaskManagerFrame_InitializeForm();
-    TaskManagerFrameSteps_UpdateScrollFrame();
+    TaskManagerFrame.StepsGroupBox.StepsScrollFrame:Update();
 end
 
 function TaskManagerFrame_UpdateFormStatus()
@@ -301,19 +303,36 @@ function TaskManagerFrameSteps_UpdateScrollFrame()
             buttons[i]:Hide();
         end
     end
+
+    if (scrollFrame.selected) then
+        TaskManagerFrame.ModifyStepButton:Enable();
+    else
+        TaskManagerFrame.ModifyStepButton:Disable();
+    end
 end
 
 function TaskManagerFrameSteps_SelectStep(button)
     TaskManagerFrame.StepsGroupBox.StepsScrollFrame.selected = button.stepIndex;
     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
-    TaskManagerFrameSteps_UpdateScrollFrame();
+    TaskManagerFrame.StepsGroupBox.StepsScrollFrame:Update();
 end
 
 function TaskManagerFrameSteps_ToggleCompleted(button)
-    local step = TaskManagerFrame.StepsGroupBox.StepsScrollFrame.steps[button:GetParent().stepIndex];
+    local stepIndex = button:GetParent().stepIndex;
+    local step = stepIndex and TaskManagerFrame.StepsGroupBox.StepsScrollFrame.steps[stepIndex];
     if step then
         step:ToggleCompleted();
         TaskManagerFrame_UpdateFormStatus();
+    end
+end
+
+function TaskManagerFrameSteps_RemoveStep(button)
+    local stepIndex = button:GetParent().stepIndex;
+    local step = stepIndex and TaskManagerFrame.StepsGroupBox.StepsScrollFrame.steps[stepIndex];
+    if step then
+        table.remove(TaskManagerFrame.StepsGroupBox.StepsScrollFrame.steps, stepIndex);
+        TaskManagerFrame_UpdateFormStatus();
+        TaskManagerFrame.StepsGroupBox.StepsScrollFrame:Update();
     end
 end
 
@@ -346,10 +365,17 @@ function TaskManagerStepsScrollFrameMixin:UpdateStep(taskID, stepIndex)
     end
 end
 
+TaskManagerModifyStepButtonMixin = {};
+
+function TaskManagerModifyStepButtonMixin:OnClick()
+    TaskManagerFrame.StepModalDialog.stepIndex = TaskManagerFrame.StepsGroupBox.StepsScrollFrame.selected;
+    TaskManagerFrame.StepModalDialog:Show();
+end
+
 TaskManagerAddStepButtonMixin = {};
 
 function TaskManagerAddStepButtonMixin:OnClick()
-    TaskManagerFrame.StepModalDialog.stepIndex = self.stepIndex;
+    TaskManagerFrame.StepModalDialog.stepIndex = #TaskManagerFrame.StepsGroupBox.StepsScrollFrame.steps + 1;
     TaskManagerFrame.StepModalDialog:Show();
 end
 
@@ -420,6 +446,7 @@ end
 function TaskManagerStepModalDialogMixin:OnShow()
     TaskManagerFrame.Overlay:Show();
     TaskManagerFrame.StepModalDialog.AcceptButton:Disable();
+    self:SetFormData();
 end
 
 function TaskManagerStepModalDialogMixin:UpdateLayout()
@@ -430,9 +457,22 @@ function TaskManagerStepModalDialogMixin:UpdateLayout()
     end
 end
 
+function TaskManagerStepModalDialogMixin:SetFormData()
+    local task = GetFormTask();
+    local step = task.steps[self.stepIndex];
+    if step then
+        UIDropDownMenu_SetSelectedValue(TaskManagerFrame.StepModalDialog.StepTypeDropDown, step.type);
+        UIDropDownMenu_SetText(TaskManagerFrame.StepModalDialog.StepTypeDropDown, StepTypes[step.type].Label);
+        if step.type == STEP_TYPE_MANUAL then
+            TaskManagerFrame.StepModalDialog.ManualStep.StepEditBox:SetText(step.label);
+        end
+        self:UpdateLayout();
+    end
+end
+
 function TaskManagerStepModalDialogMixin:UpdateFormStatus()
     local newStep = GetFormStep();
-    if not newStep:IsValid() then
+    if not self.stepIndex or not newStep:IsValid() then
         TaskManagerFrame.StepModalDialog.AcceptButton:Disable();
     else
         TaskManagerFrame.StepModalDialog.AcceptButton:Enable();
@@ -453,15 +493,17 @@ function TaskManagerStepModalDialogMixin:Hide()
 end
 
 function TaskManagerStepModalDialogMixin:Accept()
-    local task = GetFormTask();
-    local newStep = GetFormStep();
-    local index = self.index or #task.steps + 1;
-    table.insert(task.steps, index, newStep);
-    TaskManagerFrame.StepsGroupBox.StepsScrollFrame.selected = index;
+    local stepIndex = self:GetParent().stepIndex;
+    if stepIndex then
+        local task = GetFormTask();
+        local newStep = GetFormStep();
+        task.steps[stepIndex] = newStep;
+        TaskManagerFrame.StepsGroupBox.StepsScrollFrame.selected = stepIndex;
 
-    TaskManagerFrame_SetFormData(task);
+        TaskManagerFrame_SetFormData(task);
 
-    self.index = nil;
+        self:GetParent().stepIndex = nil;
 
-    self:Hide();
+        self:Hide();
+    end
 end

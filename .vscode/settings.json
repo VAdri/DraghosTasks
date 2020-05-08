@@ -1,5 +1,6 @@
 {
     "vscode-lua-format.configPath": ".lua-format",
+    "Lua.runtime.version": "Lua 5.1",
     "Lua.diagnostics.globals": [
         "CreateFrame",
         "GetLocale",
@@ -9,7 +10,6 @@
         "ObjectiveTrackerFrame",
         "UIPanelWindows",
         "PanelTemplates_SetNumTabs",
-        "unpack",
         "ButtonFrameTemplate_HideButtonBar",
         "ShowUIPanel",
         "HideUIPanel",
@@ -46,6 +46,7 @@
         "HybridScrollFrame_Update",
         "UNKNOWN",
         "C_DateAndTime",
-        "time"
+        "time",
+        "OBJECTIVE_TRACKER_UPDATE_REASON"
     ]
 }
