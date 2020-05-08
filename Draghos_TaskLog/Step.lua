@@ -62,12 +62,10 @@ end
 
 --- @return boolean
 function StepMixin:IsCompleted()
-    if not self.lastCompleted then
-        return false;
+    if self.lastCompleted then
+        return true;
     else
-        local task = Draghos_TaskLog:GetTaskByTaskID(self.taskID);
-        local repeating = task and TaskRepeats[task.repeating];
-        return repeating and repeating.IsCompleted(self) or false;
+        return false;
     end
 end
 

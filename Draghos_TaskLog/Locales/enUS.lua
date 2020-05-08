@@ -1,5 +1,4 @@
 local function UseThisLocalization()
-    CALENDAR_REPEAT_DAILY = "Daily";
     STEP_SUMMARY = "%s: %s";
     STEP_TYPE_MANUAL_LABEL = "Manual";
 end

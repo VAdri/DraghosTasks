@@ -4,7 +4,6 @@ local function UseThisLocalization()
     TASK_MANAGER_STEPS_GROUPBOX_TITLE = "Steps";
     TASK_MANAGER_STEP_DIALOG_TITLE = "Step";
     TASK_MANAGER_TITLE = "Task Log";
-    TASK_REPEAT = "Repeat";
     TASKLOG_ADD_NEW_TASK = "New Task";
     TASKLOG_TASK_TITLE = "Task Title";
 end

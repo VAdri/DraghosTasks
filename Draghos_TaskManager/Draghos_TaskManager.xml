@@ -84,7 +84,7 @@
 		<ButtonText name="$parentTitleText" inherits="GameFontNormalSmallLeft" justifyH="LEFT" parentKey="text">
 			<Anchors>
 				<Anchor point="LEFT" relativeKey="$parent.Check" relativePoint="RIGHT" x="3" y="0"/>
-				<Anchor point="RIGHT" relativeKey="$parent.Remove" relativePoint="RIGHT" x="-3" y="0"/>
+				<Anchor point="RIGHT" relativeKey="$parent.Remove" relativePoint="LEFT" x="-3" y="0"/>
 			</Anchors>
 		</ButtonText>
 		<HighlightTexture file="Interface\FriendsFrame\UI-FriendsFrame-HighlightBar-Blue" alphaMode="ADD"/>
@@ -241,24 +241,10 @@
 					<OnClick method="OnClick"/>
 				</Scripts>
 			</Button>
-			<Frame parentKey="RepeatDropDown" inherits="UIDropDownMenuTemplate">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.StepsGroupBox" relativePoint="BOTTOMLEFT" x="-18" y="-45"/>
-				</Anchors>
-				<Layers>
-					<Layer level="BACKGROUND">
-						<FontString name="$parentLabel" inherits="GameFontNormalSmall" text="TASK_REPEAT">
-							<Anchors>
-								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="22" y="3"/>
-							</Anchors>
-						</FontString>
-					</Layer>
-				</Layers>
-			</Frame>
 			<Button parentKey="SaveButton" inherits="UIPanelButtonTemplate" text="SAVE" mixin="TaskManagerSaveButtonMixin">
 				<Size x="78" y="22"/>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.RepeatDropDown" relativePoint="BOTTOMLEFT" x="18" y="-15"/>
+					<Anchor point="TOPLEFT" relativeKey="$parent.StepsGroupBox" relativePoint="BOTTOMLEFT" x="0" y="-45"/>
 				</Anchors>
 				<Scripts>
 					<OnLoad method="OnLoad"/>

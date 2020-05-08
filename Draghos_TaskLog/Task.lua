@@ -2,66 +2,8 @@
 --- @field public taskID number
 --- @field public title string
 --- @field public isActive boolean
---- @field public repeating number
 --- @field public steps Step[]
 TaskMixin = {};
-
-TASK_REPEAT_NEVER = 1;
-TASK_REPEAT_DAILY = 2;
-TASK_REPEAT_WEEKLY = 3;
-TASK_REPEAT_BIWEEKLY = 4;
-TASK_REPEAT_MONTHLY = 5;
-
-TaskRepeats = {
-    [TASK_REPEAT_NEVER] = {
-        Label = CALENDAR_REPEAT_NEVER,
-        --- @param step Step
-        --- @return boolean
-        IsCompleted = function(step)
-            return not not step.lastCompleted;
-        end
-    },
-    [TASK_REPEAT_DAILY] = {
-        Label = CALENDAR_REPEAT_DAILY,
-        --- @param step Step
-        --- @return boolean
-        IsCompleted = function(step)
-            local currentTime = time();
-            local elapsed = Elapsed(step.lastCompleted, currentTime);
-            return not (elapsed.years > 0 or elapsed.months > 0 or elapsed.days > 0);
-        end
-    },
-    [TASK_REPEAT_WEEKLY] = {
-        Label = CALENDAR_REPEAT_WEEKLY,
-        --- @param step Step
-        --- @return boolean
-        IsCompleted = function(step)
-            local currentTime = time();
-            local elapsed = Elapsed(step.lastCompleted, currentTime);
-            return not (elapsed.years >= 0 or elapsed.months >= 0 or elapsed.days >= 7);
-        end
-    },
-    [TASK_REPEAT_BIWEEKLY] = {
-        Label = CALENDAR_REPEAT_BIWEEKLY,
-        --- @param step Step
-        --- @return boolean
-        IsCompleted = function(step)
-            local currentTime = time();
-            local elapsed = Elapsed(step.lastCompleted, currentTime);
-            return not (elapsed.years >= 0 or elapsed.months >= 0 or elapsed.days >= 15);
-        end
-    },
-    [TASK_REPEAT_MONTHLY] = {
-        Label = CALENDAR_REPEAT_MONTHLY,
-        --- @param step Step
-        --- @return boolean
-        IsCompleted = function(step)
-            local currentTime = time();
-            local elapsed = Elapsed(step.lastCompleted, currentTime);
-            return not (elapsed.years >= 0 or elapsed.months >= 0);
-        end
-    }
-}
 
 local function AsStepMixin(step)
     return CreateAndInitFromMixin(StepMixin, step);
@@ -77,7 +19,6 @@ function TaskMixin:Init(task)
     self.taskID = task.taskID;
     self.title = task.title;
     self.isActive = task.isActive;
-    self.repeating = task.repeating;
     self.steps = Map((task.steps or {}), AsStepMixin);
 
     return true;
@@ -88,8 +29,6 @@ function TaskMixin:IsValid()
     if IsBlankString(self.title) then
         return false;
     elseif type(self.isActive) ~= "boolean" then
-        return false;
-    elseif not TaskRepeats[self.repeating] then
         return false;
     elseif not self.steps or #self.steps == 0 then
         return false;
@@ -109,7 +48,6 @@ function TaskMixin:Save()
         taskID = self.taskID,
         title = self.title,
         isActive = self.isActive,
-        repeating = self.repeating,
         steps = Map(self.steps, GetStepValues)
     };
 
@@ -149,8 +87,7 @@ function TaskMixin:IsModified()
                 end
             end
         end
-        return self.title ~= storedTask.title or self.isActive ~= storedTask.isActive or self.repeating ~=
-                   storedTask.repeating;
+        return self.title ~= storedTask.title or self.isActive ~= storedTask.isActive;
     end
 end
 

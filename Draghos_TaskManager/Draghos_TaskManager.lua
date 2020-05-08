@@ -172,31 +172,7 @@ end
 -- ***** MAIN FORM
 -- *********************************************************************************************************************
 
-local function SelectRepeatValue(self)
-    UIDropDownMenu_SetSelectedValue(TaskManagerFrame.RepeatDropDown, self.value);
-    TaskManagerFrame_UpdateFormStatus();
-end
-
-local function InitializeRepeatDropDown()
-    local selectedValue = UIDropDownMenu_GetSelectedValue(TaskManagerFrame.RepeatDropDown);
-    local info = UIDropDownMenu_CreateInfo();
-
-    info.func = SelectRepeatValue;
-
-    for key, value in pairs(TaskRepeats) do
-        info.text = value.Label;
-        info.value = key;
-        info.checked = selectedValue == info.value;
-        UIDropDownMenu_AddButton(info);
-    end
-
-    if selectedValue and TaskRepeats[selectedValue] then
-        UIDropDownMenu_SetText(TaskManagerFrame.RepeatDropDown, TaskRepeats[selectedValue].Label);
-    end
-end
-
 function TaskManagerFrame_InitializeForm()
-    UIDropDownMenu_Initialize(TaskManagerFrame.RepeatDropDown, InitializeRepeatDropDown);
 end
 
 --- @return Task
@@ -205,7 +181,6 @@ local function GetFormTask()
         taskID = TaskManagerFrame.taskID,
         title = TaskManagerFrame.TitleEditBox:GetText(),
         isActive = TaskManagerFrame.ActivateCheckButton:GetChecked(),
-        repeating = UIDropDownMenu_GetSelectedValue(TaskManagerFrame.RepeatDropDown),
         steps = TaskManagerFrame.StepsGroupBox.StepsScrollFrame.steps
     };
     return CreateAndInitFromMixin(TaskMixin, task);
@@ -217,7 +192,6 @@ function TaskManagerFrame_SetFormData(task)
         TaskManagerFrame.taskID = task.taskID;
         TaskManagerFrame.TitleEditBox:SetText(task.title);
         TaskManagerFrame.ActivateCheckButton:SetChecked(task.isActive);
-        UIDropDownMenu_SetSelectedValue(TaskManagerFrame.RepeatDropDown, task.repeating);
         TaskManagerFrame.RemoveButton:Show();
         TaskManagerFrame.StepsGroupBox.StepsScrollFrame.selected = nil;
         TaskManagerFrame.StepsGroupBox.StepsScrollFrame.steps = task:GetSteps();
@@ -225,7 +199,6 @@ function TaskManagerFrame_SetFormData(task)
         TaskManagerFrame.taskID = nil;
         TaskManagerFrame.TitleEditBox:SetText("");
         TaskManagerFrame.ActivateCheckButton:SetChecked(true);
-        UIDropDownMenu_SetSelectedValue(TaskManagerFrame.RepeatDropDown, TASK_REPEAT_NEVER);
         TaskManagerFrame.RemoveButton:Hide();
         TaskManagerFrame.StepsGroupBox.StepsScrollFrame.selected = nil;
         TaskManagerFrame.StepsGroupBox.StepsScrollFrame.steps = {};
@@ -472,7 +445,7 @@ end
 
 function TaskManagerStepModalDialogMixin:UpdateFormStatus()
     local newStep = GetFormStep();
-    if not self.stepIndex or not newStep:IsValid() then
+    if not newStep:IsValid() then
         TaskManagerFrame.StepModalDialog.AcceptButton:Disable();
     else
         TaskManagerFrame.StepModalDialog.AcceptButton:Enable();
