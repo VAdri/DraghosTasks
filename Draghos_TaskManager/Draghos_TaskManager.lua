@@ -384,30 +384,70 @@ end
 local function SelectStepType(self)
     UIDropDownMenu_SetSelectedValue(TaskManagerFrame.StepModalDialog.StepTypeDropDown, self.value);
     TaskManagerFrame.StepModalDialog:UpdateLayout();
+    CloseDropDownMenus();
 end
 
-local function InitializeStepTypeDropDown()
-    local selectedValue = UIDropDownMenu_GetSelectedValue(TaskManagerFrame.StepModalDialog.StepTypeDropDown);
+local function InitializeStepTypeDropDown(self, level, menuList)
+    local selectedValue = UIDropDownMenu_GetSelectedValue(self);
     local info = UIDropDownMenu_CreateInfo();
 
-    info.func = SelectStepType;
-
-    for key, value in pairs(StepTypes) do
-        info.text = value.Label;
-        info.value = key;
-        info.checked = selectedValue == info.value;
-        UIDropDownMenu_AddButton(info);
+    if level == 1 then
+        for key, value in pairs(StepTypes) do
+            if not value.Group then
+                info.text = value.Label;
+                info.value = key;
+                info.notCheckable = nil;
+                info.hasArrow = false;
+                info.menuList = nil;
+                info.func = SelectStepType;
+                info.checked = selectedValue == info.value;
+                UIDropDownMenu_AddButton(info, 1);
+            else
+                info.text = value.Group;
+                info.value = value.Group;
+                info.notCheckable = 1;
+                info.hasArrow = true;
+                info.menuList = value.Group;
+                info.func = nil;
+                info.checked = false;
+                UIDropDownMenu_AddButton(info, 1);
+            end
+        end
+    elseif level == 2 and menuList then
+        local function IsInGroup(stepType)
+            return stepType.Group == menuList;
+        end
+        local stepTypes = FilterIndexed(StepTypes, IsInGroup);
+        for key, value in pairs(stepTypes) do
+            info.text = value.Label;
+            info.value = key;
+            info.func = SelectStepType;
+            info.checked = selectedValue == info.value;
+            UIDropDownMenu_AddButton(info, 2);
+        end
     end
 end
 
---- @return Step
+--- @return Step|nil
 local function GetFormStep()
-    local step = {
-        taskID = TaskManagerFrame.taskID,
-        type = UIDropDownMenu_GetSelectedValue(TaskManagerFrame.StepModalDialog.StepTypeDropDown),
-        label = TaskManagerFrame.StepModalDialog.ManualStep.StepEditBox:GetText()
-    }
-    return CreateAndInitFromMixin(StepMixin, step);
+    local stepType = UIDropDownMenu_GetSelectedValue(TaskManagerFrame.StepModalDialog.StepTypeDropDown);
+    if stepType == STEP_TYPE_MANUAL then
+        local step = {
+            taskID = TaskManagerFrame.taskID,
+            type = UIDropDownMenu_GetSelectedValue(TaskManagerFrame.StepModalDialog.StepTypeDropDown),
+            label = TaskManagerFrame.StepModalDialog.ManualStep.StepEditBox:GetText()
+        }
+        return CreateAndInitFromMixin(StepMixin, step);
+    elseif stepType == STEP_TYPE_QUEST_PICKUP then
+        local step = {
+            taskID = TaskManagerFrame.taskID,
+            type = UIDropDownMenu_GetSelectedValue(TaskManagerFrame.StepModalDialog.StepTypeDropDown),
+            questID = TaskManagerFrame.StepModalDialog.QuestPickUpStep.QuestIDPicker.EditBox:GetText()
+        }
+        return CreateAndInitFromMixin(StepMixin, step);
+    else
+        return nil;
+    end
 end
 
 TaskManagerStepModalDialogMixin = {};
@@ -425,8 +465,13 @@ end
 function TaskManagerStepModalDialogMixin:UpdateLayout()
     local selectedType = UIDropDownMenu_GetSelectedValue(TaskManagerFrame.StepModalDialog.StepTypeDropDown);
 
+    TaskManagerFrame.StepModalDialog.ManualStep:Hide();
+    TaskManagerFrame.StepModalDialog.QuestPickUpStep:Hide();
+
     if selectedType == STEP_TYPE_MANUAL then
         TaskManagerFrame.StepModalDialog.ManualStep:Show();
+    elseif selectedType == STEP_TYPE_QUEST_PICKUP then
+        TaskManagerFrame.StepModalDialog.QuestPickUpStep:Show();
     end
 end
 
@@ -445,7 +490,7 @@ end
 
 function TaskManagerStepModalDialogMixin:UpdateFormStatus()
     local newStep = GetFormStep();
-    if not newStep:IsValid() then
+    if not newStep or not newStep:IsValid() then
         TaskManagerFrame.StepModalDialog.AcceptButton:Disable();
     else
         TaskManagerFrame.StepModalDialog.AcceptButton:Enable();
@@ -459,10 +504,12 @@ function TaskManagerStepModalDialogMixin:Hide()
 
     -- Hide layout
     TaskManagerFrame.StepModalDialog.ManualStep:Hide();
+    TaskManagerFrame.StepModalDialog.QuestPickUpStep:Hide();
 
     -- Clear data
     UIDropDownMenu_SetSelectedValue(TaskManagerFrame.StepModalDialog.StepTypeDropDown, 0);
     TaskManagerFrame.StepModalDialog.ManualStep.StepEditBox:SetText("");
+    TaskManagerFrame.StepModalDialog.QuestPickUpStep.QuestIDPicker.EditBox:SetText("");
 end
 
 function TaskManagerStepModalDialogMixin:Accept()
@@ -479,4 +526,26 @@ function TaskManagerStepModalDialogMixin:Accept()
 
         self:Hide();
     end
+end
+
+QuestIDEditBoxMixin = {};
+
+function QuestIDEditBoxMixin:OnShow()
+    -- self:RegisterEvent("QUEST_DATA_LOAD_RESULT");
+    self:RegisterEvent("QUEST_LOG_UPDATE");
+end
+
+function QuestIDEditBoxMixin:OnHide()
+    -- self:UnregisterEvent("QUEST_DATA_LOAD_RESULT");
+    self:UnregisterEvent("QUEST_LOG_UPDATE");
+end
+
+function QuestIDEditBoxMixin:OnEvent()
+    self:OnTextChanged();
+end
+
+function QuestIDEditBoxMixin:OnTextChanged()
+    local step = GetFormStep();
+    self:GetParent().Title:SetText(step and step:GetLabel() or "");
+    TaskManagerFrame.StepModalDialog:UpdateFormStatus();
 end

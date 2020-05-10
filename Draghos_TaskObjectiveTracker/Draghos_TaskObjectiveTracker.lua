@@ -263,7 +263,7 @@ local function TaskObjectiveTracker_ShowDropDown(self)
     info.text = task.title;
     info.isTitle = 1;
     info.notCheckable = 1;
-    UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL);
+    UIDropDownMenu_AddButton(info, 1);
 
     info = UIDropDownMenu_CreateInfo();
     info.text = OBJECTIVES_VIEW_TASK;
@@ -273,7 +273,7 @@ local function TaskObjectiveTracker_ShowDropDown(self)
         TaskManagerFrame_SelectTask(block.id);
     end;
     info.checked = false;
-    UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL);
+    UIDropDownMenu_AddButton(info, 1);
 
     if task:HasManualSteps() then
         info.text = OBJECTIVES_MARK_STEP_AS_COMPLETE;
@@ -282,7 +282,7 @@ local function TaskObjectiveTracker_ShowDropDown(self)
         info.menuList = MANUAL_STEPS_MENU_LIST;
         info.func = nil;
         info.checked = false;
-        UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL);
+        UIDropDownMenu_AddButton(info, 1);
         info.hasArrow = false;
         info.menuList = nil;
     end
@@ -293,7 +293,7 @@ local function TaskObjectiveTracker_ShowDropDown(self)
         task:StopTracking();
     end
     info.checked = false;
-    UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL);
+    UIDropDownMenu_AddButton(info, 1);
 end
 
 function TaskObjectiveTracker_OnOpenDropDown(self, level, menuList)

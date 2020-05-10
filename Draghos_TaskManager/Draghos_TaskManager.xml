@@ -4,6 +4,65 @@
 
 	<Script file="Draghos_TaskManager.lua"/>
 
+	<PlayerModel name="BlopModelFrame" toplevel="true" parent="UIParent">
+		<Size x="231" y="320"/>
+		<Anchors>
+			<Anchor point="TOPLEFT" x="52" y="-66"/>
+		</Anchors>
+		<Scripts>
+			<OnShow>
+				self.creatureID = tonumber("2987");
+			</OnShow>
+			<OnModelLoaded>
+				print("OnModelLoaded",self:GetModelFileID())
+			</OnModelLoaded>
+			<OnUpdate>
+				if self.creatureID and self.creatureID ~= not self:GetModelFileID() then
+					self:SetCreature(self.creatureID);
+				end
+			</OnUpdate>
+		</Scripts>
+	</PlayerModel>
+
+	<Frame name="QuestIDTemplate" virtual="true">
+		<Size x="200" y="240"/>
+		<Anchors>
+			<Anchor point="TOPLEFT" x="0" y="0"/>
+		</Anchors>
+		<Frames>
+			<EditBox parentKey="EditBox" letters="8" autoFocus="true" inherits="InputBoxTemplate" mixin="QuestIDEditBoxMixin">
+				<Size x="50" y="20"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" x="0" y="0"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<FontString inherits="GameFontNormalSmall" text="QUEST_ID">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="2"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnShow method="OnShow"/>
+					<OnHide method="OnHide"/>
+					<OnEvent method="OnEvent"/>
+					<OnTextChanged method="OnTextChanged"/>
+				</Scripts>
+			</EditBox>
+		</Frames>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<FontString parentKey="Title" inherits="GameFontNormal">
+					<Anchors>
+						<Anchor point="LEFT" relativeKey="$parent.EditBox" relativePoint="RIGHT" x="5" y="0"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
+
 	<Button name="StepButtonTemplate" virtual="true">
 		<Size x="286" y="22"/>
 		<Anchors>
@@ -328,6 +387,15 @@
 									<OnTextChanged method="UpdateFormStatus"/>
 								</Scripts>
 							</EditBox>
+						</Frames>
+					</Frame>
+					<Frame parentKey="QuestPickUpStep" hidden="true">
+						<Size x="200" y="240"/>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent.StepTypeDropDown" relativePoint="BOTTOMLEFT" x="22" y="-20"/>
+						</Anchors>
+						<Frames>
+							<Frame parentKey="QuestIDPicker" inherits="QuestIDTemplate"/>
 						</Frames>
 					</Frame>
 					<Button parentKey="CancelButton" inherits="UIPanelButtonTemplate" text="CANCEL" mixin="TaskManagerStepModalDialogMixin">

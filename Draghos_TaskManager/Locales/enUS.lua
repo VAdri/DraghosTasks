@@ -1,5 +1,6 @@
 local function UseThisLocalization()
-    MODIFY = not MODIFY and "Modify";
+    QUEST_ID = "Quest ID";
+    MODIFY = "Modify";
     STEP_COMPLETION_TYPE = "Completion Type";
     TASK_MANAGER_STEPS_GROUPBOX_TITLE = "Steps";
     TASK_MANAGER_STEP_DIALOG_TITLE = "Step";
