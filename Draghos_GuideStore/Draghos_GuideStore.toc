@@ -1,0 +1,11 @@
+## Interface: 80300
+## Title: Draghos Guides
+## Author: Draghos
+## Version: 0.0.1
+## DefaultState: Enabled
+## LoadOnDemand: 0
+
+Utils.lua
+Locales.xml
+Models.xml
+Draghos_GuideStore.xml

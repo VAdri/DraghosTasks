@@ -1,0 +1,177 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+	<Script file="Draghos_GuideObjectiveTracker.lua"/>
+
+	<Frame name="GuideObjectiveTracker">
+		<Scripts>
+			<OnLoad function="GuideObjectiveTracker_OnLoad"/>
+			<OnEvent function="GuideObjectiveTracker_OnEvent"/>
+		</Scripts>
+	</Frame>
+
+	<Frame name="GuideStepTypeIconTemplate" virtual="true">
+		<Size x="20" y="20"/>
+		<Layers>
+			<Layer level="OVERLAY" textureSubLevel="2">
+				<Texture parentKey="ProgressObjective" file="Interface\MINIMAP\ObjectIconsAtlas" hidden="true">
+					<Size x="16" y="16"/>
+					<Anchors>
+						<Anchor point="CENTER" x="4" y="-2"/>
+					</Anchors>
+					<TexCoords left="0.1328125" top="0" right="0.171875" bottom="0.078125"/>
+				</Texture>
+				<Texture parentKey="CompleteObjective" file="Interface\Scenarios\ScenarioIcon-Check" hidden="true">
+					<Size x="13" y="13"/>
+					<Anchors>
+						<Anchor point="CENTER" x="4" y="-2"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK" textureSubLevel="1">
+				<Texture parentKey="PickUpQuest" file="Interface\MINIMAP\ObjectIconsAtlas" hidden="true">
+					<Size x="22" y="20"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="HandInQuest" file="Interface\MINIMAP\ObjectIconsAtlas" hidden="true">
+					<Size x="20" y="20"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="CombatObjective" file="Interface\CHARACTERFRAME\UI-StateIcon" hidden="true">
+					<Size x="24" y="24"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+					<TexCoords left="0.5" top="0" right="1" bottom="0.5"/>
+				</Texture>
+				<!-- <Texture parentKey="SetFreeObjective" file="Interface\LFGFRAME\UI-LFG-ICON-LOCK" hidden="true">
+					<Size x="18" y="18"/>
+					<Anchors>
+						<Anchor point="CENTER" x="3"/>
+					</Anchors>
+				</Texture> -->
+				<Texture parentKey="LootObjective" file="Interface\MINIMAP\TRACKING\Banker" hidden="true">
+					<Size x="20" y="20"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="ObjectInteractionObjective" file="Interface\Scenarios\ScenarioIcon-Interact" hidden="true">
+					<Size x="16" y="16"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				-- See https://www.wowinterface.com/forums/showthread.php?t=53870 for a complete list of IDs
+				self.PickUpQuest:SetTexCoord(GetObjectIconTextureCoords(4726));
+				self.HandInQuest:SetTexCoord(GetObjectIconTextureCoords(4699));
+				-- self.LootObjective:SetTexCoord(GetObjectIconTextureCoords(4699));
+
+				-- Some other ideas:
+				-- Speak: https://github.com/Gethe/wow-ui-textures/blob/live/CHATFRAME/UI-ChatWhisperIcon.PNG
+				-- Rest: https://raw.githubusercontent.com/Gethe/wow-ui-textures/live/CHARACTERFRAME/UI-StateIcon.PNG
+				-- Information: https://github.com/Gethe/wow-ui-textures/blob/live/MINIMAP/TRACKING/Profession.PNG
+				-- Search: https://github.com/Gethe/wow-ui-textures/blob/live/MINIMAP/TRACKING/None.PNG
+				-- Hearthstone: https://github.com/Gethe/wow-ui-textures/blob/live/MINIMAP/TRACKING/Innkeeper.PNG
+				-- Food: https://github.com/Gethe/wow-ui-textures/blob/live/MINIMAP/TRACKING/Food.PNG
+				-- Fly: https://github.com/Gethe/wow-ui-textures/blob/live/MINIMAP/TRACKING/FlightMaster.PNG
+				-- Spell: https://github.com/Gethe/wow-ui-textures/blob/live/MINIMAP/TRACKING/Class.PNG
+				-- Buy/Sell: https://github.com/Gethe/wow-ui-textures/blob/live/MINIMAP/TRACKING/Auctioneer.PNG or https://github.com/Gethe/wow-ui-textures/blob/live/Buttons/UI-GroupLoot-Coin-Up.PNG
+				-- Repair: https://github.com/Gethe/wow-ui-textures/blob/live/MINIMAP/TRACKING/Repair.PNG
+				-- Really good quality: https://github.com/Gethe/wow-ui-textures/blob/live/Garrison/MobileAppIcons.PNG
+				-- Alert: https://github.com/Gethe/wow-ui-textures/blob/live/DialogFrame/UI-Dialog-Icon-AlertNew.PNG
+				-- Dices: https://github.com/Gethe/wow-ui-textures/blob/live/Buttons/UI-GroupLoot-Dice-Up.PNG
+				-- Skip: https://github.com/Gethe/wow-ui-textures/blob/live/Buttons/UI-GroupLoot-Pass-Up.PNG
+				-- Refresh: https://github.com/Gethe/wow-ui-textures/blob/live/Buttons/UI-RefreshButton.PNG or https://github.com/Gethe/wow-ui-textures/blob/live/Buttons/UIFrameButtons.PNG
+				-- Stop?: https://github.com/Gethe/wow-ui-textures/blob/live/Buttons/UI-StopButton.PNG
+				-- Plus: https://github.com/Gethe/wow-ui-textures/blob/live/PaperDollInfoFrame/Character-Plus.PNG
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+	<Frame name="GuideObjectiveAnimLineTemplate" inherits="ObjectiveTrackerLineTemplate" virtual="true">
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Check" atlas="Tracker-Check" useAtlasSize="true" hidden="true">
+					<Size x="16" y="16"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="-10" y="2"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="CheckFlash" file="Interface\Scenarios\ScenarioIcon-Check" alphaMode="ADD" alpha="0">
+					<Size x="16" y="16"/>
+					<Anchors>
+						<Anchor point="CENTER" relativeKey="$parent.Check"/>
+					</Anchors>
+					<Animations>
+						<AnimationGroup parentKey="Anim">
+							<Alpha fromAlpha="0" toAlpha="1" duration="0.067" order="1"/>
+							<Scale scaleX="1.25" scaleY="1.25" duration="0.2" order="2"/>
+							<Alpha fromAlpha="1" toAlpha="0" startDelay="0.167" duration="0.23" order="2"/>
+						</AnimationGroup>
+					</Animations>
+				</Texture>
+				<Texture parentKey="Glow" file="Interface\Scenarios\Objective-Lineglow" alpha="0" alphaMode="ADD">
+					<Size x="80" y="0"/>
+					<Anchors>
+						<Anchor point="LEFT" relativeKey="$parent.Text" x="-2" y="0"/>
+						<Anchor point="TOP" x="0" y="0"/>
+						<Anchor point="BOTTOM" x="0" y="-4"/>
+					</Anchors>
+					<Animations>
+						<AnimationGroup parentKey="Anim">
+							<Scale parentKey="ScaleGlow" startDelay="0.067" scaleX="2" scaleY="1" duration="0.433" order="1">
+								<Origin point="LEFT"/>
+							</Scale>
+							<Alpha startDelay="0.067" fromAlpha="0" toAlpha="1" duration="0.1" order="1"/>
+							<Alpha startDelay="0.467" endDelay="0" fromAlpha="1" toAlpha="0" duration="0.267" order="1"/>
+							<Scripts>
+								<OnFinished>
+									local line = self:GetParent():GetParent();
+									GuideObjectiveTracker_FinishGlowAnim(line);
+								</OnFinished>
+							</Scripts>
+						</AnimationGroup>
+					</Animations>
+				</Texture>
+				<Texture parentKey="Sheen" file="Interface\Scenarios\Objective-Sheen" alpha="0">
+					<Size x="32" y="0"/>
+					<Anchors>
+						<Anchor point="LEFT" relativeKey="$parent.Glow"/>
+						<Anchor point="TOP" x="0" y="2"/>
+						<Anchor point="BOTTOM" x="0" y="-14"/>
+					</Anchors>
+					<Animations>
+						<AnimationGroup parentKey="Anim">
+							<Translation startDelay="0.067" offsetX="110" offsetY="0" duration="0.467" order="1"/>
+							<Alpha startDelay="0.067" fromAlpha="0" toAlpha="1" duration="0.133" order="1"/>
+							<Alpha startDelay="0.2" fromAlpha="1" toAlpha="0" duration="0.133" order="1" smoothing="IN"/>
+						</AnimationGroup>
+					</Animations>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Animations>
+			<AnimationGroup parentKey="FadeOutAnim">
+				<Alpha startDelay="1" fromAlpha="1" toAlpha="0" duration="0.1" order="1"/>
+				<Scripts>
+					<OnFinished>
+						local line = self:GetParent();
+						GuideObjectiveTracker_FinishFadeOutAnim(line);
+					</OnFinished>
+				</Scripts>
+			</AnimationGroup>
+		</Animations>
+	</Frame>
+</Ui>

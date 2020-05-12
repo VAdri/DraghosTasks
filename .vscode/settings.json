@@ -51,6 +51,14 @@
         "OBJECTIVE_DASH_STYLE_HIDE",
         "OBJECTIVE_TRACKER_COLOR",
         "C_QuestLog",
-        "HaveQuestData"
+        "HaveQuestData",
+        "Mixin",
+        "C_Map",
+        "IsQuestComplete",
+        "IsAddOnLoaded",
+        "TomTom",
+        "GetQuestObjectiveInfo",
+        "GetQuestLogLeaderBoard",
+        "GetQuestLogIndexByID"
     ]
 }

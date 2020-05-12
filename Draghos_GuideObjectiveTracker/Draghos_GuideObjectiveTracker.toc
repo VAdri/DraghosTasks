@@ -1,0 +1,11 @@
+## Interface: 80300
+## Title: Draghos Guides Tracker UI
+## Author: Draghos
+## Version: 0.0.1
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## Dependencies: Blizzard_ObjectiveTracker, Draghos_GuideStore
+## OptionalDeps: TomTom
+
+Locales.xml
+Draghos_GuideObjectiveTracker.xml
