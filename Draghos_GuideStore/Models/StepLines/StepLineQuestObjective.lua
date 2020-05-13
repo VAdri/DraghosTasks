@@ -2,12 +2,12 @@ StepLineQuestObjectiveMixin = {};
 
 Mixin(StepLineQuestObjectiveMixin, StepLineMixin);
 Mixin(StepLineQuestObjectiveMixin, QuestObjectiveMixin);
--- Mixin(StepLineQuestObjectiveMixin, LocationMixin);
+Mixin(StepLineQuestObjectiveMixin, LocationMixin);
 
 function StepLineQuestObjectiveMixin:Init(stepLine)
     self:StepLineInit();
     self:QuestObjectiveInit(stepLine.questObjective);
-    -- self:LocationInit(stepLine.location);
+    self:LocationInit(stepLine.location);
 end
 
 function StepLineQuestObjectiveMixin:GetLabel()
@@ -15,7 +15,7 @@ function StepLineQuestObjectiveMixin:GetLabel()
 end
 
 function StepLineQuestObjectiveMixin:IsValid()
-    return self:IsValidStepLine() and self:IsValidQuestObjective() --and self:IsValidLocation();
+    return self:IsValidStepLine() and self:IsValidQuestObjective() -- and self:IsValidLocation();
 end
 
 function StepLineQuestObjectiveMixin:IsCompleted()

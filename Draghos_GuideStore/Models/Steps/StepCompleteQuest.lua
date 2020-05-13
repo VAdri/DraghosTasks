@@ -24,6 +24,5 @@ function StepCompleteQuestMixin:IsValid()
 end
 
 function StepCompleteQuestMixin:IsCompleted()
-    -- IsQuestComplete is true if the quest is both in the quest log and is complete, false otherwise.
-    return IsQuestComplete(self.questID) or C_QuestLog.IsQuestFlaggedCompleted(self.questID);
+    return self:IsQuestCompleted();
 end

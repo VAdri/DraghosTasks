@@ -10,7 +10,7 @@ function StepHandInQuestMixin:Init(step)
     self:QuestInit(step.quest);
     self:NPCInit(step.npc);
     self:LocationInit(step.location);
-    self.stepLines = {CreateAndInitFromMixin(StepLineSpeakToMixin, step)};
+    self.stepLines = {Draghos_GuideStore:CreateGuideItem(StepLineSpeakToMixin, step)};
 end
 
 function StepHandInQuestMixin:GetStepType()
@@ -26,5 +26,5 @@ function StepHandInQuestMixin:IsValid()
 end
 
 function StepHandInQuestMixin:IsCompleted()
-    return self.questID and C_QuestLog.IsQuestFlaggedCompleted(self.questID);
+    return self:IsQuestTurnedIn();
 end

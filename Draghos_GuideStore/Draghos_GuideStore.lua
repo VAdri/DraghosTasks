@@ -26,7 +26,7 @@ Draghos_GuideStore.npcs = {
             ["enUS"] = "Grull Hawkwind",
             ["esES"] = "Grull Viento de Halcón",
             ["esMX"] = "Grull Viento de Halcón",
-            ["frFR"] = "Grull Vent-du-faucon",
+            ["frFR"] = "Grull Vent-du-Faucon",
             ["itIT"] = "Grull Vento Agile",
             ["koKR"] = "그룰 호크윈드",
             ["ptBR"] = "Grull Vento do Falcão",
@@ -130,85 +130,6 @@ Draghos_GuideStore.items = {
     },
 };
 
-Draghos_GuideStore.quests = {
-    [1] = {
-        questID = 14449, -- The First Step
-    },
-    [2] = {
-        questID = 14452, -- Rite of Strength
-        questObjectives = {
-            [1] = {
-                questObjective = {questID = 14452, index = 1},
-                location = {}, -- TODO
-            },
-        },
-    },
-    [3] = {
-        questID = 24852, -- Our Tribe, Imprisoned
-        questObjectives = {
-            [1] = {
-                questObjective = {
-                    questID = 24852,
-                    index = 1,
-                    -- overrideObjectiveType = CUSTOM_QUEST_OBJECTIVE_TYPE_SET_FREE,
-                },
-                location = {}, -- TODO
-                object = {}, -- TODO
-            },
-        },
-    },
-    [4] = {
-        questID = 14458, -- Go to Adana
-    },
-    [5] = {
-        questID = 14459, -- The Battleboars
-        questObjectives = {
-            [1] = {
-                questObjective = {questID = 14459, index = 1},
-                location = {}, -- TODO
-                npc = Draghos_GuideStore.npcs[5],
-            },
-        },
-    },
-    [6] = {
-        questID = 14461, -- Feed of Evil
-        questObjectives = {
-            [1] = {
-                questObjective = {
-                    questID = 14459,
-                    index = 1,
-                    overrideObjectiveType = CUSTOM_QUEST_OBJECTIVE_TYPE_USE_ITEM,
-                },
-                location = {}, -- TODO
-                npc = Draghos_GuideStore.npcs[6],
-                item = Draghos_GuideStore.items[1],
-            },
-            [2] = {
-                questObjective = {
-                    questID = 14459,
-                    index = 1,
-                    overrideObjectiveType = CUSTOM_QUEST_OBJECTIVE_TYPE_USE_ITEM,
-                },
-                location = {}, -- TODO
-                npc = Draghos_GuideStore.npcs[7],
-                item = Draghos_GuideStore.items[1],
-            },
-            [3] = {
-                questObjective = {
-                    questID = 14459,
-                    index = 1,
-                    overrideObjectiveType = CUSTOM_QUEST_OBJECTIVE_TYPE_USE_ITEM,
-                },
-                location = {}, -- TODO
-                npc = Draghos_GuideStore.npcs[8],
-                item = Draghos_GuideStore.items[1],
-            },
-        },
-    },
-}
-
--- self:RegisterEvent("QUEST_LOG_UPDATE");
-
 Draghos_GuideStore.locations = {
     [1] = { -- Chief Hawkwind's location
         locationType = LOCATION_TYPE_COORDS,
@@ -223,7 +144,112 @@ Draghos_GuideStore.locations = {
     [3] = { -- Adana Thunderhorn's location
         locationType = LOCATION_TYPE_COORDS,
         uiMapID = 462, -- Camp Narache
-        coords = {46.2, 82.5},
+        coords = {31, 50.6},
+    },
+    [4] = { -- First Trough's location
+        locationType = LOCATION_TYPE_COORDS,
+        uiMapID = 462, -- Camp Narache
+        coords = {28.2, 70.4},
+    },
+    [5] = { -- Second Trough's location
+        locationType = LOCATION_TYPE_COORDS,
+        uiMapID = 462, -- Camp Narache
+        coords = {25.1, 69.2},
+    },
+    [6] = { -- Third Trough's location
+        locationType = LOCATION_TYPE_COORDS,
+        uiMapID = 462, -- Camp Narache
+        coords = {26.4, 66.3},
+    },
+}
+
+Draghos_GuideStore.quests = {
+    [1] = {
+        questID = 14449, -- The First Step
+    },
+    [2] = {
+        questID = 14452, -- Rite of Strength
+        questObjectives = {
+            [1] = {
+                questObjective = {questID = 14452, index = 1},
+                location = {}, -- TODO
+            },
+        },
+        requiredQuestIDs = {14449},
+    },
+    [3] = {
+        questID = 24852, -- Our Tribe, Imprisoned
+        questObjectives = {
+            [1] = {
+                questObjective = {
+                    questID = 24852,
+                    index = 1,
+                    -- overrideObjectiveType = CUSTOM_QUEST_OBJECTIVE_TYPE_SET_FREE,
+                },
+                location = {}, -- TODO
+                object = {}, -- TODO
+            },
+        },
+        requiredQuestIDs = {14452},
+    },
+    [4] = {
+        questID = 14458, -- Go to Adana
+        requiredQuestIDs = {24852},
+    },
+    [5] = {
+        questID = 14456, -- Stop the Thorncallers
+        requiredQuestIDs = {14458},
+    },
+    [6] = {
+        questID = 14455, -- Rite of Courage
+        requiredQuestIDs = {14458},
+    },
+    [7] = {
+        questID = 14459, -- The Battleboars
+        questObjectives = {
+            [1] = {
+                questObjective = {questID = 14459, index = 1},
+                location = {}, -- TODO
+                npc = Draghos_GuideStore.npcs[5],
+            },
+        },
+        requiredQuestIDs = {14456, 14455},
+    },
+    [8] = {
+        questID = 14461, -- Feed of Evil
+        questObjectives = {
+            [1] = {
+                questObjective = {
+                    questID = 14461,
+                    index = 1,
+                    overrideObjectiveType = CUSTOM_QUEST_OBJECTIVE_TYPE_USE_ITEM,
+                },
+                location = Draghos_GuideStore.locations[4],
+                npc = Draghos_GuideStore.npcs[6],
+                item = Draghos_GuideStore.items[1],
+            },
+            [2] = {
+                questObjective = {
+                    questID = 14461,
+                    index = 2,
+                    overrideObjectiveType = CUSTOM_QUEST_OBJECTIVE_TYPE_USE_ITEM,
+                },
+                location = Draghos_GuideStore.locations[5],
+                npc = Draghos_GuideStore.npcs[7],
+                item = Draghos_GuideStore.items[1],
+            },
+            [3] = {
+                questObjective = {
+                    questID = 14461,
+                    index = 3,
+                    overrideObjectiveType = CUSTOM_QUEST_OBJECTIVE_TYPE_USE_ITEM,
+                },
+                location = Draghos_GuideStore.locations[6],
+                npc = Draghos_GuideStore.npcs[8],
+                item = Draghos_GuideStore.items[1],
+            },
+        },
+        requiredQuestIDs = {14456, 14455},
     },
 }
 
@@ -303,83 +329,121 @@ Draghos_GuideStore.steps = {
         location = Draghos_GuideStore.locations[3],
         requiredStepIDs = {9},
     },
-    [11] = { -- Pick up The Battleboars
-        id = 11,
+    [11] = {
+        id = 11, -- Pick up Rite of Courage
         stepType = STEP_TYPE_PICKUP_QUEST,
         quest = Draghos_GuideStore.quests[5],
         npc = Draghos_GuideStore.npcs[3],
         location = Draghos_GuideStore.locations[3],
+        requiredStepIDs = {10},
     },
-    [12] = { -- Pick up Feed of Evil
-        id = 12,
+    [12] = {
+        id = 12, -- Pick up Stop the Thorncallers
         stepType = STEP_TYPE_PICKUP_QUEST,
         quest = Draghos_GuideStore.quests[6],
         npc = Draghos_GuideStore.npcs[3],
         location = Draghos_GuideStore.locations[3],
+        requiredStepIDs = {10},
     },
-    [13] = { -- Progress The Battleboars
+    [13] = { -- Complete quest Rite of Courage
         id = 13,
-        stepType = STEP_TYPE_PROGRESS_QUEST_OBJECTIVE,
-        quest = Draghos_GuideStore.quests[5],
-        questObjectivesIndexes = {1},
-        requiredStepIDs = {11},
-        completedAfterCompletedStepIDs = {14, 15, 16},
-    },
-    [14] = { -- Complete objective 1 Feed of Evil
-        id = 14,
-        stepType = STEP_TYPE_COMPLETE_QUEST_OBJECTIVE,
-        quest = Draghos_GuideStore.quests[6],
-        requiredStepIDs = {12},
-    },
-    [15] = { -- Complete objective 2 Feed of Evil
-        id = 15,
-        stepType = STEP_TYPE_COMPLETE_QUEST_OBJECTIVE,
-        quest = Draghos_GuideStore.quests[6],
-        requiredStepIDs = {12},
-    },
-    [16] = { -- Complete objective 3 Feed of Evil
-        id = 16,
-        stepType = STEP_TYPE_COMPLETE_QUEST_OBJECTIVE,
-        quest = Draghos_GuideStore.quests[6],
-        requiredStepIDs = {12},
-    },
-    [17] = { -- Complete The Battleboars
-        id = 17,
         stepType = STEP_TYPE_COMPLETE_QUEST,
         quest = Draghos_GuideStore.quests[5],
         requiredStepIDs = {11},
     },
-    [18] = { -- Hand in The Battleboars
-        id = 18,
+    [14] = { -- Complete quest Stop the Thorncallers
+        id = 14,
+        stepType = STEP_TYPE_COMPLETE_QUEST,
+        quest = Draghos_GuideStore.quests[6],
+        requiredStepIDs = {12},
+    },
+    [15] = { -- Hand in Rite of Courage
+        id = 15,
         stepType = STEP_TYPE_HANDIN_QUEST,
         quest = Draghos_GuideStore.quests[5],
         npc = Draghos_GuideStore.npcs[3],
         location = Draghos_GuideStore.locations[3],
-        requiredStepIDs = {17},
+        requiredStepIDs = {13},
     },
-    [19] = { -- Hand in Feed of Evil
-        id = 19,
+    [16] = { -- Hand in Stop the Thorncallers
+        id = 16,
         stepType = STEP_TYPE_HANDIN_QUEST,
         quest = Draghos_GuideStore.quests[6],
         npc = Draghos_GuideStore.npcs[3],
         location = Draghos_GuideStore.locations[3],
-        requiredStepIDs = {14, 15, 16},
+        requiredStepIDs = {14},
+    },
+    [17] = { -- Pick up The Battleboars
+        id = 17,
+        stepType = STEP_TYPE_PICKUP_QUEST,
+        quest = Draghos_GuideStore.quests[7],
+        npc = Draghos_GuideStore.npcs[3],
+        location = Draghos_GuideStore.locations[3],
+        requiredStepIDs = {15, 16},
+    },
+    [18] = { -- Pick up Feed of Evil
+        id = 18,
+        stepType = STEP_TYPE_PICKUP_QUEST,
+        quest = Draghos_GuideStore.quests[8],
+        npc = Draghos_GuideStore.npcs[3],
+        location = Draghos_GuideStore.locations[3],
+        requiredStepIDs = {15, 16},
+    },
+    [19] = { -- Complete Feed of Evil
+        id = 19,
+        stepType = STEP_TYPE_COMPLETE_QUEST,
+        quest = Draghos_GuideStore.quests[8],
+        requiredStepIDs = {18},
+    },
+    [20] = { -- Progress The Battleboars
+        id = 20,
+        stepType = STEP_TYPE_PROGRESS_QUEST_OBJECTIVE,
+        quest = Draghos_GuideStore.quests[7],
+        questObjectivesIndexes = {1},
+        requiredStepIDs = {17},
+        completedAfterCompletedStepIDs = {19},
+    },
+    [21] = { -- Complete The Battleboars
+        id = 21,
+        stepType = STEP_TYPE_COMPLETE_QUEST,
+        quest = Draghos_GuideStore.quests[7],
+        requiredStepIDs = {20},
+    },
+    [22] = { -- Hand in The Battleboars
+        id = 22,
+        stepType = STEP_TYPE_HANDIN_QUEST,
+        quest = Draghos_GuideStore.quests[7],
+        npc = Draghos_GuideStore.npcs[3],
+        location = Draghos_GuideStore.locations[3],
+        requiredStepIDs = {21},
+    },
+    [23] = { -- Hand in Feed of Evil
+        id = 23,
+        stepType = STEP_TYPE_HANDIN_QUEST,
+        quest = Draghos_GuideStore.quests[8],
+        npc = Draghos_GuideStore.npcs[3],
+        location = Draghos_GuideStore.locations[3],
+        requiredStepIDs = {20},
     },
 };
 
+-- *********************************************************************************************************************
+-- ***** LOADING AND RETRIEVING OBJECTS FROM THE STORE
+-- *********************************************************************************************************************
+
 local function InitStep(step)
     if step.stepType == STEP_TYPE_PICKUP_QUEST then
-        return CreateAndInitFromMixin(StepPickUpQuestMixin, step);
+        return Draghos_GuideStore:CreateGuideItem(StepPickUpQuestMixin, step);
     elseif step.stepType == STEP_TYPE_PROGRESS_QUEST_OBJECTIVE then
-        return CreateAndInitFromMixin(StepProgressQuestObjectivesMixin, step);
+        return Draghos_GuideStore:CreateGuideItem(StepProgressQuestObjectivesMixin, step);
     elseif step.stepType == STEP_TYPE_COMPLETE_QUEST_OBJECTIVE then
-        return CreateAndInitFromMixin(StepCompleteQuestObjectivesMixin, step);
+        return Draghos_GuideStore:CreateGuideItem(StepCompleteQuestObjectivesMixin, step);
     elseif step.stepType == STEP_TYPE_COMPLETE_QUEST then
-        return CreateAndInitFromMixin(StepCompleteQuestMixin, step);
+        return Draghos_GuideStore:CreateGuideItem(StepCompleteQuestMixin, step);
     elseif step.stepType == STEP_TYPE_HANDIN_QUEST then
-        return CreateAndInitFromMixin(StepHandInQuestMixin, step);
+        return Draghos_GuideStore:CreateGuideItem(StepHandInQuestMixin, step);
     else
-        -- ? return CreateAndInitFromMixin(StepUnknownMixin, step);
+        -- ? return Draghos_GuideStore:CreateObject(StepUnknownMixin, step);
     end
 end
 
@@ -395,12 +459,71 @@ function Draghos_GuideStore:GetStepByID(stepID)
     return FindByProp(self.steps, "stepID", stepID);
 end
 
+local function CompareStepOrder(step1, step2)
+    return step1.stepID < step2.stepID;
+end
+
 function Draghos_GuideStore:GetRemainingSteps()
-    return Filter(self.steps, IsStepRemaining);
+    local steps = Filter(self.steps, IsStepRemaining);
+    table.sort(steps, CompareStepOrder);
+    return steps;
 end
 
 function Draghos_GuideStore:GetQuestByID(questID)
     return FindByProp(self.quests, "questID", questID);
 end
 
-Draghos_GuideStore:LoadSteps();
+-- *********************************************************************************************************************
+-- ***** OBJECTS CREATION
+-- *********************************************************************************************************************
+
+local GuideItemMetatable = {};
+
+-- Trick from this conversation: http://lua-users.org/lists/lua-l/2011-05/msg00029.html
+local function meta_tostring(object)
+    -- Disable the custom __tostring to get the original value
+    GuideItemMetatable.__tostring = nil;
+    local originalString = tostring(object);
+
+    -- Re-enable meta_tostring and return the result
+    GuideItemMetatable.__tostring = meta_tostring;
+    if object and type(object.GetLabel) == "function" then
+        return "guide_item: " .. originalString:sub(8) .. " (" .. object:GetLabel() .. ")";
+    else
+        return originalString;
+    end
+end
+GuideItemMetatable.__tostring = meta_tostring;
+
+function Draghos_GuideStore:CreateGuideItem(mixin, data)
+    local object = CreateAndInitFromMixin(mixin, data);
+    return setmetatable(object, GuideItemMetatable);
+end
+
+-- *********************************************************************************************************************
+-- ***** HOOKS
+-- *********************************************************************************************************************
+
+local frame;
+
+function GuideStoreFrame_OnLoad(self)
+    frame = self;
+    Draghos_GuideStore:LoadSteps();
+    Draghos_GuideStore.initialized = true;
+end
+
+function GuideStoreFrame_OnEvent(self, event, ...)
+    local notifiers = Draghos_GuideStore.notifiers and Draghos_GuideStore.notifiers[event] or {};
+    for _, notifier in pairs(notifiers) do
+        notifier:NotifyWatchers(event, ...);
+    end
+end
+
+function Draghos_GuideStore:RegisterForNotifications(item, event)
+    self.notifiers = self.notifiers or {};
+    self.notifiers[event] = self.notifiers[event] or {};
+    table.insert(self.notifiers[event], item);
+    if not frame:IsEventRegistered(event) then
+        frame:RegisterEvent(event, self.OnEvent);
+    end
+end

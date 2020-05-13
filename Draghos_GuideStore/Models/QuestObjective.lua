@@ -22,6 +22,10 @@ function QuestObjectiveMixin:QuestObjectiveInit(questObjective)
     self.questID = tonumber(questObjective.questID);
     self.index = tonumber(questObjective.index);
     self.overrideObjectiveType = questObjective.overrideObjectiveType;
+
+    Draghos_GuideStore:RegisterForNotifications(self, "QUEST_LOG_UPDATE");
+    Draghos_GuideStore:RegisterForNotifications(self, "QUEST_LOG_CRITERIA_UPDATE");
+    Draghos_GuideStore:RegisterForNotifications(self, "WAYPOINT_UPDATE");
 end
 
 function QuestObjectiveMixin:GetQuestObjective()
@@ -33,10 +37,10 @@ function QuestObjectiveMixin:GetQuestObjective()
         text, objectiveType, finished = questObjectives.text, questObjective.type, questObjective.finished;
     end
 
-    if IsBlankString(text) or IsBlankString(objectiveType) then
-        local questLogIndex = GetQuestLogIndexByID(self.questID);
-        text, objectiveType, finished = GetQuestLogLeaderBoard(self.index, questLogIndex);
-    end
+    -- if IsBlankString(text) or IsBlankString(objectiveType) then
+    --     local questLogIndex = GetQuestLogIndexByID(self.questID);
+    --     text, objectiveType, finished = GetQuestLogLeaderBoard(self.index, questLogIndex);
+    -- end
 
     if IsBlankString(text) or IsBlankString(objectiveType) then
         text, objectiveType, finished = GetQuestObjectiveInfo(self.questID, self.index, false);
@@ -46,8 +50,8 @@ function QuestObjectiveMixin:GetQuestObjective()
         text = text,
         type = objectiveType,
         finished = finished,
-        numFulfilled = questObjective.numFulfilled,
-        numRequired = questObjective.numRequired,
+        numFulfilled = questObjective and questObjective.numFulfilled or nil,
+        numRequired = questObjective and questObjective.numRequired or nil,
     };
 end
 
@@ -77,6 +81,10 @@ end
 
 function QuestObjectiveMixin:IsObjectInteraction()
     return self:IsObjectiveType(QUEST_OBJECTIVE_TYPE_OBJECT);
+end
+
+function QuestObjectiveMixin:IsLoot()
+    return self:IsObjectiveType(QUEST_OBJECTIVE_TYPE_ITEM);
 end
 
 -- function QuestObjectiveMixin:IsSetFree()

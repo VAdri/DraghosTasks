@@ -101,12 +101,35 @@ function Map(t, func)
 end
 
 --- @param t table
+--- @param prop any
+--- @return table
+function MapProp(t, prop)
+    local _t = {};
+    for _, value in pairs(t) do
+        _t[#_t + 1] = value[prop];
+    end
+    return _t;
+end
+
+--- @param t table
 --- @param func function
 --- @return table
 function MapIndexed(t, func)
     local _t = {};
     for index, value in pairs(t) do
         _t[index] = func(value, index);
+    end
+    return _t;
+end
+
+--- @param t table
+--- @return table
+function Flatten(t)
+    local _t = {};
+    for _, subTable in pairs(t) do
+        for _, value in pairs(subTable) do
+            _t[#_t + 1] = value;
+        end
     end
     return _t;
 end
@@ -152,6 +175,78 @@ end
 --- @return number
 function Count(t, func)
     return #Filter(t, func);
+end
+
+--- @return table
+function Concat(...)
+    local _t = {};
+    for i = 1, select("#", ...) do
+        for _, v in pairs(select(i, ...)) do
+            _t[#_t + 1] = v;
+        end
+    end
+    return _t;
+end
+
+--- @param t table
+--- @return table
+function Unique(t)
+    local _t = {};
+    for _, v1 in pairs(t) do
+        local isUnique = true;
+        for _, v2 in pairs(_t) do
+            if v1 == v2 then
+                isUnique = false;
+                break
+            end
+        end
+        if isUnique then
+            _t[#_t + 1] = v1;
+        end
+    end
+    return _t;
+end
+
+--- @param t1 table
+--- @param t2 table
+--- @return table
+function Intersection(t1, t2)
+    local _t = {};
+    for _, v1 in pairs(t1) do
+        for _, v2 in pairs(t2) do
+            if v1 == v2 then
+                _t[#_t + 1] = v1;
+                break
+            end
+        end
+    end
+    return _t;
+end
+
+--- @param t1 table
+--- @param t2 table
+--- @return table
+function Difference(t1, t2)
+    local _t = {};
+    for _, v1 in pairs(t1) do
+        _t[#_t + 1] = v1;
+        for _, v2 in pairs(t2) do
+            if v1 == v2 then
+                _t[#_t] = nil;
+                break
+            end
+        end
+    end
+    return _t;
+end
+
+--- @param t1 table
+--- @param t2 table
+--- @return table
+function XOR(t1, t2)
+    local _t1 = Difference(t1, t2);
+    local _t2 = Difference(t2, t1);
+    return Unique(Concat(_t1, _t2));
 end
 
 --- @param t table
@@ -232,7 +327,20 @@ function GetSupportedLocales()
     };
 end
 
--- function Draghos_Dump(value)
---     LoadAddOn("Blizzard_DebugTools");
---     DevTools_Dump(value)
--- end
+--- @param guid string
+--- @return number|nil
+function GetIDFromGUID(guid)
+    return tonumber(guid:match("%d+", guid:match("%a+-0-%d+-%d+-%d+-%d+-"):len()));
+end
+
+--- @param unit string
+--- @param id number
+--- @return boolean
+function UnitHasUnitID(unit, id)
+    return UnitExists(unit) and GetIDFromGUID(UnitGUID(unit)) == id;
+end
+
+function Draghos_Dump(value)
+    LoadAddOn("Blizzard_DebugTools");
+    DevTools_Dump(value)
+end

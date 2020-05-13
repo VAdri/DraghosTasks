@@ -21,11 +21,11 @@ function StepCompleteQuestObjectivesMixin:GetLabel()
 end
 
 function StepCompleteQuestObjectivesMixin:IsValid()
-    return self:IsValidStep() and self:IsValidQuest() --[[and self:IsValidLocation()]];
+    return self:IsValidStep() and self:IsValidQuest();
 end
 
 function StepCompleteQuestObjectivesMixin:IsCompleted()
-    return All(self:GetQuestObjectives(), CallOnSelf("IsQuestObjectiveCompleted"));
+    return self:IsQuestCompleted() or All(self:GetQuestObjectives(), CallOnSelf("IsQuestObjectiveCompleted"));
 end
 
 function StepCompleteQuestObjectivesMixin:IsPartial()

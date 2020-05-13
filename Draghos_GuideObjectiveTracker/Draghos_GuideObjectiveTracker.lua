@@ -28,30 +28,27 @@ function GuideObjectiveTracker_OnEvent(self, event, ...)
     end
 end
 
+local function UpdateGuideObjectiveTracker()
+    GUIDE_TRACKER_MODULE:ResetAnimations();
+    ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_GUIDE);
+end
+
 function GuideObjectiveTrackerInitialize(self)
     if self.initialized or not ObjectiveTrackerFrame.initialized then
         return;
     end
 
-    local guideHeaderFrame = CreateFrame(
-                                 "Frame", "ObjectiveTrackerBlocksFrame.GuideHeader", ObjectiveTrackerFrame.BlocksFrame,
-                                 "ObjectiveTrackerHeaderTemplate"
-                             );
+    GUIDE_TRACKER_MODULE.header = CreateFrame(
+                                      "Frame", "ObjectiveTrackerBlocksFrame.GuideHeader",
+                                      ObjectiveTrackerFrame.BlocksFrame, "ObjectiveTrackerHeaderTemplate"
+                                  );
 
-    GUIDE_TRACKER_MODULE:SetHeader(guideHeaderFrame, TRACKER_HEADER_GUIDE, OBJECTIVE_TRACKER_UPDATE_REASON);
+    GUIDE_TRACKER_MODULE:SetHeader(GUIDE_TRACKER_MODULE.header, TRACKER_HEADER_GUIDE, OBJECTIVE_TRACKER_UPDATE_REASON);
 
     table.insert(ObjectiveTrackerFrame.MODULES, GUIDE_TRACKER_MODULE);
     table.insert(ObjectiveTrackerFrame.MODULES_UI_ORDER, GUIDE_TRACKER_MODULE);
 
-    ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_GUIDE);
-
-    -- -- Function called when the task store is updated
-    -- Draghos_TaskLog:Subscribe(
-    --     function()
-    --         ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_GUIDE);
-    --         GUIDE_TRACKER_MODULE:ResetAnimations();
-    --     end
-    -- );
+    UpdateGuideObjectiveTracker();
 
     self:UnregisterEvent("PLAYER_ENTERING_WORLD");
     self.initialized = true;
@@ -73,7 +70,7 @@ function GuideObjectiveTracker_FinishGlowAnim(line)
         --     line.state = "FADING";
         -- else
         line.state = "COMPLETED";
-        ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_GUIDE);
+        UpdateGuideObjectiveTracker();
         -- end
     end
 end
@@ -87,7 +84,85 @@ function GuideObjectiveTracker_FinishFadeOutAnim(line)
             return;
         end
     end
-    ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_GUIDE);
+    UpdateGuideObjectiveTracker();
+end
+
+-- *********************************************************************************************************************
+-- ***** STYLING
+-- *********************************************************************************************************************
+
+local white = WHITE_FONT_COLOR;
+local lightgray = CreateColor(0.8, 0.8, 0.8);
+local gray = LIGHTGRAY_FONT_COLOR;
+local darkgray = DISABLED_FONT_COLOR;
+
+OBJECTIVE_TRACKER_COLOR["PartialHeader"] = {r = lightgray.r, g = lightgray.g, b = lightgray.b};
+OBJECTIVE_TRACKER_COLOR["PartialHeaderHighlight"] = {r = white.r, g = white.g, b = white.b};
+OBJECTIVE_TRACKER_COLOR["PartialHeader"].reverse = OBJECTIVE_TRACKER_COLOR["PartialHeaderHighlight"];
+OBJECTIVE_TRACKER_COLOR["PartialHeaderHighlight"].reverse = OBJECTIVE_TRACKER_COLOR["PartialHeader"];
+
+OBJECTIVE_TRACKER_COLOR["Partial"] = {r = darkgray.r, g = darkgray.g, b = darkgray.b};
+OBJECTIVE_TRACKER_COLOR["PartialHighlight"] = {r = gray.r, g = gray.g, b = gray.b};
+OBJECTIVE_TRACKER_COLOR["Partial"].reverse = OBJECTIVE_TRACKER_COLOR["PartialHighlight"];
+OBJECTIVE_TRACKER_COLOR["PartialHighlight"].reverse = OBJECTIVE_TRACKER_COLOR["Partial"];
+
+--- @param block table
+--- @param step Step
+function GUIDE_TRACKER_MODULE:SetBlockHeader(block, step)
+    if step.questID and step:CanUseItem() then
+        -- Display the item button (if necessary)
+        local questLogIndex = step:GetQuestLogIndex();
+        local isQuestComplete = step:IsQuestCompleted();
+
+        QuestObjective_SetupHeader(block);
+
+        local hasItem = QuestObjectiveSetupBlockButton_Item(block, questLogIndex, isQuestComplete);
+
+        -- Special case for previous behavior...if there are no buttons then use default line width from module
+        if not (hasItem) then
+            block.lineWidth = nil;
+        end
+    end
+
+    local color;
+    if step.IsPartial and step:IsPartial() then
+        -- Partial steps are grayed out
+        color = OBJECTIVE_TRACKER_COLOR["PartialHeader"];
+    else
+        color = OBJECTIVE_TRACKER_COLOR["Header"];
+    end
+
+    -- Set the text
+    block.HeaderText:SetWidth(block.lineWidth or OBJECTIVE_TRACKER_TEXT_WIDTH);
+    local height = self:SetStringText(block.HeaderText, step:GetLabel(), nil, color);
+    block.height = height;
+end
+
+local DefaultOnBlockHeaderEnter = DEFAULT_OBJECTIVE_TRACKER_MODULE.OnBlockHeaderEnter;
+function GUIDE_TRACKER_MODULE:OnBlockHeaderEnter(block)
+    -- Save the current color before using the default handler because it will erase it
+    local headerColorStyle = block.HeaderText.colorStyle;
+    DefaultOnBlockHeaderEnter(self, block);
+
+    -- Show the highlight color
+    if (block.HeaderText and block.step and block.step.IsPartial and block.step:IsPartial()) then
+        local reverseColorStyle = headerColorStyle.reverse or headerColorStyle;
+        block.HeaderText:SetTextColor(reverseColorStyle.r, reverseColorStyle.g, reverseColorStyle.b);
+    end
+    block.HeaderText.colorStyle = headerColorStyle;
+end
+
+local DefaultOnBlockHeaderLeave = DEFAULT_OBJECTIVE_TRACKER_MODULE.OnBlockHeaderLeave;
+function GUIDE_TRACKER_MODULE:OnBlockHeaderLeave(block)
+    -- Save the current color before using the default handler because it will erase it
+    local headerColorStyle = block.HeaderText.colorStyle;
+    DefaultOnBlockHeaderLeave(self, block)
+
+    -- Show the normal color
+    if (block.HeaderText and block.step and block.step.IsPartial and block.step:IsPartial()) then
+        block.HeaderText:SetTextColor(headerColorStyle.r, headerColorStyle.g, headerColorStyle.b);
+    end
+    block.HeaderText.colorStyle = headerColorStyle;
 end
 
 -- *********************************************************************************************************************
@@ -96,7 +171,7 @@ end
 
 --- @param step Step
 function GUIDE_TRACKER_MODULE:ShouldDisplayStep(step)
-    return step:RequiredStepsCompleted();
+    return step:IsAvailable();
 end
 
 function GUIDE_TRACKER_MODULE:BuildStepWatchInfos()
@@ -121,31 +196,58 @@ function GUIDE_TRACKER_MODULE:EnumStepWatchData(func)
     end
 end
 
--- function GUIDE_TRACKER_MODULE:ResetAnimations()
---     for _, block in pairs(GUIDE_TRACKER_MODULE.usedBlocks) do
---         local task = Draghos_GuideStore:GetStepByStepID(block.id);
---         for _, line in pairs(block.lines) do
---             local step = task.???[line.index]
---             if (step and not step:IsCompleted() and line.state == "COMPLETED") then
---                 line.state = nil;
---             end
---         end
---     end
--- end
+function GUIDE_TRACKER_MODULE:ResetAnimations()
+    for _, block in pairs(GUIDE_TRACKER_MODULE.usedBlocks) do
+        for _, line in pairs(block.lines) do
+            local stepLine = line.stepLine;
+            if (stepLine and not stepLine:IsCompleted() and line.state == "COMPLETED") then
+                line.state = nil;
+            end
+        end
+    end
+end
+
+-- TODO: Move TomTom somewhere else
+if IsAddOnLoaded("TomTom") then
+    local tomtomSetClosestFrame = CreateFrame("Frame");
+    -- Check every 1 second to set the TomTom arrow to the closest point.
+    tomtomSetClosestFrame:SetScript(
+        "OnUpdate", function(self, elapsed)
+            self.elapsed = self.elapsed and self.elapsed + elapsed or 0;
+            if self.elapsed > 1 then
+                self.elapsed = 0;
+                TomTom:SetClosestWaypoint();
+            end
+        end
+    );
+end
 
 --- @param step Step
 --- @param stepIndex number
 function GUIDE_TRACKER_MODULE:UpdateSingle(step, stepIndex)
-    if stepIndex == 1 and step:CanAddWaypoint() and IsAddOnLoaded("TomTom") then
-        TomTom:AddWaypoint(step:GetWaypointInfo());
+    -- TODO: Move TomTom somewhere else
+    if IsAddOnLoaded("TomTom") then
+        if stepIndex == self.wapypointStepIndex then
+            if step:SkipWaypoint() then
+                self.wapypointStepIndex = self.wapypointStepIndex + 1;
+            elseif step:CanAddWaypoints() then
+                local waypoints = step:GetWaypointsInfo();
+                for _, waypoint in pairs(waypoints) do
+                    waypoint.options.callbacks = TomTom:DefaultCallbacks(waypoint.options);
+                    TomTom:AddWaypoint(waypoint.uiMapID, waypoint.x, waypoint.y, waypoint.options);
+                end
+                TomTom:SetClosestWaypoint();
+            end
+        end
     end
 
     local stepID = step.stepID;
 
     local block = self:GetBlock(stepID);
     block.id = stepID;
+    block.step = step;
 
-    self:SetBlockHeader(block, step:GetLabel());
+    self:SetBlockHeader(block, step);
 
     for stepIndexIndex, stepLine in pairs(step.stepLines) do
         local line;
@@ -162,26 +264,17 @@ function GUIDE_TRACKER_MODULE:UpdateSingle(step, stepIndex)
                 line.state = "COMPLETING";
             end
         else
-            line = self:AddObjective(block, stepID .. ":" .. stepIndexIndex, stepLine:GetLabel(), LINE_TYPE_ANIM);
+            line = self:AddObjective(
+                       block, stepID .. ":" .. stepIndexIndex, stepLine:GetLabel(), LINE_TYPE_ANIM, nil,
+                       OBJECTIVE_DASH_STYLE_SHOW,
+                       step.IsPartial and step:IsPartial() and OBJECTIVE_TRACKER_COLOR["Partial"] or nil
+                   );
             line.Check:Hide();
         end
 
         line.block = block;
         line.index = stepIndexIndex;
-    end
-
-    local stepTypeIcon = CreateFrame("Frame", nil, block, "GuideStepTypeIconTemplate");
-    stepTypeIcon:SetPoint("RIGHT", block.HeaderText, "LEFT", -2, 0);
-
-    local stepTypeIconName = step:GetStepType();
-    if stepTypeIconName and stepTypeIcon[stepTypeIconName] then
-        stepTypeIcon[stepTypeIconName]:Show();
-        if type(step.IsPartial) == "function" then
-            local partialStepTypeIcon = CreateFrame("Frame", nil, block, "GuideStepTypeIconTemplate");
-            partialStepTypeIcon:SetPoint("RIGHT", block.HeaderText, "LEFT", -2, 0);
-            partialStepTypeIcon.ProgressObjective:SetShown(step:IsPartial());
-            partialStepTypeIcon.CompleteObjective:SetShown(not step:IsPartial());
-        end
+        line.stepLine = stepLine;
     end
 
     block:SetHeight(block.height);
@@ -189,6 +282,28 @@ function GUIDE_TRACKER_MODULE:UpdateSingle(step, stepIndex)
     if ObjectiveTracker_AddBlock(block) then
         block:Show();
         self:FreeUnusedLines(block);
+
+        -- Watch modifications on the step and stepLines
+        block.step:Watch(self, UpdateGuideObjectiveTracker);
+        for _, usedLine in pairs(block.lines or {}) do
+            usedLine.stepLine:Watch(self, UpdateGuideObjectiveTracker);
+        end
+
+        -- Show the icon
+        local stepTypeIconName = step:GetStepType();
+        if stepTypeIconName then
+            GuideObjective_SetupHeader(block);
+            GuideObjectiveBlock_AddLeftIcon(block, stepTypeIconName)
+            if block.leftIcon and block.leftIcon:IsShown() then
+                if type(step.IsPartial) == "function" then
+                    block.leftIcon.ProgressObjective:SetShown(step:IsPartial());
+                    block.leftIcon.CompleteObjective:SetShown(not step:IsPartial());
+                else
+                    block.leftIcon.ProgressObjective:Hide();
+                    block.leftIcon.CompleteObjective:Hide();
+                end
+            end
+        end
     else
         block.used = false;
         return true; -- Can't add the block, we're done enumerating tasks
@@ -198,6 +313,21 @@ end
 function GUIDE_TRACKER_MODULE:OnBlockHeaderClick(block, mouseButton)
 end
 
+function GUIDE_TRACKER_MODULE:ClearBlockData(block)
+    -- Hide icon
+    GuideObjectiveBlock_ReleaseLeftIcon(block);
+
+    -- Unwatch steps
+    block.step:Unwatch(self);
+    for _, line in pairs(block.lines or {}) do
+        line.stepLine:Unwatch(self);
+    end
+end
+
+function GUIDE_TRACKER_MODULE:OnFreeBlock(block)
+    self:ClearBlockData(block);
+end
+
 function GUIDE_TRACKER_MODULE:Update()
     -- TODO: Move TomTom somewhere else
     if IsAddOnLoaded("TomTom") and TomTom then
@@ -205,8 +335,25 @@ function GUIDE_TRACKER_MODULE:Update()
         TomTom:ReloadWaypoints();
     end
 
+    -- Clear
+    for _, block in pairs(self.usedBlocks) do
+        self:ClearBlockData(block);
+    end
+    local previouslyDisplayedIDs = MapProp(self.usedBlocks, "id");
+    self.wapypointStepIndex = 1;
+
     -- Update the blocks
     self:BeginLayout();
     self:EnumStepWatchData(self.UpdateSingle);
     self:EndLayout();
+
+    -- Show animation if the steps have changed
+    local displayedIDs = MapProp(self.usedBlocks, "id");
+    if #XOR(previouslyDisplayedIDs, displayedIDs) > 0 then
+        if (not GUIDE_TRACKER_MODULE.header.animating) then
+            GUIDE_TRACKER_MODULE.header.animating = true;
+            GUIDE_TRACKER_MODULE.header.HeaderOpenAnim:Stop();
+            GUIDE_TRACKER_MODULE.header.HeaderOpenAnim:Play();
+        end
+    end
 end

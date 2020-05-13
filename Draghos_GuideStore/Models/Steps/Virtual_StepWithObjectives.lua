@@ -28,6 +28,11 @@ function Virtual_StepWithObjectivesMixin:GetObjectivesType()
             return "ObjectInteractionObjective";
         end
 
+        local lootObjectivesCount = Count(questObjectives, CallOnSelf("IsLoot"));
+        if lootObjectivesCount == questObjectivesCount then
+            return "LootObjective";
+        end
+
         -- local setFreeObjectivesCount = Count(questObjectives, CallOnSelf("IsSetFree"));
         -- if setFreeObjectivesCount == questObjectivesCount then
         --     return "SetFreeObjective";

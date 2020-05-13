@@ -10,7 +10,7 @@ function StepPickUpQuestMixin:Init(step)
     self:QuestInit(step.quest);
     self:NPCInit(step.npc);
     self:LocationInit(step.location);
-    self.stepLines = {CreateAndInitFromMixin(StepLineSpeakToMixin, step)};
+    self.stepLines = {Draghos_GuideStore:CreateGuideItem(StepLineSpeakToMixin, step)};
 end
 
 function StepPickUpQuestMixin:GetStepType()
@@ -25,6 +25,10 @@ function StepPickUpQuestMixin:IsValid()
     return self:IsValidStep() and self:IsValidQuest() and self:IsValidNPC() and self:IsValidLocation();
 end
 
+function StepPickUpQuestMixin:IsAvailable()
+    return self:IsQuestAvailable() and self:RequiredStepsCompleted();
+end
+
 function StepPickUpQuestMixin:IsCompleted()
-    return self.questID and (C_QuestLog.IsOnQuest(self.questID) or C_QuestLog.IsQuestFlaggedCompleted(self.questID));
+    return (C_QuestLog.IsOnQuest(self.questID) or self:IsQuestCompleted());
 end

@@ -59,6 +59,27 @@
         "TomTom",
         "GetQuestObjectiveInfo",
         "GetQuestLogLeaderBoard",
-        "GetQuestLogIndexByID"
+        "GetQuestLogIndexByID",
+        "GossipFrame",
+        "UnitExists",
+        "UnitName",
+        "Draghos_GuideStore",
+        "CreateFramePool",
+        "GetObjectIconTextureCoords",
+        "QuestFrame",
+        "UnitGUID",
+        "QUEST_WATCH_QUEST_READY",
+        "GetQuestLogSpecialItemInfo",
+        "QuestObjective_SetupHeader",
+        "QuestObjectiveSetupBlockButton_Item",
+        "OBJECTIVE_TRACKER_TEXT_WIDTH",
+        "ACCEPT",
+        "LIGHTGRAY_FONT_COLOR",
+        "GRAY_FONT_COLOR",
+        "OBJECTIVE_DASH_STYLE_SHOW",
+        "DEFAULT_OBJECTIVE_TRACKER_MODULE",
+        "WHITE_FONT_COLOR",
+        "DISABLED_FONT_COLOR",
+        "CreateColor"
     ]
 }

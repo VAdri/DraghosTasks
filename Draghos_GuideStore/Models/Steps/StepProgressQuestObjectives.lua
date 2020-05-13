@@ -3,13 +3,20 @@ StepProgressQuestObjectivesMixin = {};
 Mixin(StepProgressQuestObjectivesMixin, Virtual_StepWithObjectivesMixin);
 Mixin(StepProgressQuestObjectivesMixin, StepMixin);
 Mixin(StepProgressQuestObjectivesMixin, QuestMixin);
---Mixin(StepProgressQuestObjectiveMixin, LocationMixin);
+-- Mixin(StepProgressQuestObjectiveMixin, LocationMixin);
 
 function StepProgressQuestObjectivesMixin:Init(step)
     self:StepInit(step);
     self:QuestInit(step.quest);
-    --self:LocationInit(step.location);
+    -- self:LocationInit(step.location);
     self.stepLines = self:CreateQuestObjectives(step.questObjectivesIndexes);
+    self.completedAfterCompletedStepIDs = step.completedAfterCompletedStepIDs or {};
+    self.isFlaggedCompleted = false;
+end
+
+function StepProgressQuestObjectivesMixin:SkipWaypoint()
+    -- The waypoint will be set for the next step
+    return true;
 end
 
 function StepProgressQuestObjectivesMixin:GetStepType()
@@ -21,13 +28,21 @@ function StepProgressQuestObjectivesMixin:GetLabel()
 end
 
 function StepProgressQuestObjectivesMixin:IsValid()
-    return self:IsValidStep() and self:IsValidQuest() --[[and self:IsValidLocation()]];
+    return self:IsValidStep() and self:IsValidQuest();
 end
 
 function StepProgressQuestObjectivesMixin:IsPartial()
     return true;
 end
 
+local function GetStepByID(stepID)
+    return Draghos_GuideStore:GetStepByID(stepID);
+end
+
+function StepProgressQuestObjectivesMixin:DependentStepsCompleted()
+    return All(Map(self.completedAfterCompletedStepIDs, GetStepByID), CallOnSelf("IsCompleted"));
+end
+
 function StepProgressQuestObjectivesMixin:IsCompleted()
-    return self.isFlaggedCompleted; -- TODO
+    return self.isFlaggedCompleted or self:IsQuestCompleted() or self:DependentStepsCompleted();
 end
