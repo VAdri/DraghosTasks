@@ -7,5 +7,6 @@
 
 Utils.lua
 Locales.xml
+Data.xml
 Models.xml
 Draghos_GuideStore.xml

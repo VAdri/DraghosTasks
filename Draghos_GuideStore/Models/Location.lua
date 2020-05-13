@@ -1,9 +1,5 @@
 LocationMixin = {};
 
-LOCATION_TYPE_COORDS = 1;
-LOCATION_TYPE_PATH = 2;
-LOCATION_TYPE_AREA = 3;
-
 function LocationMixin:LocationInit(location)
     if not location then
         self.hasLocation = false;

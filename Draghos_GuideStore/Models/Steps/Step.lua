@@ -1,12 +1,6 @@
 --- @class Step
 StepMixin = {};
 
-STEP_TYPE_PICKUP_QUEST = 1;
-STEP_TYPE_PROGRESS_QUEST_OBJECTIVE = 2;
-STEP_TYPE_COMPLETE_QUEST_OBJECTIVE = 3;
-STEP_TYPE_COMPLETE_QUEST = 4;
-STEP_TYPE_HANDIN_QUEST = 5;
-
 Mixin(StepMixin, ObservableMixin);
 
 function StepMixin:StepInit(step)

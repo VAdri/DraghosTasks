@@ -1,17 +1,5 @@
 QuestObjectiveMixin = {};
 
-QUEST_OBJECTIVE_TYPE_ITEM = "item";
-QUEST_OBJECTIVE_TYPE_OBJECT = "object";
-QUEST_OBJECTIVE_TYPE_MONSTER = "monster";
-QUEST_OBJECTIVE_TYPE_REPUTATION = "reputation";
-QUEST_OBJECTIVE_TYPE_LOG = "log";
-QUEST_OBJECTIVE_TYPE_EVENT = "event";
-QUEST_OBJECTIVE_TYPE_PLAYER = "player";
-QUEST_OBJECTIVE_TYPE_PROGRESSBAR = "progressbar";
-
--- CUSTOM_QUEST_OBJECTIVE_TYPE_SET_FREE = "setfree";
-CUSTOM_QUEST_OBJECTIVE_TYPE_USE_ITEM = "useitem";
-
 --- @class QuestObjective
 --- @field questID number
 --- @field index number
