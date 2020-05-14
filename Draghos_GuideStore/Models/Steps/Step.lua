@@ -7,6 +7,7 @@ Mixin(StepMixin, ObservableMixin);
 
 function StepMixin:StepInit(step)
     self.stepID = tonumber(step.id);
+    self.stepLines = {};
     self.requiredStepIDs = step.requiredStepIDs or {};
 end
 
@@ -42,4 +43,12 @@ end
 
 function StepMixin:RequiredStepsCompleted()
     return #self.requiredStepIDs == 0 or FP:All(self.requiredStepIDs, IsCompleted);
+end
+
+function StepMixin:AddOneStepLine(stepLine)
+    self.stepLines = FP:Append(self.stepLines, stepLine);
+end
+
+function StepMixin:AddMultipleStepLines(stepLines)
+    self.stepLines = FP:Concat(self.stepLines, stepLines);
 end

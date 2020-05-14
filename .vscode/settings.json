@@ -82,6 +82,14 @@
         "DISABLED_FONT_COLOR",
         "CreateColor",
         "LoadAddOn",
-        "DevTools_Dump"
+        "DevTools_Dump",
+        "UnitLevel",
+        "UnitXP",
+        "LEVEL_GAINED",
+        "XP_STATUS_BAR_TEXT",
+        "UnitXPMax",
+        "tremove",
+        "XP_GAIN",
+        "PERCENTAGE_STRING"
     ]
 }

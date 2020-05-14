@@ -11,7 +11,8 @@ function StepCompleteQuestObjectivesMixin:Init(step)
     self:StepInit(step);
     self:QuestInit(step.quest);
     -- self:LocationInit(step.location);
-    self.stepLines = self:CreateQuestObjectives(step.questObjectivesIndexes);
+
+    self:AddMultipleStepLines(self:CreateQuestObjectives(step.questObjectivesIndexes));
 end
 
 function StepCompleteQuestObjectivesMixin:GetStepType()

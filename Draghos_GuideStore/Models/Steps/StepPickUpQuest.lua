@@ -10,7 +10,8 @@ function StepPickUpQuestMixin:Init(step)
     self:QuestInit(step.quest);
     self:NPCInit(step.npc);
     self:LocationInit(step.location);
-    self.stepLines = {Draghos_GuideStore:CreateGuideItem(StepLineSpeakToMixin, step)};
+
+    self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(StepLineSpeakToMixin, step));
 end
 
 function StepPickUpQuestMixin:GetStepType()

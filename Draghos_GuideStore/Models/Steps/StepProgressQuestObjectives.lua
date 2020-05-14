@@ -11,9 +11,10 @@ function StepProgressQuestObjectivesMixin:Init(step)
     self:StepInit(step);
     self:QuestInit(step.quest);
     -- self:LocationInit(step.location);
-    self.stepLines = self:CreateQuestObjectives(step.questObjectivesIndexes);
+
+    self:AddMultipleStepLines(self:CreateQuestObjectives(step.questObjectivesIndexes));
+
     self.completedAfterCompletedStepIDs = step.completedAfterCompletedStepIDs or {};
-    self.isFlaggedCompleted = false;
 end
 
 function StepProgressQuestObjectivesMixin:SkipWaypoint()
@@ -46,7 +47,7 @@ function StepProgressQuestObjectivesMixin:DependentStepsCompleted()
 end
 
 function StepProgressQuestObjectivesMixin:IsCompleted()
-    return self.isFlaggedCompleted or self:IsQuestCompleted() or self:DependentStepsCompleted();
+    return self:IsQuestCompleted() or self:DependentStepsCompleted();
 end
 
 function StepProgressQuestObjectivesMixin:RequiredStepsCompleted()

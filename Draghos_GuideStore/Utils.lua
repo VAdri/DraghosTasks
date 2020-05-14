@@ -179,6 +179,15 @@ function DraghosUtils.FP:All(t, func)
 end
 
 --- @param t table
+--- @param prop any
+function DraghosUtils.FP:SortByProp(t, prop)
+    local sort = function(item1, item2)
+        return item1[prop] < item2[prop];
+    end;
+    table.sort(t, sort);
+end
+
+--- @param t table
 --- @param func function|any
 --- @return number
 function DraghosUtils.FP:Count(t, func)
@@ -194,6 +203,13 @@ function DraghosUtils.FP:Concat(...)
         end
     end
     return _t;
+end
+
+--- @param t table
+--- @param item any
+--- @return table
+function DraghosUtils.FP:Append(t, item)
+    return DraghosUtils.FP:Concat(t, {item});
 end
 
 --- @param t table
@@ -337,7 +353,7 @@ end
 -- ***** DEBUG
 -- *********************************************************************************************************************
 
--- TODO: Deactivate this on publish
+-- TODO: Deactivate this on release builds
 
 DraghosUtils.Debug = {};
 

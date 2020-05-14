@@ -8,7 +8,8 @@ function StepCompleteQuestMixin:Init(step)
     self:StepInit(step);
     self:QuestInit(step.quest);
     -- self:LocationInit(step.location);
-    self.stepLines = self:CreateQuestObjectives(nil);
+
+    self:AddMultipleStepLines(self:CreateQuestObjectives(nil));
 end
 
 function StepCompleteQuestMixin:GetStepType()

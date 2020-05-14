@@ -33,13 +33,9 @@ local function IsStepRemaining(step)
     return step:IsValid() and not step:IsCompleted();
 end
 
-local function CompareStepOrder(step1, step2)
-    return step1.stepID < step2.stepID;
-end
-
 function Draghos_GuideStore:GetRemainingSteps()
     local steps = FP:Filter(self.steps, IsStepRemaining);
-    table.sort(steps, CompareStepOrder);
+    FP:SortByProp(steps, "stepID");
     return steps;
 end
 
@@ -52,6 +48,8 @@ end
 -- *********************************************************************************************************************
 
 local GuideItemMetatable = {};
+
+-- TODO: Deactivate this on release builds
 
 -- Trick from this conversation: http://lua-users.org/lists/lua-l/2011-05/msg00029.html
 local function meta_tostring(object)
