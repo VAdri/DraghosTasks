@@ -209,40 +209,9 @@ function GUIDE_TRACKER_MODULE:ResetAnimations()
     end
 end
 
--- TODO: Move TomTom somewhere else
-if IsAddOnLoaded("TomTom") then
-    local tomtomSetClosestFrame = CreateFrame("Frame");
-    -- Check every 1 second to set the TomTom arrow to the closest point.
-    tomtomSetClosestFrame:SetScript(
-        "OnUpdate", function(self, elapsed)
-            self.elapsed = self.elapsed and self.elapsed + elapsed or 0;
-            if self.elapsed > 1 then
-                self.elapsed = 0;
-                TomTom:SetClosestWaypoint();
-            end
-        end
-    );
-end
-
 --- @param step Step
 --- @param stepIndex number
 function GUIDE_TRACKER_MODULE:UpdateSingle(step, stepIndex)
-    -- TODO: Move TomTom somewhere else
-    if IsAddOnLoaded("TomTom") then
-        if stepIndex == self.wapypointStepIndex then
-            if step:SkipWaypoint() then
-                self.wapypointStepIndex = self.wapypointStepIndex + 1;
-            elseif step:CanAddWaypoints() then
-                local waypoints = step:GetWaypointsInfo();
-                for _, waypoint in pairs(waypoints) do
-                    waypoint.options.callbacks = TomTom:DefaultCallbacks(waypoint.options);
-                    TomTom:AddWaypoint(waypoint.uiMapID, waypoint.x, waypoint.y, waypoint.options);
-                end
-                TomTom:SetClosestWaypoint();
-            end
-        end
-    end
-
     local stepID = step.stepID;
 
     local block = self:GetBlock(stepID);
@@ -332,12 +301,6 @@ function GUIDE_TRACKER_MODULE:OnFreeBlock(block)
 end
 
 function GUIDE_TRACKER_MODULE:Update()
-    -- TODO: Move TomTom somewhere else
-    if IsAddOnLoaded("TomTom") and TomTom then
-        TomTom.waydb:ResetProfile();
-        TomTom:ReloadWaypoints();
-    end
-
     -- Clear
     for _, block in pairs(self.usedBlocks) do
         self:ClearBlockData(block);

@@ -1,0 +1,11 @@
+## Interface: 80300
+## Title: Draghos Guides Destination
+## Author: Draghos
+## Version: 0.0.1
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## Dependencies: Draghos_GuideStore
+## OptionalDeps: TomTom
+
+Locales.xml
+Draghos_GuideDestination.xml

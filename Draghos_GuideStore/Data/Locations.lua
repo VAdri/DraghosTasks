@@ -8,7 +8,7 @@ Draghos_GuideStore.locations = {
     [1] = { -- Chief Hawkwind's location
         locationType = LOCATION_TYPE_COORDS,
         uiMapID = 462, -- Camp Narache
-        coords = {27.2, 28.4},
+        coords = {27.7, 28.3},
     },
     [2] = { -- Grull Hawkwind's location
         locationType = LOCATION_TYPE_COORDS,

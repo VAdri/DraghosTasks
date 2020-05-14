@@ -5,7 +5,6 @@
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## Dependencies: Blizzard_ObjectiveTracker, Draghos_GuideStore
-## OptionalDeps: TomTom
 
 Locales.xml
 Draghos_GuideObjectiveTracker.xml
