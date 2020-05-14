@@ -168,6 +168,58 @@ function GUIDE_TRACKER_MODULE:OnBlockHeaderLeave(block)
 end
 
 -- *********************************************************************************************************************
+-- ***** PROGRESS BARS
+-- *********************************************************************************************************************
+
+function GUIDE_TRACKER_MODULE:AddProgressBar(block, line, currentValue, maxValue)
+    -- Get or create the progress bar
+    local progressBar = self.usedProgressBars[block] and self.usedProgressBars[block][line];
+    if (not progressBar) then
+        local numFreeProgressBars = #self.freeProgressBars;
+        local parent = block.ScrollContents or block;
+        if (numFreeProgressBars > 0) then
+            progressBar = self.freeProgressBars[numFreeProgressBars];
+            tremove(self.freeProgressBars, numFreeProgressBars);
+            progressBar:SetParent(parent);
+            progressBar:Show();
+        else
+            progressBar = CreateFrame("Frame", nil, parent, "GuideObjectiveTrackerProgressBarTemplate");
+            progressBar.height = progressBar:GetHeight();
+        end
+        if (not self.usedProgressBars[block]) then
+            self.usedProgressBars[block] = {};
+        end
+        self.usedProgressBars[block][line] = progressBar;
+        progressBar:Show();
+    end
+
+    -- Anchor the progress bar
+    local anchor = block.currentLine or block.HeaderText;
+    if (anchor) then
+        progressBar:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -block.module.lineSpacing);
+    else
+        progressBar:SetPoint("TOPLEFT", 0, -block.module.lineSpacing);
+    end
+
+    -- Set values
+    local percent = math.ceil(currentValue / maxValue * 100);
+    progressBar.Bar:SetValue(percent);
+    progressBar.Bar.Label:SetFormattedText(PERCENTAGE_STRING, percent);
+
+    -- Set data
+    progressBar.block = block;
+
+    line.ProgressBar = progressBar;
+    block.height = block.height + progressBar.height + block.module.lineSpacing;
+    block.currentLine = progressBar;
+
+    return progressBar;
+end
+
+-- function GuideObjectiveTrackerProgressBar_OnEvent()
+-- end
+
+-- *********************************************************************************************************************
 -- ***** UPDATE FUNCTIONS
 -- *********************************************************************************************************************
 
@@ -246,6 +298,10 @@ function GUIDE_TRACKER_MODULE:UpdateSingle(step, stepIndex)
         line.block = block;
         line.index = stepIndexIndex;
         line.stepLine = stepLine;
+
+        if stepLine:IsProgress() then
+            self:AddProgressBar(block, line, stepLine:GetProgressValues());
+        end
     end
 
     block:SetHeight(block.height);

@@ -16,6 +16,8 @@ local function InitStep(step)
         return Draghos_GuideStore:CreateGuideItem(StepCompleteQuestMixin, step);
     elseif step.stepType == STEP_TYPE_HANDIN_QUEST then
         return Draghos_GuideStore:CreateGuideItem(StepHandInQuestMixin, step);
+    elseif step.stepType == STEP_TYPE_GRIND then
+        return Draghos_GuideStore:CreateGuideItem(StepGrindMixin, step);
     else
         -- ? return Draghos_GuideStore:CreateObject(StepUnknownMixin, step);
     end

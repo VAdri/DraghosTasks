@@ -31,6 +31,7 @@ local StepTypeIconTextureInfos = {
     ["LootObjective"] = {filePath = "Interface\\MINIMAP\\TRACKING\\Banker", x = 20, y = 20},
     -- ["ObjectInteractionObjective"] = {filePath = "Interface\\Scenarios\\ScenarioIcon-Interact", x = 16, y = 16},
     ["OtherObjective"] = {filePath = "Interface\\Scenarios\\ScenarioIcon-Interact", x = 16, y = 16},
+    ["Grind"] = {filePath = "Interface\\PaperDollInfoFrame\\Character-Plus", x = 14, y = 14},
 };
 
 function GuideObjective_SetupHeader(block)

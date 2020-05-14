@@ -9,6 +9,10 @@ function StepLineMixin:IsValidStepLine()
     return true;
 end
 
+function StepLineMixin:IsProgress()
+    return false;
+end
+
 function StepLineMixin:CanAddWaypoints()
     return false;
 end

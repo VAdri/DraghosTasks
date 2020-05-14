@@ -2,12 +2,14 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
     <Script file="Models/Observable.lua"/>
+    <Script file="Models/Experience.lua"/>
     <Script file="Models/Location.lua"/>
     <Script file="Models/NPC.lua"/>
     <Script file="Models/Quest.lua"/>
     <Script file="Models/QuestObjective.lua"/>
 
     <Script file="Models/StepLines/StepLine.lua"/>
+    <Script file="Models/StepLines/StepLineGrindProgress.lua"/>
     <Script file="Models/StepLines/StepLineQuestObjective.lua"/>
     <Script file="Models/StepLines/StepLineSpeakTo.lua"/>
 
@@ -15,6 +17,7 @@
     <Script file="Models/Steps/Virtual_StepWithObjectives.lua"/>
     <Script file="Models/Steps/StepCompleteQuest.lua"/>
     <Script file="Models/Steps/StepCompleteQuestObjectives.lua"/>
+    <Script file="Models/Steps/StepGrind.lua"/>
     <Script file="Models/Steps/StepHandInQuest.lua"/>
     <Script file="Models/Steps/StepPickUpQuest.lua"/>
     <Script file="Models/Steps/StepProgressQuestObjectives.lua"/>
