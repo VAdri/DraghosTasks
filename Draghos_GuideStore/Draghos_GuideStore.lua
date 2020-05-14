@@ -1,4 +1,5 @@
 local CreateAndInitFromMixin = CreateAndInitFromMixin;
+local FP = DraghosUtils.FP;
 
 -- *********************************************************************************************************************
 -- ***** LOADING AND RETRIEVING OBJECTS FROM THE STORE
@@ -21,11 +22,11 @@ local function InitStep(step)
 end
 
 function Draghos_GuideStore:LoadSteps()
-    self.steps = MapIndexed(self.steps, InitStep);
+    self.steps = FP:MapIndexed(self.steps, InitStep);
 end
 
 function Draghos_GuideStore:GetStepByID(stepID)
-    return FindByProp(self.steps, "stepID", stepID);
+    return FP:FindByProp(self.steps, "stepID", stepID);
 end
 
 local function IsStepRemaining(step)
@@ -37,13 +38,13 @@ local function CompareStepOrder(step1, step2)
 end
 
 function Draghos_GuideStore:GetRemainingSteps()
-    local steps = Filter(self.steps, IsStepRemaining);
+    local steps = FP:Filter(self.steps, IsStepRemaining);
     table.sort(steps, CompareStepOrder);
     return steps;
 end
 
 function Draghos_GuideStore:GetQuestByID(questID)
-    return FindByProp(self.quests, "questID", questID);
+    return FP:FindByProp(self.quests, "questID", questID);
 end
 
 -- *********************************************************************************************************************

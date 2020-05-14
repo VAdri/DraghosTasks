@@ -1,3 +1,5 @@
+local FP = DraghosUtils.FP;
+
 QuestMixin = {};
 
 function QuestMixin:QuestInit(quest)
@@ -24,7 +26,7 @@ function QuestMixin:IsQuestAvailable()
 end
 
 function QuestMixin:IsValidQuest()
-    return self.questID and HaveQuestData(self.questID) and All(self:GetQuestObjectives(), CallOnSelf("IsValid"));
+    return self.questID and HaveQuestData(self.questID) and FP:All(self:GetQuestObjectives(), FP:CallOnSelf("IsValid"));
 end
 
 function QuestMixin:IsQuestFinishedButNotTurnedIn()
@@ -50,7 +52,7 @@ function QuestMixin:CanUseItem()
 end
 
 function QuestMixin:GetQuestObjectives()
-    return FilterByProp(self.stepLines or {}, "QuestObjectiveInit", QuestObjectiveMixin.QuestObjectiveInit);
+    return FP:FilterByProp(self.stepLines or {}, "QuestObjectiveInit", QuestObjectiveMixin.QuestObjectiveInit);
 end
 
 function QuestMixin:CreateQuestObjectives(questObjectivesIndexes)
@@ -75,11 +77,11 @@ function QuestMixin:CreateQuestObjectives(questObjectivesIndexes)
 
     -- If no index was supplied we create all the objectives
     if questObjectivesIndexes == nil then
-        questObjectivesIndexes = questObjectivesIndexes or Keys(questObjectives);
+        questObjectivesIndexes = questObjectivesIndexes or FP:Keys(questObjectives);
     end
 
     local function CreateQuestObjective(questObjectiveIndex)
         return Draghos_GuideStore:CreateGuideItem(StepLineQuestObjectiveMixin, questObjectives[questObjectiveIndex]);
     end
-    return Map(questObjectivesIndexes, CreateQuestObjective);
+    return FP:Map(questObjectivesIndexes, CreateQuestObjective);
 end

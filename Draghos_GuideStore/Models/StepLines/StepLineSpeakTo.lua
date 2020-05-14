@@ -1,3 +1,5 @@
+local Helpers = DraghosUtils.Helpers;
+
 StepLineSpeakToMixin = {};
 
 Mixin(StepLineSpeakToMixin, StepLineMixin);
@@ -32,5 +34,5 @@ function StepLineSpeakToMixin:IsValid()
 end
 
 function StepLineSpeakToMixin:IsCompleted()
-    return UnitHasUnitID("npc", self.npcID);
+    return Helpers:UnitHasUnitID("npc", self.npcID);
 end

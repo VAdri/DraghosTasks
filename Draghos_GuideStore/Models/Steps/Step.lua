@@ -1,3 +1,5 @@
+local FP = DraghosUtils.FP;
+
 --- @class Step
 StepMixin = {};
 
@@ -21,12 +23,12 @@ function StepMixin:SkipWaypoint()
 end
 
 function StepMixin:CanAddWaypoints()
-    return Any(self.stepLines or {}, CallOnSelf("CanAddWaypoints"));
+    return FP:Any(self.stepLines or {}, FP:CallOnSelf("CanAddWaypoints"));
 end
 
 function StepMixin:GetWaypointsInfo()
-    local stepLineLocations = Filter(self.stepLines or {}, CallOnSelf("CanAddWaypoints"));
-    return Flatten(Map(stepLineLocations, CallOnSelf("GetWaypointsInfo")));
+    local stepLineLocations = FP:Filter(self.stepLines or {}, FP:CallOnSelf("CanAddWaypoints"));
+    return FP:Flatten(FP:Map(stepLineLocations, FP:CallOnSelf("GetWaypointsInfo")));
 end
 
 function StepMixin:CanUseItem()
@@ -39,5 +41,5 @@ local function IsCompleted(stepID)
 end
 
 function StepMixin:RequiredStepsCompleted()
-    return #self.requiredStepIDs == 0 or All(self.requiredStepIDs, IsCompleted);
+    return #self.requiredStepIDs == 0 or FP:All(self.requiredStepIDs, IsCompleted);
 end

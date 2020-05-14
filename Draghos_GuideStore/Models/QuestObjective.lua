@@ -1,3 +1,5 @@
+local Str = DraghosUtils.Str;
+
 QuestObjectiveMixin = {};
 
 --- @class QuestObjective
@@ -30,7 +32,7 @@ function QuestObjectiveMixin:GetQuestObjective()
     --     text, objectiveType, finished = GetQuestLogLeaderBoard(self.index, questLogIndex);
     -- end
 
-    if IsBlankString(text) or IsBlankString(objectiveType) then
+    if Str:IsBlankString(text) or Str:IsBlankString(objectiveType) then
         text, objectiveType, finished = GetQuestObjectiveInfo(self.questID, self.index, false);
     end
 
@@ -55,7 +57,7 @@ end
 
 function QuestObjectiveMixin:IsValidQuestObjective()
     local questObjective = self:GetQuestObjective();
-    return not IsBlankString(questObjective.text) and not IsBlankString(questObjective.type);
+    return not Str:IsBlankString(questObjective.text) and not Str:IsBlankString(questObjective.type);
 end
 
 function QuestObjectiveMixin:IsObjectiveType(objectiveType)

@@ -1,3 +1,5 @@
+local Str = DraghosUtils.Str;
+
 LocationMixin = {};
 
 function LocationMixin:LocationInit(location)
@@ -40,5 +42,5 @@ function LocationMixin:GetWaypointsInfo()
 end
 
 function LocationMixin:IsValidLocation()
-    return self.hasLocation and self.uiMapID and not IsBlankString(self:GetZoneName());
+    return self.hasLocation and self.uiMapID and not Str:IsBlankString(self:GetZoneName());
 end

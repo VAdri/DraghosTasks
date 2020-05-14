@@ -1,3 +1,5 @@
+local FP = DraghosUtils.FP;
+
 StepProgressQuestObjectivesMixin = {};
 
 Mixin(StepProgressQuestObjectivesMixin, Virtual_StepWithObjectivesMixin);
@@ -40,7 +42,7 @@ local function GetStepByID(stepID)
 end
 
 function StepProgressQuestObjectivesMixin:DependentStepsCompleted()
-    return All(Map(self.completedAfterCompletedStepIDs, GetStepByID), CallOnSelf("IsCompleted"));
+    return FP:All(FP:Map(self.completedAfterCompletedStepIDs, GetStepByID), FP:CallOnSelf("IsCompleted"));
 end
 
 function StepProgressQuestObjectivesMixin:IsCompleted()

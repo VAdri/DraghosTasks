@@ -1,34 +1,28 @@
+local FP = DraghosUtils.FP;
+
 Virtual_StepWithObjectivesMixin = {};
 
 local function IsQuestObjective(object)
     return object.QuestObjectiveInit ~= nil;
 end
 
--- local function IsCombatObjective(questObjective)
---     return questObjective:IsCombat();
--- end
-
--- local function IsSetFreeObjective(questObjective)
---     return questObjective:IsSetFree();
--- end
-
 function Virtual_StepWithObjectivesMixin:GetObjectivesType()
-    local questObjectives = Filter(self.stepLines, IsQuestObjective);
+    local questObjectives = FP:Filter(self.stepLines, IsQuestObjective);
     local questObjectivesCount = #questObjectives;
     if questObjectivesCount == 0 then
         return nil;
     else
-        local combatObjectivesCount = Count(questObjectives, CallOnSelf("IsCombat"));
+        local combatObjectivesCount = FP:Count(questObjectives, FP:CallOnSelf("IsCombat"));
         if combatObjectivesCount == questObjectivesCount then
             return "CombatObjective";
         end
 
-        local objectInteractObjectivesCount = Count(questObjectives, CallOnSelf("IsObjectInteraction"));
+        local objectInteractObjectivesCount = FP:Count(questObjectives, FP:CallOnSelf("IsObjectInteraction"));
         if objectInteractObjectivesCount == questObjectivesCount then
             return "ObjectInteractionObjective";
         end
 
-        local lootObjectivesCount = Count(questObjectives, CallOnSelf("IsLoot"));
+        local lootObjectivesCount = FP:Count(questObjectives, FP:CallOnSelf("IsLoot"));
         if lootObjectivesCount == questObjectivesCount then
             return "LootObjective";
         end

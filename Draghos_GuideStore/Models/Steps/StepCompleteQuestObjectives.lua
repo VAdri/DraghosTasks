@@ -1,3 +1,5 @@
+local FP = DraghosUtils.FP;
+
 StepCompleteQuestObjectivesMixin = {};
 
 Mixin(StepCompleteQuestObjectivesMixin, Virtual_StepWithObjectivesMixin);
@@ -25,7 +27,7 @@ function StepCompleteQuestObjectivesMixin:IsValid()
 end
 
 function StepCompleteQuestObjectivesMixin:IsCompleted()
-    return self:IsQuestCompleted() or All(self:GetQuestObjectives(), CallOnSelf("IsQuestObjectiveCompleted"));
+    return self:IsQuestCompleted() or FP:All(self:GetQuestObjectives(), FP:CallOnSelf("IsQuestObjectiveCompleted"));
 end
 
 function StepCompleteQuestObjectivesMixin:IsPartial()
