@@ -101,3 +101,8 @@ function Draghos_GuideStore:RegisterForNotifications(item, event)
         frame:RegisterEvent(event, self.OnEvent);
     end
 end
+
+function Draghos_GuideStore:UnregisterForNotifications(item)
+    self.notifiers = self.notifiers or {};
+    self.notifiers[item] = nil;
+end

@@ -33,3 +33,8 @@ end
 function StepCompleteQuestObjectivesMixin:IsPartial()
     return false;
 end
+
+function StepCompleteQuestObjectivesMixin:RequiredStepsCompleted()
+    local requiredStepsCompleted = StepMixin.RequiredStepsCompleted(self);
+    return requiredStepsCompleted and StepPickUpQuestMixin.IsCompleted(self);
+end

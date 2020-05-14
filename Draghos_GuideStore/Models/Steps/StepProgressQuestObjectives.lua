@@ -48,3 +48,8 @@ end
 function StepProgressQuestObjectivesMixin:IsCompleted()
     return self.isFlaggedCompleted or self:IsQuestCompleted() or self:DependentStepsCompleted();
 end
+
+function StepProgressQuestObjectivesMixin:RequiredStepsCompleted()
+    local requiredStepsCompleted = StepMixin.RequiredStepsCompleted(self);
+    return requiredStepsCompleted and StepPickUpQuestMixin.IsCompleted(self);
+end

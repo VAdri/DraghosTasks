@@ -20,7 +20,6 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[1],
         npc = Draghos_GuideStore.npcs[2],
         location = Draghos_GuideStore.locations[2],
-        requiredStepIDs = {1},
     },
     [3] = { -- Pick up Rite of Strength
         id = 3,
@@ -28,13 +27,11 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[2],
         npc = Draghos_GuideStore.npcs[2],
         location = Draghos_GuideStore.locations[2],
-        requiredStepIDs = {2},
     },
     [4] = { -- Complete quest Rite of Strength
         id = 4,
         stepType = STEP_TYPE_COMPLETE_QUEST,
         quest = Draghos_GuideStore.quests[2],
-        requiredStepIDs = {3},
     },
     [5] = { -- Hand in Rite of Strength
         id = 5,
@@ -42,7 +39,6 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[2],
         npc = Draghos_GuideStore.npcs[2],
         location = Draghos_GuideStore.locations[2],
-        requiredStepIDs = {4},
     },
     [6] = { -- Pick up Our Tribe, Imprisoned
         id = 6,
@@ -50,13 +46,11 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[3],
         npc = Draghos_GuideStore.npcs[2],
         location = Draghos_GuideStore.locations[2],
-        requiredStepIDs = {5},
     },
     [7] = { -- Complete quest Our Tribe, Imprisoned
         id = 7,
         stepType = STEP_TYPE_COMPLETE_QUEST,
         quest = Draghos_GuideStore.quests[3],
-        requiredStepIDs = {6},
     },
     [8] = { -- Hand in Our Tribe, Imprisoned
         id = 8,
@@ -64,7 +58,6 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[3],
         npc = Draghos_GuideStore.npcs[2],
         location = Draghos_GuideStore.locations[2],
-        requiredStepIDs = {7},
     },
     [9] = { -- Pick up Go to Adana
         id = 9,
@@ -72,7 +65,6 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[4],
         npc = Draghos_GuideStore.npcs[2],
         location = Draghos_GuideStore.locations[2],
-        requiredStepIDs = {8},
     },
     [10] = { -- Hand in Go to Adana
         id = 10,
@@ -80,7 +72,6 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[4],
         npc = Draghos_GuideStore.npcs[3],
         location = Draghos_GuideStore.locations[3],
-        requiredStepIDs = {9},
     },
     [11] = {
         id = 11, -- Pick up Rite of Courage
@@ -88,7 +79,6 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[5],
         npc = Draghos_GuideStore.npcs[3],
         location = Draghos_GuideStore.locations[3],
-        requiredStepIDs = {10},
     },
     [12] = {
         id = 12, -- Pick up Stop the Thorncallers
@@ -96,19 +86,16 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[6],
         npc = Draghos_GuideStore.npcs[3],
         location = Draghos_GuideStore.locations[3],
-        requiredStepIDs = {10},
     },
     [13] = { -- Complete quest Rite of Courage
         id = 13,
         stepType = STEP_TYPE_COMPLETE_QUEST,
         quest = Draghos_GuideStore.quests[5],
-        requiredStepIDs = {11},
     },
     [14] = { -- Complete quest Stop the Thorncallers
         id = 14,
         stepType = STEP_TYPE_COMPLETE_QUEST,
         quest = Draghos_GuideStore.quests[6],
-        requiredStepIDs = {12},
     },
     [15] = { -- Hand in Rite of Courage
         id = 15,
@@ -116,7 +103,6 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[5],
         npc = Draghos_GuideStore.npcs[3],
         location = Draghos_GuideStore.locations[3],
-        requiredStepIDs = {13},
     },
     [16] = { -- Hand in Stop the Thorncallers
         id = 16,
@@ -124,7 +110,6 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[6],
         npc = Draghos_GuideStore.npcs[3],
         location = Draghos_GuideStore.locations[3],
-        requiredStepIDs = {14},
     },
     [17] = { -- Pick up The Battleboars
         id = 17,
@@ -132,7 +117,6 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[7],
         npc = Draghos_GuideStore.npcs[3],
         location = Draghos_GuideStore.locations[3],
-        requiredStepIDs = {15, 16},
     },
     [18] = { -- Pick up Feed of Evil
         id = 18,
@@ -140,20 +124,17 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[8],
         npc = Draghos_GuideStore.npcs[3],
         location = Draghos_GuideStore.locations[3],
-        requiredStepIDs = {15, 16},
     },
     [19] = { -- Complete Feed of Evil
         id = 19,
         stepType = STEP_TYPE_COMPLETE_QUEST,
         quest = Draghos_GuideStore.quests[8],
-        requiredStepIDs = {18},
     },
     [20] = { -- Progress The Battleboars
         id = 20,
         stepType = STEP_TYPE_PROGRESS_QUEST_OBJECTIVE,
         quest = Draghos_GuideStore.quests[7],
         questObjectivesIndexes = {1},
-        requiredStepIDs = {17},
         completedAfterCompletedStepIDs = {19},
     },
     [21] = { -- Complete The Battleboars
@@ -168,7 +149,6 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[7],
         npc = Draghos_GuideStore.npcs[3],
         location = Draghos_GuideStore.locations[3],
-        requiredStepIDs = {21},
     },
     [23] = { -- Hand in Feed of Evil
         id = 23,
@@ -176,7 +156,6 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[8],
         npc = Draghos_GuideStore.npcs[3],
         location = Draghos_GuideStore.locations[3],
-        requiredStepIDs = {20},
     },
     [24] = { -- Pick up Rite of Honor
         id = 24,
@@ -189,7 +168,6 @@ Draghos_GuideStore.steps = {
         id = 25,
         stepType = STEP_TYPE_COMPLETE_QUEST,
         quest = Draghos_GuideStore.quests[9],
-        requiredStepIDs = {24},
     },
     -- TODO: Use Hearthstone
     [26] = { -- Hand in Rite of Honor
@@ -198,6 +176,5 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[9],
         npc = Draghos_GuideStore.npcs[1],
         location = Draghos_GuideStore.locations[1],
-        requiredStepIDs = {25},
     },
 };

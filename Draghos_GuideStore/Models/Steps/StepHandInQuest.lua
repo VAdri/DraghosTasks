@@ -28,3 +28,8 @@ end
 function StepHandInQuestMixin:IsCompleted()
     return self:IsQuestTurnedIn();
 end
+
+function StepHandInQuestMixin:RequiredStepsCompleted()
+    local requiredStepsCompleted = StepMixin.RequiredStepsCompleted(self);
+    return requiredStepsCompleted and self:IsQuestCompleted();
+end

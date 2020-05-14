@@ -26,3 +26,8 @@ end
 function StepCompleteQuestMixin:IsCompleted()
     return self:IsQuestCompleted();
 end
+
+function StepCompleteQuestMixin:RequiredStepsCompleted()
+    local requiredStepsCompleted = StepMixin.RequiredStepsCompleted(self);
+    return requiredStepsCompleted and StepPickUpQuestMixin.IsCompleted(self);
+end

@@ -6,6 +6,8 @@ function QuestMixin:QuestInit(quest)
     self.questID = tonumber(quest.questID);
     C_QuestLog.RequestLoadQuestByID(self.questID);
 
+    self.requiredQuestIDs = quest.requiredQuestIDs or {};
+
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_ACCEPTED");
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_POI_UPDATE");
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_LOG_UPDATE");
@@ -15,6 +17,10 @@ function QuestMixin:QuestInit(quest)
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_AUTOCOMPLETE");
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_TURNED_IN");
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_REMOVED");
+end
+
+function QuestMixin:QuestUnload()
+    Draghos_GuideStore:UnregisterForNotifications(self);
 end
 
 function QuestMixin:GetQuestLabel()
@@ -40,6 +46,20 @@ end
 
 function QuestMixin:IsQuestCompleted()
     return self:IsQuestFinishedButNotTurnedIn() or self:IsQuestTurnedIn();
+end
+
+local function IsRequiredQuestCompleted(questID)
+    local quest = Draghos_GuideStore:GetQuestByID(questID);
+    return quest and QuestMixin.IsQuestTurnedIn(quest);
+end
+
+function QuestMixin:RequiredQuestsCompleted()
+    return FP:All(self.requiredQuestIDs, IsRequiredQuestCompleted);
+end
+
+function QuestMixin:RequiredStepsCompleted()
+    local requiredStepsCompleted = StepMixin.RequiredStepsCompleted(self);
+    return requiredStepsCompleted and self:RequiredQuestsCompleted();
 end
 
 function QuestMixin:GetQuestLogIndex()
