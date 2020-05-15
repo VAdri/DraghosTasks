@@ -4,6 +4,8 @@
     <Script file="Models/Observable.lua"/>
     <Script file="Models/Experience.lua"/>
     <Script file="Models/Location.lua"/>
+    <Script file="Models/UseItem.lua"/>
+    <Script file="Models/Hearth.lua"/>
     <Script file="Models/NPC.lua"/>
     <Script file="Models/Quest.lua"/>
     <Script file="Models/QuestObjective.lua"/>
@@ -21,4 +23,5 @@
     <Script file="Models/Steps/StepHandInQuest.lua"/>
     <Script file="Models/Steps/StepPickUpQuest.lua"/>
     <Script file="Models/Steps/StepProgressQuestObjectives.lua"/>
+    <Script file="Models/Steps/StepUseHearthstone.lua"/>
 </Ui>

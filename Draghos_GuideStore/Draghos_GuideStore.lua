@@ -17,7 +17,9 @@ local function InitStep(step)
     elseif step.stepType == STEP_TYPE_HANDIN_QUEST then
         return Draghos_GuideStore:CreateGuideItem(StepHandInQuestMixin, step);
     elseif step.stepType == STEP_TYPE_GRIND then
-        return Draghos_GuideStore:CreateGuideItem(StepGrindMixin, step);
+        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepGrind, step);
+    elseif step.stepType == STEP_TYPE_USE_HEARTHSTONE then
+        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepUseHearthstone, step);
     else
         -- ? return Draghos_GuideStore:CreateObject(StepUnknownMixin, step);
     end
@@ -42,7 +44,12 @@ function Draghos_GuideStore:GetRemainingSteps()
 end
 
 function Draghos_GuideStore:GetQuestByID(questID)
-    return FP:FindByProp(self.quests, "questID", questID);
+    return self.quests[questID];
+    -- return FP:FindByProp(self.quests, "questID", questID);
+end
+
+function Draghos_GuideStore:GetHearthstoneItemByID(itemID)
+    return self.items.hearth[itemID];
 end
 
 -- *********************************************************************************************************************

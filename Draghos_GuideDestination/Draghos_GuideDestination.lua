@@ -1,10 +1,4 @@
-local addonName, addon = ...;
-
--- *********************************************************************************************************************
--- ***** TomTom arrow
--- *********************************************************************************************************************
-
-local TomTomListener = CreateFrame("Frame");
+local TomTomDestination = CreateFrame("Frame");
 
 local function OnStepUpdated(self, watchedItem, event, ...)
     TomTom.waydb:ResetProfile();
@@ -24,7 +18,7 @@ local function OnStepUpdated(self, watchedItem, event, ...)
     TomTom:SetClosestWaypoint();
 end
 
-function TomTomListener:WatchNextStep()
+function TomTomDestination:WatchNextStep()
     local steps = Draghos_GuideStore:GetRemainingSteps();
 
     local stepIndex = 1;
@@ -34,7 +28,8 @@ function TomTomListener:WatchNextStep()
         stepIndex = stepIndex + 1;
     until (not watchedStep or not watchedStep:SkipWaypoint());
 
-    if watchedStep and watchedStep:CanAddWaypoints() then
+    -- We need to always watch a step even if we cannot put waypoints on it, otherwise TomTom will never show up
+    if watchedStep --[[and watchedStep:CanAddWaypoints()]] then
         watchedStep:Watch(self, OnStepUpdated);
         self.watchedStep = watchedStep;
     end
@@ -50,22 +45,22 @@ end
 
 local function ToggleTomTomListener(self, event, ...)
     local loaded, finishedLoading = IsAddOnLoaded("TomTom");
-    if loaded and finishedLoading then -- TODO: and Arrow option is true
-        if not TomTomListener:GetScript("OnUpdate") then
-            TomTomListener:WatchNextStep();
-            TomTomListener:SetScript("OnUpdate", UpdateTomTomArrow);
+    if loaded and finishedLoading then -- TODO: "and showArrow option is true"
+        if not TomTomDestination:GetScript("OnUpdate") then
+            TomTomDestination:WatchNextStep();
+            TomTomDestination:SetScript("OnUpdate", UpdateTomTomArrow);
         end
-    elseif TomTomListener:GetScript("OnUpdate") then
+    elseif TomTomDestination:GetScript("OnUpdate") then
         if self.watchedStep then
-            self.watchedStep:Unwatch(TomTomListener);
+            self.watchedStep:Unwatch(TomTomDestination);
             self.watchedStep = nil;
         end
-        TomTomListener:SetScript("OnUpdate", nil);
+        TomTomDestination:SetScript("OnUpdate", nil);
     end
 end
 
-TomTomListener:SetScript("OnEvent", ToggleTomTomListener);
+TomTomDestination:SetScript("OnEvent", ToggleTomTomListener);
 
-TomTomListener:RegisterEvent("PLAYER_ENTERING_WORLD");
-TomTomListener:RegisterEvent("ADDON_LOADED");
-TomTomListener:RegisterEvent("ADDONS_UNLOADING");
+TomTomDestination:RegisterEvent("PLAYER_ENTERING_WORLD");
+TomTomDestination:RegisterEvent("ADDON_LOADED");
+TomTomDestination:RegisterEvent("ADDONS_UNLOADING");

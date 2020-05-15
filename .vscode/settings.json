@@ -90,6 +90,27 @@
         "UnitXPMax",
         "tremove",
         "XP_GAIN",
-        "PERCENTAGE_STRING"
+        "PERCENTAGE_STRING",
+        "PlayerHasHearthstone",
+        "GetBindLocation",
+        "INVSLOT_FEET",
+        "GetItemCooldown",
+        "Item",
+        "Spell",
+        "QuestObjectiveReleaseBlockButton_Item",
+        "QuestObjectiveItem_AcquireButton",
+        "SetItemButtonTexture",
+        "SetItemButtonCount",
+        "QuestObjectiveSetupBlockButton_AddRightButton",
+        "GameTooltip",
+        "IsModifiedClick",
+        "ChatEdit_GetActiveWindow",
+        "ChatEdit_InsertLink",
+        "CooldownFrame_Set",
+        "SetItemButtonTextureVertexColor",
+        "CastingInfo",
+        "UnitCastingInfo",
+        "IsItemInRange",
+        "TOOLTIP_UPDATE_TIME"
     ]
 }

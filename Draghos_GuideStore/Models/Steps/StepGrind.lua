@@ -1,4 +1,4 @@
-StepGrindMixin = {}
+local StepGrindMixin = {}
 
 Mixin(StepGrindMixin, StepMixin);
 Mixin(StepGrindMixin, ExperienceMixin);
@@ -20,9 +20,11 @@ function StepGrindMixin:GetLabel()
 end
 
 function StepGrindMixin:IsValid()
-    return self:IsValidExperience();
+    return self:IsValidStep() and self:IsValidExperience();
 end
 
 function StepGrindMixin:IsCompleted()
     return self:IsAboveLevelXP();
 end
+
+DraghosMixins.StepGrind = StepGrindMixin;

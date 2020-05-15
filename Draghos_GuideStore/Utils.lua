@@ -1,4 +1,6 @@
 DraghosUtils = {};
+DraghosMixins = {};
+Draghos_GuideStore = {};
 
 -- *********************************************************************************************************************
 -- ***** Functional Programming
@@ -347,6 +349,18 @@ end
 --- @return boolean
 function DraghosUtils.Helpers:UnitHasUnitID(unit, id)
     return UnitExists(unit) and DraghosUtils.Helpers:GetIDFromGUID(UnitGUID(unit)) == id;
+end
+
+--- @param spellID number
+--- @return boolean
+function DraghosUtils.Helpers:PlayerIsCastingSpellID(spellID)
+    if CastingInfo then
+        -- Classic
+        return select(9, CastingInfo()) == spellID;
+    else
+        -- Retail
+        return select(9, UnitCastingInfo("player")) == spellID;
+    end
 end
 
 -- *********************************************************************************************************************

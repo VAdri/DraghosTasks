@@ -1,7 +1,5 @@
-Draghos_GuideStore = Draghos_GuideStore or {};
-
 Draghos_GuideStore.npcs = {
-    [1] = { -- Chief Hawkwind
+    [2981] = { -- Chief Hawkwind
         npcID = 2981,
         names = {
             ["deDE"] = "Häuptling Falkenwind",
@@ -17,8 +15,10 @@ Draghos_GuideStore.npcs = {
             ["zhTW"] = "鹰风酋长",
             ["zhCN"] = "鹰风酋长",
         },
+        reactHorde = 1,
+        reactAlliance = -1,
     },
-    [2] = { -- Grull Hawkwind
+    [2980] = { -- Grull Hawkwind
         npcID = 2980,
         names = {
             ["deDE"] = "Grull Falkenwind",
@@ -34,8 +34,10 @@ Draghos_GuideStore.npcs = {
             ["zhTW"] = "格鲁尔·鹰风",
             ["zhCN"] = "格鲁尔·鹰风",
         },
+        reactHorde = 1,
+        reactAlliance = -1,
     },
-    [3] = { -- Adana Thunderhorn
+    [36694] = { -- Adana Thunderhorn
         npcID = 36694,
         names = {
             ["deDE"] = "Adana Donnerhornd",
@@ -51,9 +53,10 @@ Draghos_GuideStore.npcs = {
             ["zhTW"] = "阿达娜·雷角",
             ["zhCN"] = "阿达娜·雷角",
         },
+        reactHorde = 1,
+        reactAlliance = -1,
     },
-    [4] = {}, -- TODO
-    [5] = {
+    [36696] = {
         npcID = 36696, -- Armored Battleboar
         names = {
             ["deDE"] = "Gepanzerter Kampfeber",
@@ -69,59 +72,61 @@ Draghos_GuideStore.npcs = {
             ["zhTW"] = "重甲斗猪",
             ["zhCN"] = "重甲斗猪",
         },
+        reactHorde = 0,
+        reactAlliance = 0,
     },
-    [6] = {
-        npcID = 36727, -- First Trough
-        names = {
-            ["deDE"] = "First Trough", -- ! Absent value
-            ["enUS"] = "First Trough",
-            ["enGB"] = "First Trough",
-            ["esES"] = "First Trough", -- ! Absent value
-            ["esMX"] = "First Trough", -- ! Absent value
-            ["frFR"] = "First Trough", -- ! Absent value
-            ["itIT"] = "Prima Mangiatoia",
-            ["koKR"] = "첫 번째 여물통",
-            ["ptBR"] = "Primeira Gamela",
-            ["ruRU"] = "First Trough", -- ! Absent value
-            ["zhTW"] = "第一斗猪",
-            ["zhCN"] = "第一斗猪",
-        },
-    },
-    [7] = {
-        npcID = 37155,
-        names = {
-            ["deDE"] = "Second Trough", -- ! Absent value
-            ["enUS"] = "Second Trough",
-            ["enGB"] = "Second Trough",
-            ["esES"] = "Second Trough", -- ! Absent value
-            ["esMX"] = "Second Trough", -- ! Absent value
-            ["frFR"] = "Second Trough", -- ! Absent value
-            ["itIT"] = "Seconda Mangiatoia",
-            ["koKR"] = "두 번째 여물통",
-            ["ptBR"] = "Segunda Gamela",
-            ["ruRU"] = "Second Trough", -- ! Absent value
-            ["zhTW"] = "Second Trough", -- ! Absent value
-            ["zhCN"] = "Second Trough", -- ! Absent value
-        },
-    },
-    [8] = {
-        npcID = 37156,
-        names = {
-            ["deDE"] = "Third Trough", -- ! Absent value
-            ["enUS"] = "Third Trough",
-            ["enGB"] = "Third Trough",
-            ["esES"] = "Third Trough", -- ! Absent value
-            ["esMX"] = "Third Trough", -- ! Absent value
-            ["frFR"] = "Third Trough", -- ! Absent value
-            ["itIT"] = "Terza Mangiatoia",
-            ["koKR"] = "세 번째 여물통",
-            ["ptBR"] = "Terceira Gamela",
-            ["ruRU"] = "Third Trough", -- ! Absent value
-            ["zhTW"] = "Third Trough", -- ! Absent value
-            ["zhCN"] = "Third Trough", -- ! Absent value
-        },
-    },
-    [9] = {
+    -- [36727] = {
+    --     npcID = 36727, -- First Trough
+    --     names = {
+    --         ["deDE"] = "First Trough", -- ! Absent value
+    --         ["enUS"] = "First Trough",
+    --         ["enGB"] = "First Trough",
+    --         ["esES"] = "First Trough", -- ! Absent value
+    --         ["esMX"] = "First Trough", -- ! Absent value
+    --         ["frFR"] = "First Trough", -- ! Absent value
+    --         ["itIT"] = "Prima Mangiatoia",
+    --         ["koKR"] = "첫 번째 여물통",
+    --         ["ptBR"] = "Primeira Gamela",
+    --         ["ruRU"] = "First Trough", -- ! Absent value
+    --         ["zhTW"] = "第一斗猪",
+    --         ["zhCN"] = "第一斗猪",
+    --     },
+    -- },
+    -- [37155] = {
+    --     npcID = 37155,
+    --     names = {
+    --         ["deDE"] = "Second Trough", -- ! Absent value
+    --         ["enUS"] = "Second Trough",
+    --         ["enGB"] = "Second Trough",
+    --         ["esES"] = "Second Trough", -- ! Absent value
+    --         ["esMX"] = "Second Trough", -- ! Absent value
+    --         ["frFR"] = "Second Trough", -- ! Absent value
+    --         ["itIT"] = "Seconda Mangiatoia",
+    --         ["koKR"] = "두 번째 여물통",
+    --         ["ptBR"] = "Segunda Gamela",
+    --         ["ruRU"] = "Second Trough", -- ! Absent value
+    --         ["zhTW"] = "Second Trough", -- ! Absent value
+    --         ["zhCN"] = "Second Trough", -- ! Absent value
+    --     },
+    -- },
+    -- [37156] = {
+    --     npcID = 37156,
+    --     names = {
+    --         ["deDE"] = "Third Trough", -- ! Absent value
+    --         ["enUS"] = "Third Trough",
+    --         ["enGB"] = "Third Trough",
+    --         ["esES"] = "Third Trough", -- ! Absent value
+    --         ["esMX"] = "Third Trough", -- ! Absent value
+    --         ["frFR"] = "Third Trough", -- ! Absent value
+    --         ["itIT"] = "Terza Mangiatoia",
+    --         ["koKR"] = "세 번째 여물통",
+    --         ["ptBR"] = "Terceira Gamela",
+    --         ["ruRU"] = "Third Trough", -- ! Absent value
+    --         ["zhTW"] = "Third Trough", -- ! Absent value
+    --         ["zhCN"] = "Third Trough", -- ! Absent value
+    --     },
+    -- },
+    [36712] = {
         npcID = 36712,
         names = {
             ["deDE"] = "Häuptling Quieker Dornmantel",
@@ -137,5 +142,7 @@ Draghos_GuideStore.npcs = {
             ["zhTW"] = "尖啸·刺鬃酋长",
             ["zhCN"] = "尖啸·刺鬃酋长",
         },
+        reactHorde = -1,
+        reactAlliance = -1,
     },
 };

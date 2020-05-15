@@ -111,14 +111,17 @@ OBJECTIVE_TRACKER_COLOR["PartialHighlight"].reverse = OBJECTIVE_TRACKER_COLOR["P
 --- @param block table
 --- @param step Step
 function GUIDE_TRACKER_MODULE:SetBlockHeader(block, step)
-    if step.questID and step:CanUseItem() then
-        -- Display the item button (if necessary)
-        local questLogIndex = step:GetQuestLogIndex();
-        local isQuestComplete = step:IsQuestCompleted();
+    if step:CanUseItem() then
+        GuideObjective_SetupHeader(block);
 
-        QuestObjective_SetupHeader(block);
-
-        local hasItem = QuestObjectiveSetupBlockButton_Item(block, questLogIndex, isQuestComplete);
+        local hasItem;
+        if step.questID and step:IsQuestItemToUse() then
+            local questLogIndex = step:GetQuestLogIndex();
+            local isQuestComplete = step:IsQuestCompleted();
+            hasItem = QuestObjectiveSetupBlockButton_Item(block, questLogIndex, isQuestComplete);
+        elseif step.item then
+            hasItem = GuideObjectiveSetupBlockButton_Item(block, step.item);
+        end
 
         -- Special case for previous behavior...if there are no buttons then use default line width from module
         if not (hasItem) then
@@ -233,8 +236,12 @@ function GUIDE_TRACKER_MODULE:BuildStepWatchInfos()
 
     local steps = Draghos_GuideStore:GetRemainingSteps();
     for index, step in pairs(steps) do
-        if step and self:ShouldDisplayStep(step) then
+        if step:IsAvailable() then
+            -- Add the step on the tracker
             table.insert(infos, {step = step, index = index});
+        else
+            -- We watch items not completed that could become available (on cooldown finish for instance)
+            step:Watch(self, UpdateGuideObjectiveTracker)
         end
     end
 
@@ -310,16 +317,12 @@ function GUIDE_TRACKER_MODULE:UpdateSingle(step, stepIndex)
         block:Show();
         self:FreeUnusedLines(block);
 
-        -- Watch modifications on the step and stepLines
+        -- Watch modifications on the step
         block.step:Watch(self, UpdateGuideObjectiveTracker);
-        for _, usedLine in pairs(block.lines or {}) do
-            usedLine.stepLine:Watch(self, UpdateGuideObjectiveTracker);
-        end
 
         -- Show the icon
         local stepTypeIconName = step:GetStepType();
         if stepTypeIconName then
-            GuideObjective_SetupHeader(block);
             GuideObjectiveBlock_AddLeftIcon(block, stepTypeIconName)
             if block.leftIcon and block.leftIcon:IsShown() then
                 if type(step.IsPartial) == "function" then
@@ -342,13 +345,13 @@ function GUIDE_TRACKER_MODULE:OnBlockHeaderClick(block, mouseButton)
 end
 
 function GUIDE_TRACKER_MODULE:ClearBlockData(block)
-    -- Hide icon
+    -- Hide icon and button
     GuideObjectiveBlock_ReleaseLeftIcon(block);
+    GuideObjectiveItem_ReleaseButton(block);
 
-    -- Unwatch steps
-    block.step:Unwatch(self);
-    for _, line in pairs(block.lines or {}) do
-        line.stepLine:Unwatch(self);
+    -- Unwatch step
+    if block.step:IsCompleted() then
+        block.step:Unwatch(self);
     end
 end
 

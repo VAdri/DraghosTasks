@@ -6,6 +6,11 @@ function ObservableMixin:Watch(frame, handler)
     assert(type(handler) == "function", "Usage: ObservableMixin:Watch(frame, handler)");
     self.watchers = self.watchers or {};
     self.watchers[frame] = handler;
+
+    -- Watch children
+    for _, stepLine in pairs(self.stepLines or {}) do
+        stepLine:Watch(frame, handler);
+    end
 end
 
 function ObservableMixin:Unwatch(frame)
@@ -13,6 +18,11 @@ function ObservableMixin:Unwatch(frame)
     assert(type(frame) == "table", "Usage: ObservableMixin:Watch(frame, handler)");
     if self.watchers and self.watchers[frame] then
         self.watchers[frame] = nil;
+    end
+
+    -- Unwatch children
+    for _, stepLine in pairs(self.stepLines or {}) do
+        stepLine:Unwatch(frame);
     end
 end
 

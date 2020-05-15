@@ -67,8 +67,12 @@ function QuestMixin:GetQuestLogIndex()
 end
 
 function QuestMixin:CanUseItem()
-    local _, item = GetQuestLogSpecialItemInfo(self:GetQuestLogIndex());
-    return not not item;
+    local _, itemID = GetQuestLogSpecialItemInfo(self:GetQuestLogIndex());
+    return itemID ~= nil;
+end
+
+function QuestMixin:IsQuestItemToUse()
+    return true;
 end
 
 function QuestMixin:GetQuestObjectives()

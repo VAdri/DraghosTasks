@@ -27,7 +27,7 @@ function StepPickUpQuestMixin:IsValid()
 end
 
 function StepPickUpQuestMixin:IsAvailable()
-    return self:IsQuestAvailable() and self:RequiredStepsCompleted();
+    return self:IsQuestAvailable() and self:IsStepAvailable();
 end
 
 function StepPickUpQuestMixin:IsCompleted()

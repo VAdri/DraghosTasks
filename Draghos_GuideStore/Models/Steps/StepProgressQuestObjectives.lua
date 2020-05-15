@@ -13,8 +13,6 @@ function StepProgressQuestObjectivesMixin:Init(step)
     -- self:LocationInit(step.location);
 
     self:AddMultipleStepLines(self:CreateQuestObjectives(step.questObjectivesIndexes));
-
-    self.completedAfterCompletedStepIDs = step.completedAfterCompletedStepIDs or {};
 end
 
 function StepProgressQuestObjectivesMixin:SkipWaypoint()
@@ -36,14 +34,6 @@ end
 
 function StepProgressQuestObjectivesMixin:IsPartial()
     return true;
-end
-
-local function GetStepByID(stepID)
-    return Draghos_GuideStore:GetStepByID(stepID);
-end
-
-function StepProgressQuestObjectivesMixin:DependentStepsCompleted()
-    return FP:All(FP:Map(self.completedAfterCompletedStepIDs, GetStepByID), FP:CallOnSelf("IsCompleted"));
 end
 
 function StepProgressQuestObjectivesMixin:IsCompleted()

@@ -8,15 +8,20 @@ Mixin(StepMixin, ObservableMixin);
 function StepMixin:StepInit(step)
     self.stepID = tonumber(step.id);
     self.stepLines = {};
-    self.requiredStepIDs = step.requiredStepIDs or {};
+    self.requiredStepIDs = step.requiredStepIDs or {}; -- TODO: Detect potential circular references
+    self.completedAfterCompletedStepIDs = step.completedAfterCompletedStepIDs or {}; -- TODO: Detect potential circular references
 end
 
-function StepMixin:IsAvailable()
+function StepMixin:IsStepAvailable()
     return self:RequiredStepsCompleted();
 end
 
+function StepMixin:IsAvailable()
+    return self:IsStepAvailable();
+end
+
 function StepMixin:IsValidStep()
-    return (self.stepID and self.requiredStepIDs) and true or false;
+    return self.stepID and true or false;
 end
 
 function StepMixin:SkipWaypoint()
@@ -36,6 +41,10 @@ function StepMixin:CanUseItem()
     return false;
 end
 
+function StepMixin:IsQuestItemToUse()
+    return false;
+end
+
 local function IsCompleted(stepID)
     local step = Draghos_GuideStore:GetStepByID(stepID);
     return step and step:IsCompleted();
@@ -43,6 +52,14 @@ end
 
 function StepMixin:RequiredStepsCompleted()
     return #self.requiredStepIDs == 0 or FP:All(self.requiredStepIDs, IsCompleted);
+end
+
+local function GetStepByID(stepID)
+    return Draghos_GuideStore:GetStepByID(stepID);
+end
+
+function StepMixin:DependentStepsCompleted()
+    return FP:All(FP:Map(self.completedAfterCompletedStepIDs, GetStepByID), FP:CallOnSelf("IsCompleted"));
 end
 
 function StepMixin:AddOneStepLine(stepLine)

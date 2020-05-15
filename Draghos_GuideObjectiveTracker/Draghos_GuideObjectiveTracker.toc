@@ -7,4 +7,5 @@
 ## Dependencies: Blizzard_ObjectiveTracker, Draghos_GuideStore
 
 Locales.xml
+Draghos_GuideObjectiveItemButton.xml
 Draghos_GuideObjectiveTracker.xml

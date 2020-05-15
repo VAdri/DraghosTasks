@@ -1,0 +1,83 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Script file="Draghos_GuideObjectiveItemButton.lua"/>
+
+    <Frame name="GuideStepTypeIconTemplate" virtual="true">
+        <Size x="20" y="20"/>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <Texture parentKey="ProgressObjective" file="Interface\MINIMAP\ObjectIconsAtlas" hidden="true">
+                    <Size x="16" y="16"/>
+                    <Anchors>
+                        <Anchor point="CENTER" x="4" y="0"/>
+                    </Anchors>
+                    <TexCoords left="0.1328125" top="0" right="0.171875" bottom="0.078125"/>
+                </Texture>
+                <Texture parentKey="CompleteObjective" file="Interface\Scenarios\ScenarioIcon-Check" hidden="true">
+                    <Size x="13" y="13"/>
+                    <Anchors>
+                        <Anchor point="CENTER" x="4" y="-2"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="1">
+                <Texture parentKey="MainIcon">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+
+    <Button name="GuideObjectiveItemButtonTemplate" inherits="SecureActionButtonTemplate" virtual="true">
+        <Attributes>
+            <Attribute name="type1" value="item" />
+            <!-- <Attribute name="item" value="" /> -->
+        </Attributes>
+        <Size x="26" y="26"/>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="HotKey" inherits="NumberFontNormalSmallGray" justifyH="LEFT" text="RANGE_INDICATOR">
+                    <Size x="29" y="10"/>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" x="16" y="-2"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="icon"/>
+                <FontString parentKey="Count" inherits="NumberFontNormal" justifyH="RIGHT" hidden="true">
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-3" y="2"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate"/>
+        </Frames>
+        <Scripts>
+            <OnLoad function="GuideObjectiveItem_OnLoad"/>
+            <OnEvent function="GuideObjectiveItem_OnEvent"/>
+            <OnUpdate function="GuideObjectiveItem_OnUpdate"/>
+            <OnShow function="GuideObjectiveItem_OnShow"/>
+            <OnHide function="GuideObjectiveItem_OnHide"/>
+            <OnEnter function="GuideObjectiveItem_OnEnter"/>
+            <OnLeave>
+                GameTooltip:Hide();
+            </OnLeave>
+            <!-- <OnClick function="GuideObjectiveItem_OnClick"/> -->
+        </Scripts>
+        <NormalTexture parentKey="NormalTexture" file="Interface\Buttons\UI-Quickslot2">
+            <Size x="42" y="42"/>
+            <Anchors>
+                <Anchor point="CENTER"/>
+            </Anchors>
+        </NormalTexture>
+        <PushedTexture file="Interface\Buttons\UI-Quickslot-Depress"/>
+        <HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD"/>
+    </Button>
+</Ui>
