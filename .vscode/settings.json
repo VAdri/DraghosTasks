@@ -111,6 +111,17 @@
         "CastingInfo",
         "UnitCastingInfo",
         "IsItemInRange",
-        "TOOLTIP_UPDATE_TIME"
+        "TOOLTIP_UPDATE_TIME",
+        "FramePool_HideAndClearAnchors",
+        "ObjectPoolMixin",
+        "SetBindingClick",
+        "GetBindingAction",
+        "SetBinding",
+        "StaticPopupDialogs",
+        "StaticPopup_Show",
+        "StaticPopup_Visible",
+        "YES",
+        "NO",
+        "SaveBindings"
     ]
 }

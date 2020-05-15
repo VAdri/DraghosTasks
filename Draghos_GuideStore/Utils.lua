@@ -233,6 +233,14 @@ function DraghosUtils.FP:Unique(t)
     return _t;
 end
 
+--- @param func function
+--- @return function
+function DraghosUtils.FP:ReverseResult(func)
+    return function(...)
+        return not func(...);
+    end
+end
+
 --- @param t1 table
 --- @param t2 table
 --- @return table
@@ -361,6 +369,39 @@ function DraghosUtils.Helpers:PlayerIsCastingSpellID(spellID)
         -- Retail
         return select(9, UnitCastingInfo("player")) == spellID;
     end
+end
+
+-- *********************************************************************************************************************
+-- ***** Hacks
+-- *********************************************************************************************************************
+
+DraghosUtils.Hacks = {};
+
+local NamedFramePoolMixin = {};
+
+NamedFramePoolMixin = CreateFromMixins(ObjectPoolMixin);
+
+local function FramePoolFactory(framePool)
+    local name = framePool.nameSuffix .. (framePool.numActiveObjects + 1);
+    return CreateFrame(framePool.frameType, name, framePool.parent, framePool.frameTemplate);
+end
+
+function NamedFramePoolMixin:OnLoad(frameType, parent, frameTemplate, resetterFunc, nameSuffix)
+    ObjectPoolMixin.OnLoad(self, FramePoolFactory, resetterFunc);
+    self.frameType = frameType;
+    self.parent = parent;
+    self.frameTemplate = frameTemplate;
+    self.nameSuffix = nameSuffix;
+end
+
+function NamedFramePoolMixin:GetTemplate()
+    return self.frameTemplate;
+end
+
+function DraghosUtils.Hacks:CreateNamedFramePool(frameType, parent, frameTemplate, resetterFunc, nameSuffix)
+    local framePool = CreateFromMixins(NamedFramePoolMixin);
+    framePool:OnLoad(frameType, parent, frameTemplate, resetterFunc or FramePool_HideAndClearAnchors, nameSuffix);
+    return framePool;
 end
 
 -- *********************************************************************************************************************

@@ -37,6 +37,25 @@ Draghos_GuideStore.npcs = {
         reactHorde = 1,
         reactAlliance = -1,
     },
+    [36943] = {
+        npcID = 36943,
+        names = {
+            ["deDE"] = "Eindringling der Borstennacken",
+            ["enUS"] = "Bristleback Invader",
+            ["enGB"] = "Bristleback Invader",
+            ["esES"] = "Invasor Erizapúas",
+            ["esMX"] = "Invasor Erizapúas",
+            ["frFR"] = "Envahisseur dos-hirsute",
+            ["itIT"] = "Invasore Mantotergo",
+            ["koKR"] = "뾰족털 침략자",
+            ["ptBR"] = "Invasor Costagulha",
+            ["ruRU"] = "Налетчик из племени Дыбогривов",
+            ["zhTW"] = "刺背入侵者",
+            ["zhCN"] = "刺背入侵者",
+        },
+        reactHorde = -1,
+        reactAlliance = -1,
+    },
     [36694] = { -- Adana Thunderhorn
         npcID = 36694,
         names = {

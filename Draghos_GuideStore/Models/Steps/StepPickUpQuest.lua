@@ -4,11 +4,13 @@ Mixin(StepPickUpQuestMixin, DraghosMixins.Step);
 Mixin(StepPickUpQuestMixin, DraghosMixins.Quest);
 Mixin(StepPickUpQuestMixin, DraghosMixins.NPC);
 Mixin(StepPickUpQuestMixin, DraghosMixins.Location);
+Mixin(StepPickUpQuestMixin, DraghosMixins.Target);
 
 function StepPickUpQuestMixin:Init(step)
     self:StepInit(step);
     self:QuestInit(step.quest);
     self:NPCInit(step.npc);
+    self:TargetInit();
     self:LocationInit(step.location);
 
     self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineSpeakTo, step));

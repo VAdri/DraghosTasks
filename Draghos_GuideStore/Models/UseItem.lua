@@ -24,7 +24,7 @@ function UseItemMixin:UseItemInit(item)
     self.itemID = item.itemID;
     self.itemSpellID = item.spellID;
     self.item = item.itemID and Item:CreateFromItemID(self.itemID);
-    self.spell = item and item.spellID and Spell:CreateFromSpellID(self.itemSpellID);
+    self.spell = item.spellID and Spell:CreateFromSpellID(self.itemSpellID);
 
     Draghos_GuideStore:RegisterForNotifications(self, "BAG_UPDATE_COOLDOWN");
     Draghos_GuideStore:RegisterForNotifications(self, "UNIT_SPELLCAST_SUCCEEDED");

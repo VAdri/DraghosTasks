@@ -1,12 +1,16 @@
+local FP = DraghosUtils.FP;
+
 local StepCompleteQuestMixin = {};
 
 Mixin(StepCompleteQuestMixin, DraghosMixins.Virtual_StepWithObjectives);
 Mixin(StepCompleteQuestMixin, DraghosMixins.Step);
 Mixin(StepCompleteQuestMixin, DraghosMixins.Quest);
+Mixin(StepCompleteQuestMixin, DraghosMixins.Target);
 
 function StepCompleteQuestMixin:Init(step)
     self:StepInit(step);
     self:QuestInit(step.quest);
+    self:TargetInit(FP:Concat(step.targets or {}, step.quest.targets or {}));
     -- self:LocationInit(step.location);
 
     self:AddMultipleStepLines(self:CreateQuestObjectives(nil));
@@ -21,7 +25,7 @@ function StepCompleteQuestMixin:GetLabel()
 end
 
 function StepCompleteQuestMixin:IsValid()
-    return self:IsValidStep() and self:IsValidQuest();
+    return self:IsValidStep() and self:IsValidQuest() and not self:HasInvalidTargets();
 end
 
 function StepCompleteQuestMixin:IsCompleted()

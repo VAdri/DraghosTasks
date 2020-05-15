@@ -37,6 +37,10 @@ function StepMixin:GetWaypointsInfo()
     return FP:Flatten(FP:Map(stepLineLocations, FP:CallOnSelf("GetWaypointsInfo")));
 end
 
+function StepMixin:HasTargets()
+    return false;
+end
+
 function StepMixin:CanUseItem()
     return false;
 end

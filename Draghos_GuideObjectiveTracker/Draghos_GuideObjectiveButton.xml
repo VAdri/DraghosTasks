@@ -2,7 +2,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Script file="Draghos_GuideObjectiveItemButton.lua"/>
+    <Script file="Draghos_GuideObjectiveButton.lua"/>
 
     <Frame name="GuideStepTypeIconTemplate" virtual="true">
         <Size x="20" y="20"/>
@@ -32,7 +32,7 @@
         </Layers>
     </Frame>
 
-    <Button name="GuideObjectiveItemButtonTemplate" inherits="SecureActionButtonTemplate" virtual="true">
+    <Button name="GuideObjectiveButtonTemplate" inherits="SecureActionButtonTemplate" virtual="true">
         <Attributes>
             <Attribute name="type1" value="item" />
             <!-- <Attribute name="item" value="" /> -->
@@ -60,16 +60,15 @@
             <Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate"/>
         </Frames>
         <Scripts>
-            <OnLoad function="GuideObjectiveItem_OnLoad"/>
-            <OnEvent function="GuideObjectiveItem_OnEvent"/>
-            <OnUpdate function="GuideObjectiveItem_OnUpdate"/>
-            <OnShow function="GuideObjectiveItem_OnShow"/>
-            <OnHide function="GuideObjectiveItem_OnHide"/>
-            <OnEnter function="GuideObjectiveItem_OnEnter"/>
+            <OnLoad function="GuideObjectiveButton_OnLoad"/>
+            <OnEvent function="GuideObjectiveButton_OnEvent"/>
+            <OnUpdate function="GuideObjectiveButton_OnUpdate"/>
+            <OnShow function="GuideObjectiveButton_OnShow"/>
+            <OnHide function="GuideObjectiveButton_OnHide"/>
+            <OnEnter function="GuideObjectiveButton_OnEnter"/>
             <OnLeave>
                 GameTooltip:Hide();
             </OnLeave>
-            <!-- <OnClick function="GuideObjectiveItem_OnClick"/> -->
         </Scripts>
         <NormalTexture parentKey="NormalTexture" file="Interface\Buttons\UI-Quickslot2">
             <Size x="42" y="42"/>

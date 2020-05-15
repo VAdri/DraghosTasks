@@ -5,11 +5,13 @@ local StepLineSpeakToMixin = {};
 Mixin(StepLineSpeakToMixin, DraghosMixins.StepLine);
 Mixin(StepLineSpeakToMixin, DraghosMixins.NPC);
 Mixin(StepLineSpeakToMixin, DraghosMixins.Location);
+Mixin(StepLineSpeakToMixin, DraghosMixins.Target);
 
 function StepLineSpeakToMixin:Init(stepLine)
     self:StepLineInit();
     self:NPCInit(stepLine.npc);
     self:LocationInit(stepLine.location);
+    self:TargetInit({stepLine.npc});
 
     -- When speaking to a standard NPC
     Draghos_GuideStore:RegisterForNotifications(self, "GOSSIP_SHOW");
@@ -30,7 +32,7 @@ function StepLineSpeakToMixin:GetLabel()
 end
 
 function StepLineSpeakToMixin:IsValid()
-    return self:IsValidStepLine() and self:IsValidNPC() and self:IsValidLocation();
+    return self:IsValidStepLine() and self:IsValidNPC() and self:IsValidLocation() and not self:HasInvalidTargets();
 end
 
 function StepLineSpeakToMixin:IsCompleted()

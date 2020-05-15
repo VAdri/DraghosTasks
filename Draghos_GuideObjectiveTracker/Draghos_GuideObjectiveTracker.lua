@@ -111,22 +111,25 @@ OBJECTIVE_TRACKER_COLOR["PartialHighlight"].reverse = OBJECTIVE_TRACKER_COLOR["P
 --- @param block table
 --- @param step Step
 function GUIDE_TRACKER_MODULE:SetBlockHeader(block, step)
-    if step:CanUseItem() then
-        GuideObjective_SetupHeader(block);
+    local hasButton = false;
 
-        local hasItem;
+    GuideObjective_SetupHeader(block);
+
+    if step:CanUseItem() then
         if step.questID and step:IsQuestItemToUse() then
             local questLogIndex = step:GetQuestLogIndex();
             local isQuestComplete = step:IsQuestCompleted();
-            hasItem = QuestObjectiveSetupBlockButton_Item(block, questLogIndex, isQuestComplete);
+            hasButton = QuestObjectiveSetupBlockButton_Item(block, questLogIndex, isQuestComplete) or hasButton;
         elseif step.item then
-            hasItem = GuideObjectiveSetupBlockButton_Item(block, step.item);
+            hasButton = GuideObjectiveSetupBlockButton_Item(block, step.item) or hasButton;
         end
+    end
 
+    hasButton = GuideObjectiveSetupBlockButton_Targets(block, step) or hasButton;
+
+    if not (hasButton) then
         -- Special case for previous behavior...if there are no buttons then use default line width from module
-        if not (hasItem) then
-            block.lineWidth = nil;
-        end
+        block.lineWidth = nil;
     end
 
     local color;
@@ -347,7 +350,7 @@ end
 function GUIDE_TRACKER_MODULE:ClearBlockData(block)
     -- Hide icon and button
     GuideObjectiveBlock_ReleaseLeftIcon(block);
-    GuideObjectiveItem_ReleaseButton(block);
+    GuideObjectiveButton_Release(block);
 
     -- Unwatch step
     if block.step:IsCompleted() then
@@ -356,6 +359,10 @@ function GUIDE_TRACKER_MODULE:ClearBlockData(block)
 end
 
 function GUIDE_TRACKER_MODULE:OnFreeBlock(block)
+    GuideObjectiveReleaseBlockButton_Item(block);
+    -- TODO: GuideObjectiveReleaseBlockButton_Spell(block);
+    GuideObjectiveReleaseBlockButton_Targets(block);
+
     self:ClearBlockData(block);
 end
 

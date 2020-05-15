@@ -1,7 +1,7 @@
 local StepUseHearthstoneMixin = {}
 
-Mixin(StepUseHearthstoneMixin, StepMixin);
-Mixin(StepUseHearthstoneMixin, LocationMixin);
+Mixin(StepUseHearthstoneMixin, DraghosMixins.Step);
+Mixin(StepUseHearthstoneMixin, DraghosMixins.Location);
 Mixin(StepUseHearthstoneMixin, DraghosMixins.Hearth);
 Mixin(StepUseHearthstoneMixin, DraghosMixins.UseItem);
 
@@ -10,10 +10,9 @@ function StepUseHearthstoneMixin:Init(step)
     self:LocationInit(step.location);
     self:HearthInit(step.location);
 
-    local hearthstoneID = PlayerHasHearthstone();
-    self:UseItemInit(Draghos_GuideStore:GetHearthstoneItemByID(hearthstoneID));
-
-    -- self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(StepLineGrindProgressMixin, step));
+    local hearthstoneID = PlayerHasHearthstone(); -- TODO: It can return nil
+    local hearthstone = Draghos_GuideStore:GetHearthstoneItemByID(hearthstoneID);
+    self:UseItemInit(hearthstone);
 end
 
 function StepUseHearthstoneMixin:GetStepType()

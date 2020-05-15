@@ -1,3 +1,7 @@
+local Hacks = DraghosUtils.Hacks;
+local Str = DraghosUtils.Str;
+local FP = DraghosUtils.FP;
+
 local defaultInitialAnchorOffsets = {0, 0};
 
 function GuideObjective_SetupHeader(block, initialLineWidth)
@@ -120,105 +124,20 @@ function GuideObjectiveBlock_ReleaseLeftIcon(block)
 end
 
 -- *****************************************************************************************************
--- ***** RIGHT ITEM BUTTON
+-- ***** RIGHT BUTTON MANAGER
 -- *****************************************************************************************************
 
-local g_guideObjectiveItemPool = CreateFramePool("BUTTON", nil, "GuideObjectiveItemButtonTemplate", OnRelease);
-function GuideObjectiveItem_AcquireButton(parent)
-    local itemButton = g_guideObjectiveItemPool:Acquire();
-    itemButton:SetParent(parent);
-
-    return itemButton;
+local g_guideObjectiveButtonPool = Hacks:CreateNamedFramePool(
+                                       "BUTTON", nil, "GuideObjectiveButtonTemplate", OnRelease, "GuideObjectiveButton"
+                                   );
+function GuideObjectiveButton_Acquire(parent)
+    local button = g_guideObjectiveButtonPool:Acquire();
+    button:SetParent(parent);
+    return button;
 end
 
-function GuideObjectiveItem_ReleaseButton(button)
-    g_guideObjectiveItemPool:Release(button);
-end
-
-function GuideObjectiveItem_Initialize(itemButton, item)
-    itemButton:SetID(item:GetItemID());
-    itemButton:SetAttribute("type1", "item")
-    itemButton:SetAttribute("item", item:GetItemName());
-    itemButton.item = item;
-    -- itemButton.charges = nil;
-    itemButton.rangeTimer = -1;
-    SetItemButtonTexture(itemButton, item:GetItemIcon());
-    -- SetItemButtonCount(itemButton, itemButton.charges);
-    GuideObjectiveItem_UpdateCooldown(itemButton);
-end
-
-function GuideObjectiveItem_OnLoad(self)
-    self:RegisterForClicks("AnyUp")
-    self:HookScript("OnClick", GuideObjectiveItem_OnClick)
-end
-
-function GuideObjectiveItem_OnEvent(self, event, ...)
-    if (event == "PLAYER_TARGET_CHANGED") then
-        self.rangeTimer = -1;
-    elseif (event == "BAG_UPDATE_COOLDOWN") then
-        GuideObjectiveItem_UpdateCooldown(self);
-    end
-end
-
-function GuideObjectiveItem_OnUpdate(self, elapsed)
-    -- -- Handle range indicator
-    local rangeTimer = self.rangeTimer;
-    if (rangeTimer) then
-        rangeTimer = rangeTimer - elapsed;
-        if (rangeTimer <= 0) then
-            local count = self.HotKey;
-            -- ! IsItemInRange return true, false or nil but IsSpellInRange return 1, 0 or nil
-            local valid = IsItemInRange(self.item:GetItemName(), "player");
-            if (valid == false) then
-                count:Show();
-                count:SetVertexColor(1.0, 0.1, 0.1);
-            elseif (valid == true) then
-                count:Show();
-                count:SetVertexColor(0.6, 0.6, 0.6);
-            else
-                count:Hide();
-            end
-            rangeTimer = TOOLTIP_UPDATE_TIME;
-        end
-
-        self.rangeTimer = rangeTimer;
-    end
-end
-
-function GuideObjectiveItem_OnShow(self)
-    self:RegisterEvent("PLAYER_TARGET_CHANGED");
-    self:RegisterEvent("BAG_UPDATE_COOLDOWN");
-end
-
-function GuideObjectiveItem_OnHide(self)
-    self:UnregisterEvent("PLAYER_TARGET_CHANGED");
-    self:UnregisterEvent("BAG_UPDATE_COOLDOWN");
-end
-
-function GuideObjectiveItem_OnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-    GameTooltip:SetItemByID(self:GetID());
-end
-
-function GuideObjectiveItem_OnClick(self, button)
-    if (IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow()) then
-        local link = self.item:GetItemLink();
-        if (link) then
-            ChatEdit_InsertLink(link);
-        end
-    end
-end
-
-function GuideObjectiveItem_UpdateCooldown(itemButton)
-    local start, duration, enable = GetItemCooldown(itemButton:GetID());
-    if (start) then
-        CooldownFrame_Set(itemButton.Cooldown, start, duration, enable);
-        if (duration > 0 and enable == 0) then
-            SetItemButtonTextureVertexColor(itemButton, 0.4, 0.4, 0.4);
-        else
-            SetItemButtonTextureVertexColor(itemButton, 1, 1, 1);
-        end
-    end
+function GuideObjectiveButton_Release(button)
+    g_guideObjectiveButtonPool:Release(button);
 end
 
 function GuideObjectiveSetupBlockButton_AddRightButton(block, button, initialAnchorOffsets)
@@ -245,15 +164,146 @@ function GuideObjectiveSetupBlockButton_AddRightButton(block, button, initialAnc
     block.lineWidth = block.lineWidth - button:GetWidth() - paddingBetweenButtons;
 end
 
+-- *****************************************************************************************************
+-- ***** BUTTON HOKS
+-- *****************************************************************************************************
+
+function GuideObjectiveButton_OnLoad(self)
+    self:RegisterForClicks("AnyUp")
+    self:HookScript("OnClick", GuideObjectiveButton_OnClick)
+end
+
+function GuideObjectiveButton_OnEvent(self, event, ...)
+    if (event == "PLAYER_TARGET_CHANGED") then
+        self.rangeTimer = -1;
+    elseif (event == "BAG_UPDATE_COOLDOWN") then
+        GuideObjectiveButton_UpdateCooldown(self);
+    end
+end
+
+function GuideObjectiveButton_UpdateCooldown(self)
+    if self.item then
+        GuideObjectiveButton_UpdateItemCooldown(self);
+        -- elseif self.spell then
+        --     GuideObjectiveButton_UpdateSpellCooldown(self);
+    end
+end
+
+function GuideObjectiveButton_OnUpdate(self, elapsed)
+    if self.item then
+        GuideObjectiveButton_UpdateItem(self, elapsed);
+        -- elseif self.spell then
+        --     GuideObjectiveButton_UpdateSpell(self, elapsed);
+    elseif self.targets then
+        GuideObjectiveButton_UpdateTarget(self, elapsed);
+    end
+end
+
+function GuideObjectiveButton_OnShow(self)
+    self:RegisterEvent("PLAYER_TARGET_CHANGED");
+    self:RegisterEvent("BAG_UPDATE_COOLDOWN");
+end
+
+function GuideObjectiveButton_OnHide(self)
+    self:UnregisterEvent("PLAYER_TARGET_CHANGED");
+    self:UnregisterEvent("BAG_UPDATE_COOLDOWN");
+end
+
+function GuideObjectiveButton_OnEnter(self)
+    if self.item then
+        GuideObjectiveButton_ShowItemTooltip(self);
+        -- elseif self.spell then
+        --     GuideObjectiveButton_ShowSpellTooltip(self);
+    elseif self.targets then
+        GuideObjectiveButton_ShowTargetTooltip(self);
+    end
+end
+
+function GuideObjectiveButton_OnClick(self, button)
+    if self.item then
+        GuideObjectiveButton_OnItemClick(self, button);
+        -- elseif self.spell then
+        --     GuideObjectiveButton_OnSpellClick(self, button);
+    elseif self.targets then
+        GuideObjectiveButton_OnTargetClick(self, button);
+    end
+end
+
+-- *****************************************************************************************************
+-- ***** ITEM BUTTON
+-- *****************************************************************************************************
+
+function GuideObjectiveButton_InitializeItem(itemButton, item)
+    itemButton:SetID(item:GetItemID());
+    itemButton:SetAttribute("type1", "item")
+    itemButton:SetAttribute("item", item:GetItemName());
+    itemButton.item = item;
+    -- itemButton.charges = nil;
+    itemButton.rangeTimer = -1;
+    SetItemButtonTexture(itemButton, item:GetItemIcon());
+    -- SetItemButtonCount(itemButton, itemButton.charges);
+    GuideObjectiveButton_UpdateItemCooldown(itemButton);
+end
+
+function GuideObjectiveButton_ShowItemTooltip(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+    GameTooltip:SetItemByID(self:GetID());
+end
+
+function GuideObjectiveButton_OnItemClick(self, button)
+    if (IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow()) then
+        local link = self.item:GetItemLink();
+        if (link) then
+            ChatEdit_InsertLink(link);
+        end
+    end
+end
+function GuideObjectiveButton_UpdateItem(self, elapsed)
+    -- -- Handle range indicator
+    local rangeTimer = self.rangeTimer;
+    if (rangeTimer) then
+        rangeTimer = rangeTimer - elapsed;
+        if (rangeTimer <= 0) then
+            local count = self.HotKey;
+            -- ! IsItemInRange return true, false or nil but IsSpellInRange return 1, 0 or nil
+            local valid = IsItemInRange(self.item:GetItemName(), "player");
+            if (valid == false) then
+                count:Show();
+                count:SetVertexColor(1.0, 0.1, 0.1);
+            elseif (valid == true) then
+                count:Show();
+                count:SetVertexColor(0.6, 0.6, 0.6);
+            else
+                count:Hide();
+            end
+            rangeTimer = TOOLTIP_UPDATE_TIME;
+        end
+
+        self.rangeTimer = rangeTimer;
+    end
+end
+
+function GuideObjectiveButton_UpdateItemCooldown(itemButton)
+    local start, duration, enable = GetItemCooldown(itemButton:GetID());
+    if (start) then
+        CooldownFrame_Set(itemButton.Cooldown, start, duration, enable);
+        if (duration > 0 and enable == 0) then
+            SetItemButtonTextureVertexColor(itemButton, 0.4, 0.4, 0.4);
+        else
+            SetItemButtonTextureVertexColor(itemButton, 1, 1, 1);
+        end
+    end
+end
+
 function GuideObjectiveSetupBlockButton_Item(block, item)
     if item then
         local itemButton = block.itemButton;
         if not itemButton then
-            itemButton = GuideObjectiveItem_AcquireButton(block);
+            itemButton = GuideObjectiveButton_Acquire(block);
             block.itemButton = itemButton;
         end
 
-        GuideObjectiveItem_Initialize(itemButton, item);
+        GuideObjectiveButton_InitializeItem(itemButton, item);
         GuideObjectiveSetupBlockButton_AddRightButton(block, itemButton, block.module.buttonOffsets.useItem);
         return true;
     else
@@ -264,7 +314,114 @@ end
 
 function GuideObjectiveReleaseBlockButton_Item(block)
     if block.itemButton then
-        GuideObjectiveItem_ReleaseButton(block.itemButton);
+        GuideObjectiveButton_Release(block.itemButton);
         block.itemButton = nil;
+    end
+end
+
+-- *****************************************************************************************************
+-- ***** TARGETS BUTTON
+-- *****************************************************************************************************
+
+-- TODO: Set the binding (CTRL-TAB) on the options
+local bindingKey = "CTRL-TAB";
+
+StaticPopupDialogs["DRAGHOS_GOT_KEYBIND_EXISTS"] = {
+    text = TARGET_KEYBIND_ALREADY_EXISTS_DIALOG,
+    button1 = YES,
+    button2 = NO,
+    OnAccept = function()
+        SetBinding(bindingKey, nil);
+        SaveBindings(2)
+        ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_GUIDE);
+    end,
+    OnCancel = function(_, _, action)
+        if action == "clicked" then
+            -- TODO: Modify it in the options
+            bindingKey = nil;
+        end
+    end,
+    timeout = 0,
+    whileDead = true,
+    -- hideOnEscape = true,
+};
+
+local function TargetUnitMacro(name)
+    return "/targetexact " .. name;
+end
+
+function GuideObjectiveButton_InitializeTargets(targetsButton, step)
+    local macroTargets = table.concat(FP:Map(step:GetTargetNames(), TargetUnitMacro), "\n");
+
+    -- targetButton:SetID(item:GetItemID());
+    targetsButton.targets = step:GetTargetIDs();
+
+    targetsButton:SetAttribute("type1", "macro");
+    targetsButton:SetAttribute("macrotext", "/cleartaget\n" .. macroTargets);
+
+    if bindingKey and not g_guideObjectiveButtonPool.hasKeyBind then
+        local bindingAction = GetBindingAction(bindingKey);
+        if not Str:IsBlankString(bindingAction) then
+            if not StaticPopup_Visible("DRAGHOS_GOT_KEYBIND_EXISTS") then
+                local bindingActionName = _G["BINDING_NAME_" .. bindingAction];
+                bindingActionName = bindingActionName and "'" .. bindingActionName .. "'" or ANOTHER_ACTION;
+                StaticPopup_Show("DRAGHOS_GOT_KEYBIND_EXISTS", bindingKey, bindingActionName);
+            end
+        else
+            SetBindingClick(bindingKey, targetsButton:GetName());
+            targetsButton.hasKeyBind = true;
+            g_guideObjectiveButtonPool.hasKeyBind = true;
+        end
+    end
+
+    targetsButton.HotKey:Hide();
+
+    targetsButton.icon = targetsButton:CreateTexture(nil, "BORDER");
+    targetsButton.icon:SetTexture("Interface\\Icons\\Ability_Hunter_SniperShot");
+    targetsButton.icon:SetAllPoints(targetsButton);
+end
+
+function GuideObjectiveButton_ShowTargetTooltip(self)
+    -- GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+    -- GameTooltip:SetItemByID(self:GetID());
+end
+
+function GuideObjectiveButton_OnTargetClick(self, button)
+    -- if (IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow()) then
+    --     local link = self.item:GetItemLink();
+    --     if (link) then
+    --         ChatEdit_InsertLink(link);
+    --     end
+    -- end
+end
+
+function GuideObjectiveButton_UpdateTarget(self, elapsed)
+end
+
+function GuideObjectiveSetupBlockButton_Targets(block, step)
+    if step:HasTargets() then
+        local targetsButton = block.targetsButton;
+        if not targetsButton then
+            targetsButton = GuideObjectiveButton_Acquire(block);
+            block.targetsButton = targetsButton;
+        end
+
+        GuideObjectiveButton_InitializeTargets(targetsButton, step);
+        GuideObjectiveSetupBlockButton_AddRightButton(block, targetsButton, block.module.buttonOffsets.useItem);
+        return true;
+    else
+        GuideObjectiveReleaseBlockButton_Targets(block);
+        return false;
+    end
+end
+
+function GuideObjectiveReleaseBlockButton_Targets(block)
+    if block.targetsButton then
+        if block.targetsButton.hasKeyBind then
+            block.targetsButton.hasKeyBind = false;
+            g_guideObjectiveButtonPool.hasKeyBind = false;
+        end
+        GuideObjectiveButton_Release(block.targetsButton);
+        block.targetsButton = nil;
     end
 end

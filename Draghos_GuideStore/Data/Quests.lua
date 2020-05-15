@@ -15,12 +15,14 @@ Draghos_GuideStore.quests = {
     },
     [14452] = {
         questID = 14452, -- Rite of Strength
-        questObjectives = {
-            [1] = {
-                questObjective = {questID = 14452, index = 1},
-                location = {}, -- TODO
-            },
-        },
+        -- questObjectives = {
+        --     [1] = {
+        --         questObjective = {questID = 14452, index = 1},
+        --         location = {}, -- TODO
+        --         targets = {Draghos_GuideStore.npcs[36943]},
+        --     },
+        -- },
+        targets = {Draghos_GuideStore.npcs[36943]},
         requiredQuestIDs = {14449},
     },
     [24852] = {
@@ -56,7 +58,7 @@ Draghos_GuideStore.quests = {
             [1] = {
                 questObjective = {questID = 14459, index = 1},
                 location = {}, -- TODO
-                npc = Draghos_GuideStore.npcs[36696],
+                targets = {Draghos_GuideStore.npcs[36696]},
             },
         },
         requiredQuestIDs = {14456, 14455},
