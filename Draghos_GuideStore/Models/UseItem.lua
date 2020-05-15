@@ -18,7 +18,7 @@ ItemWatcherFrame:SetScript("OnUpdate", WatchAvailability);
 -- Mixin
 local UseItemMixin = {};
 
-Mixin(UseItemMixin, ObservableMixin);
+Mixin(UseItemMixin, DraghosMixins.Observable);
 
 function UseItemMixin:UseItemInit(item)
     self.itemID = item.itemID;

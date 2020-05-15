@@ -1,14 +1,14 @@
 local StepGrindMixin = {}
 
-Mixin(StepGrindMixin, StepMixin);
-Mixin(StepGrindMixin, ExperienceMixin);
+Mixin(StepGrindMixin, DraghosMixins.Step);
+Mixin(StepGrindMixin, DraghosMixins.Experience);
 
 function StepGrindMixin:Init(step)
     self:StepInit(step);
     self:ExperienceInit(step.experience);
     -- self:LocationInit(step.location);
 
-    self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(StepLineGrindProgressMixin, step));
+    self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineGrindProgress, step));
 end
 
 function StepGrindMixin:GetStepType()

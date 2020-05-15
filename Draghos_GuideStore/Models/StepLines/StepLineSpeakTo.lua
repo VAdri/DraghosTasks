@@ -1,10 +1,10 @@
 local Helpers = DraghosUtils.Helpers;
 
-StepLineSpeakToMixin = {};
+local StepLineSpeakToMixin = {};
 
-Mixin(StepLineSpeakToMixin, StepLineMixin);
-Mixin(StepLineSpeakToMixin, NPCMixin);
-Mixin(StepLineSpeakToMixin, LocationMixin);
+Mixin(StepLineSpeakToMixin, DraghosMixins.StepLine);
+Mixin(StepLineSpeakToMixin, DraghosMixins.NPC);
+Mixin(StepLineSpeakToMixin, DraghosMixins.Location);
 
 function StepLineSpeakToMixin:Init(stepLine)
     self:StepLineInit();
@@ -36,3 +36,5 @@ end
 function StepLineSpeakToMixin:IsCompleted()
     return Helpers:UnitHasUnitID("npc", self.npcID);
 end
+
+DraghosMixins.StepLineSpeakTo = StepLineSpeakToMixin;

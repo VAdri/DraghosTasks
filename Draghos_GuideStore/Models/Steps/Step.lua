@@ -1,9 +1,9 @@
 local FP = DraghosUtils.FP;
 
 --- @class Step
-StepMixin = {};
+local StepMixin = {};
 
-Mixin(StepMixin, ObservableMixin);
+Mixin(StepMixin, DraghosMixins.Observable);
 
 function StepMixin:StepInit(step)
     self.stepID = tonumber(step.id);
@@ -69,3 +69,5 @@ end
 function StepMixin:AddMultipleStepLines(stepLines)
     self.stepLines = FP:Concat(self.stepLines, stepLines);
 end
+
+DraghosMixins.Step = StepMixin;

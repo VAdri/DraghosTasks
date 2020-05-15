@@ -1,7 +1,7 @@
-StepLineGrindProgressMixin = {};
+local StepLineGrindProgressMixin = {};
 
-Mixin(StepLineGrindProgressMixin, StepLineMixin);
-Mixin(StepLineGrindProgressMixin, ExperienceMixin);
+Mixin(StepLineGrindProgressMixin, DraghosMixins.StepLine);
+Mixin(StepLineGrindProgressMixin, DraghosMixins.Experience);
 
 function StepLineGrindProgressMixin:Init(stepLine)
     self:StepLineInit();
@@ -33,3 +33,5 @@ end
 function StepLineGrindProgressMixin:IsCompleted()
     return self:IsAboveLevelXP();
 end
+
+DraghosMixins.StepLineGrindProgress = StepLineGrindProgressMixin

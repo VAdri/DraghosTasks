@@ -1,6 +1,6 @@
 local HearthMixin = {};
 
-Mixin(HearthMixin, ObservableMixin);
+Mixin(HearthMixin, DraghosMixins.Observable);
 
 function HearthMixin:HearthInit(location)
     self.hearthNames = location and location.hearthNames;

@@ -7,15 +7,15 @@ local FP = DraghosUtils.FP;
 
 local function InitStep(step)
     if step.stepType == STEP_TYPE_PICKUP_QUEST then
-        return Draghos_GuideStore:CreateGuideItem(StepPickUpQuestMixin, step);
+        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepPickUpQuest, step);
     elseif step.stepType == STEP_TYPE_PROGRESS_QUEST_OBJECTIVE then
-        return Draghos_GuideStore:CreateGuideItem(StepProgressQuestObjectivesMixin, step);
+        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepProgressQuestObjectives, step);
     elseif step.stepType == STEP_TYPE_COMPLETE_QUEST_OBJECTIVE then
-        return Draghos_GuideStore:CreateGuideItem(StepCompleteQuestObjectivesMixin, step);
+        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepCompleteQuestObjectives, step);
     elseif step.stepType == STEP_TYPE_COMPLETE_QUEST then
-        return Draghos_GuideStore:CreateGuideItem(StepCompleteQuestMixin, step);
+        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepCompleteQuest, step);
     elseif step.stepType == STEP_TYPE_HANDIN_QUEST then
-        return Draghos_GuideStore:CreateGuideItem(StepHandInQuestMixin, step);
+        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepHandInQuest, step);
     elseif step.stepType == STEP_TYPE_GRIND then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepGrind, step);
     elseif step.stepType == STEP_TYPE_USE_HEARTHSTONE then

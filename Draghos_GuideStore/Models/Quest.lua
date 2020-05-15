@@ -1,6 +1,6 @@
 local FP = DraghosUtils.FP;
 
-QuestMixin = {};
+local QuestMixin = {};
 
 function QuestMixin:QuestInit(quest)
     self.questID = tonumber(quest.questID);
@@ -58,7 +58,7 @@ function QuestMixin:RequiredQuestsCompleted()
 end
 
 function QuestMixin:RequiredStepsCompleted()
-    local requiredStepsCompleted = StepMixin.RequiredStepsCompleted(self);
+    local requiredStepsCompleted = DraghosMixins.Step.RequiredStepsCompleted(self);
     return requiredStepsCompleted and self:RequiredQuestsCompleted();
 end
 
@@ -76,7 +76,7 @@ function QuestMixin:IsQuestItemToUse()
 end
 
 function QuestMixin:GetQuestObjectives()
-    return FP:FilterByProp(self.stepLines or {}, "QuestObjectiveInit", QuestObjectiveMixin.QuestObjectiveInit);
+    return FP:FilterByProp(self.stepLines or {}, "QuestObjectiveInit", DraghosMixins.QuestObjective.QuestObjectiveInit);
 end
 
 function QuestMixin:CreateQuestObjectives(questObjectivesIndexes)
@@ -105,7 +105,11 @@ function QuestMixin:CreateQuestObjectives(questObjectivesIndexes)
     end
 
     local function CreateQuestObjective(questObjectiveIndex)
-        return Draghos_GuideStore:CreateGuideItem(StepLineQuestObjectiveMixin, questObjectives[questObjectiveIndex]);
+        return Draghos_GuideStore:CreateGuideItem(
+                   DraghosMixins.StepLineQuestObjective, questObjectives[questObjectiveIndex]
+               );
     end
     return FP:Map(questObjectivesIndexes, CreateQuestObjective);
 end
+
+DraghosMixins.Quest = QuestMixin;

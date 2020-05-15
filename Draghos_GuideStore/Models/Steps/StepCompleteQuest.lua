@@ -1,8 +1,8 @@
-StepCompleteQuestMixin = {};
+local StepCompleteQuestMixin = {};
 
-Mixin(StepCompleteQuestMixin, Virtual_StepWithObjectivesMixin);
-Mixin(StepCompleteQuestMixin, StepMixin);
-Mixin(StepCompleteQuestMixin, QuestMixin);
+Mixin(StepCompleteQuestMixin, DraghosMixins.Virtual_StepWithObjectives);
+Mixin(StepCompleteQuestMixin, DraghosMixins.Step);
+Mixin(StepCompleteQuestMixin, DraghosMixins.Quest);
 
 function StepCompleteQuestMixin:Init(step)
     self:StepInit(step);
@@ -29,6 +29,8 @@ function StepCompleteQuestMixin:IsCompleted()
 end
 
 function StepCompleteQuestMixin:RequiredStepsCompleted()
-    local requiredStepsCompleted = StepMixin.RequiredStepsCompleted(self);
-    return requiredStepsCompleted and StepPickUpQuestMixin.IsCompleted(self);
+    local requiredStepsCompleted = DraghosMixins.Step.RequiredStepsCompleted(self);
+    return requiredStepsCompleted and DraghosMixins.StepPickUpQuest.IsCompleted(self);
 end
+
+DraghosMixins.StepCompleteQuest = StepCompleteQuestMixin;

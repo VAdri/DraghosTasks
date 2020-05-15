@@ -1,9 +1,9 @@
-StepHandInQuestMixin = {};
+local StepHandInQuestMixin = {};
 
-Mixin(StepHandInQuestMixin, StepMixin);
-Mixin(StepHandInQuestMixin, QuestMixin);
-Mixin(StepHandInQuestMixin, NPCMixin);
-Mixin(StepHandInQuestMixin, LocationMixin);
+Mixin(StepHandInQuestMixin, DraghosMixins.Step);
+Mixin(StepHandInQuestMixin, DraghosMixins.Quest);
+Mixin(StepHandInQuestMixin, DraghosMixins.NPC);
+Mixin(StepHandInQuestMixin, DraghosMixins.Location);
 
 function StepHandInQuestMixin:Init(step)
     self:StepInit(step);
@@ -11,7 +11,7 @@ function StepHandInQuestMixin:Init(step)
     self:NPCInit(step.npc);
     self:LocationInit(step.location);
 
-    self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(StepLineSpeakToMixin, step));
+    self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineSpeakTo, step));
 end
 
 function StepHandInQuestMixin:GetStepType()
@@ -31,6 +31,8 @@ function StepHandInQuestMixin:IsCompleted()
 end
 
 function StepHandInQuestMixin:RequiredStepsCompleted()
-    local requiredStepsCompleted = StepMixin.RequiredStepsCompleted(self);
+    local requiredStepsCompleted = DraghosMixins.Step.RequiredStepsCompleted(self);
     return requiredStepsCompleted and self:IsQuestCompleted();
 end
+
+DraghosMixins.StepHandInQuest = StepHandInQuestMixin;

@@ -1,6 +1,6 @@
 local Str = DraghosUtils.Str;
 
-QuestObjectiveMixin = {};
+local QuestObjectiveMixin = {};
 
 --- @class QuestObjective
 --- @field questID number
@@ -81,3 +81,5 @@ end
 -- return self:IsObjectiveType(CUSTOM_QUEST_OBJECTIVE_TYPE_SET_FREE);
 --     return self.overrideObjectiveType == CUSTOM_QUEST_OBJECTIVE_TYPE_SET_FREE;
 -- end
+
+DraghosMixins.QuestObjective = QuestObjectiveMixin;

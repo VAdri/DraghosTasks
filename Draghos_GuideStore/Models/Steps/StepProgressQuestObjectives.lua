@@ -1,10 +1,8 @@
-local FP = DraghosUtils.FP;
+local StepProgressQuestObjectivesMixin = {};
 
-StepProgressQuestObjectivesMixin = {};
-
-Mixin(StepProgressQuestObjectivesMixin, Virtual_StepWithObjectivesMixin);
-Mixin(StepProgressQuestObjectivesMixin, StepMixin);
-Mixin(StepProgressQuestObjectivesMixin, QuestMixin);
+Mixin(StepProgressQuestObjectivesMixin, DraghosMixins.Virtual_StepWithObjectives);
+Mixin(StepProgressQuestObjectivesMixin, DraghosMixins.Step);
+Mixin(StepProgressQuestObjectivesMixin, DraghosMixins.Quest);
 -- Mixin(StepProgressQuestObjectiveMixin, LocationMixin);
 
 function StepProgressQuestObjectivesMixin:Init(step)
@@ -41,6 +39,8 @@ function StepProgressQuestObjectivesMixin:IsCompleted()
 end
 
 function StepProgressQuestObjectivesMixin:RequiredStepsCompleted()
-    local requiredStepsCompleted = StepMixin.RequiredStepsCompleted(self);
-    return requiredStepsCompleted and StepPickUpQuestMixin.IsCompleted(self);
+    local requiredStepsCompleted = DraghosMixins.Step.RequiredStepsCompleted(self);
+    return requiredStepsCompleted and DraghosMixins.StepPickUpQuest.IsCompleted(self);
 end
+
+DraghosMixins.StepProgressQuestObjectives = StepProgressQuestObjectivesMixin;

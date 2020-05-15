@@ -1,6 +1,6 @@
-StepLineMixin = {};
+local StepLineMixin = {};
 
-Mixin(StepLineMixin, ObservableMixin);
+Mixin(StepLineMixin, DraghosMixins.Observable);
 
 function StepLineMixin:StepLineInit()
 end
@@ -16,3 +16,5 @@ end
 function StepLineMixin:CanAddWaypoints()
     return false;
 end
+
+DraghosMixins.StepLine = StepLineMixin

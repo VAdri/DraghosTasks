@@ -1,6 +1,6 @@
 local Str = DraghosUtils.Str;
 
-LocationMixin = {};
+local LocationMixin = {};
 
 function LocationMixin:LocationInit(location)
     if not location then
@@ -44,3 +44,5 @@ end
 function LocationMixin:IsValidLocation()
     return self.hasLocation and self.uiMapID and not Str:IsBlankString(self:GetZoneName());
 end
+
+DraghosMixins.Location = LocationMixin;

@@ -1,4 +1,4 @@
-ObservableMixin = {};
+local ObservableMixin = {};
 
 function ObservableMixin:Watch(frame, handler)
     assert(type(self) == "table", "Usage: ObservableMixin:Watch(frame, handler)");
@@ -32,3 +32,5 @@ function ObservableMixin:NotifyWatchers(event, ...)
         handler(frame, self, event, ...);
     end
 end
+
+DraghosMixins.Observable = ObservableMixin;

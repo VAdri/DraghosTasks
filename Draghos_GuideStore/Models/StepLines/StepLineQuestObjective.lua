@@ -1,8 +1,8 @@
-StepLineQuestObjectiveMixin = {};
+local StepLineQuestObjectiveMixin = {};
 
-Mixin(StepLineQuestObjectiveMixin, StepLineMixin);
-Mixin(StepLineQuestObjectiveMixin, QuestObjectiveMixin);
-Mixin(StepLineQuestObjectiveMixin, LocationMixin);
+Mixin(StepLineQuestObjectiveMixin, DraghosMixins.StepLine);
+Mixin(StepLineQuestObjectiveMixin, DraghosMixins.QuestObjective);
+Mixin(StepLineQuestObjectiveMixin, DraghosMixins.Location);
 
 function StepLineQuestObjectiveMixin:Init(stepLine)
     self:StepLineInit();
@@ -21,3 +21,5 @@ end
 function StepLineQuestObjectiveMixin:IsCompleted()
     return self:IsQuestObjectiveCompleted();
 end
+
+DraghosMixins.StepLineQuestObjective = StepLineQuestObjectiveMixin;

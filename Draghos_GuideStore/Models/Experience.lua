@@ -1,6 +1,6 @@
-ExperienceMixin = {};
+local ExperienceMixin = {};
 
-Mixin(ExperienceMixin, ObservableMixin);
+Mixin(ExperienceMixin, DraghosMixins.Observable);
 
 function ExperienceMixin:ExperienceInit(experience)
     self.level = tonumber(experience.level);
@@ -39,3 +39,5 @@ function ExperienceMixin:GetXPRequired()
         return false, UnitXP("player"), UnitXPMax("player");
     end
 end
+
+DraghosMixins.Experience = ExperienceMixin;

@@ -3,7 +3,7 @@ local Str = DraghosUtils.Str;
 local FP = DraghosUtils.FP;
 local next = next;
 
-NPCMixin = {};
+local NPCMixin = {};
 
 function NPCMixin:NPCInit(npc)
     self.npcID = tonumber(npc.npcID);
@@ -24,3 +24,5 @@ end
 function NPCMixin:IsValidNPC()
     return self.npcID and HasAllNPCNames(self.npcNames) and true or false;
 end
+
+DraghosMixins.NPC = NPCMixin;

@@ -1,6 +1,6 @@
 local FP = DraghosUtils.FP;
 
-Virtual_StepWithObjectivesMixin = {};
+local Virtual_StepWithObjectivesMixin = {};
 
 local function IsQuestObjective(object)
     return object.QuestObjectiveInit ~= nil;
@@ -37,3 +37,5 @@ function Virtual_StepWithObjectivesMixin:GetObjectivesType()
         return nil;
     end
 end
+
+DraghosMixins.Virtual_StepWithObjectives = Virtual_StepWithObjectivesMixin;
