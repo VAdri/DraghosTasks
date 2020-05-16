@@ -10,6 +10,7 @@ local function UseThisLocalization()
     GRIND_PROGRESS = "Progression";
     GRIND_PROGRESS_TO_NEXT_LEVEL = "Progression jusqu'au prochain niveau";
     USE_HEARTHSTONE_TO_TELEPORT = "Utiliser la %s pour retourner à %s";
+    SET_HEARTH_TO_LOCATION = "Faire de %s votre nouveau foyer";
 end
 
 local Locale = GetLocale();

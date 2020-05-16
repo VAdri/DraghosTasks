@@ -408,25 +408,27 @@ local NamedFramePoolMixin = {};
 NamedFramePoolMixin = CreateFromMixins(ObjectPoolMixin);
 
 local function FramePoolFactory(framePool)
-    local name = framePool.nameSuffix .. (framePool.numActiveObjects + 1);
-    return CreateFrame(framePool.frameType, name, framePool.parent, framePool.frameTemplate);
+    local name = framePool.namePrefix .. (framePool.numActiveObjects + 1);
+    local frame = CreateFrame(framePool.frameType, name, framePool.parent, framePool.frameTemplate);
+    frame:SetID(framePool.numActiveObjects + 1);
+    return frame;
 end
 
-function NamedFramePoolMixin:OnLoad(frameType, parent, frameTemplate, resetterFunc, nameSuffix)
+function NamedFramePoolMixin:OnLoad(frameType, parent, frameTemplate, resetterFunc, namePrefix)
     ObjectPoolMixin.OnLoad(self, FramePoolFactory, resetterFunc);
     self.frameType = frameType;
     self.parent = parent;
     self.frameTemplate = frameTemplate;
-    self.nameSuffix = nameSuffix;
+    self.namePrefix = namePrefix;
 end
 
 function NamedFramePoolMixin:GetTemplate()
     return self.frameTemplate;
 end
 
-function DraghosUtils.Hacks:CreateNamedFramePool(frameType, parent, frameTemplate, resetterFunc, nameSuffix)
+function DraghosUtils.Hacks:CreateNamedFramePool(frameType, parent, frameTemplate, resetterFunc, namePrefix)
     local framePool = CreateFromMixins(NamedFramePoolMixin);
-    framePool:OnLoad(frameType, parent, frameTemplate, resetterFunc or FramePool_HideAndClearAnchors, nameSuffix);
+    framePool:OnLoad(frameType, parent, frameTemplate, resetterFunc or FramePool_HideAndClearAnchors, namePrefix);
     return framePool;
 end
 

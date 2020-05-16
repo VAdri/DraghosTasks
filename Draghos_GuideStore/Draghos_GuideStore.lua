@@ -20,6 +20,8 @@ local function InitStep(step)
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepGrind, step);
     elseif step.stepType == STEP_TYPE_USE_HEARTHSTONE then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepUseHearthstone, step);
+    elseif step.stepType == STEP_TYPE_SET_HEARTH then
+        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepSetHearth, step);
     else
         -- ? return Draghos_GuideStore:CreateObject(StepUnknownMixin, step);
     end

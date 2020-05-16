@@ -42,7 +42,7 @@ function StepUseHearthstoneMixin:IsValid()
 end
 
 function StepUseHearthstoneMixin:IsAvailable()
-    return self:IsStepAvailable() and self:IsItemAvailableToUse();
+    return self:IsStepAvailable() and self:IsItemAvailableToUse() and self:IsCurrentHearth();
 end
 
 function StepUseHearthstoneMixin:IsCompleted()

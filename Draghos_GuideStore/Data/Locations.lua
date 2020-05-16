@@ -4,7 +4,8 @@ LOCATION_TYPE_AREA = 3;
 
 Draghos_GuideStore.locations = {
     hearths = {
-        [1] = { -- Camp Narache Hearthstone's location
+        [1] = { -- Camp Narache Hearth location
+            locationType = LOCATION_TYPE_COORDS,
             uiMapID = 462, -- Camp Narache
             coords = {27.77, 28.76},
             hearthNames = {
@@ -21,6 +22,26 @@ Draghos_GuideStore.locations = {
                 ["zhTW"] = "纳拉其营地",
                 ["zhCN"] = "纳拉其营地",
             },
+        },
+        [2] = { -- Innkeeper Kauth's Bloodhoof Village Hearth location in Mulgore
+            locationType = LOCATION_TYPE_COORDS,
+            uiMapID = 1306, -- Mulgore
+            coords = {46.8, 60.4},
+            hearthNames = {
+                ["deDE"] = "",
+                ["enUS"] = "Bloodhoof Village",
+                ["enGB"] = "Bloodhoof Village",
+                ["esES"] = "",
+                ["esMX"] = "",
+                ["frFR"] = "Sabot-de-Sang",
+                ["itIT"] = "",
+                ["koKR"] = "",
+                ["ptBR"] = "",
+                ["ruRU"] = "",
+                ["zhTW"] = "",
+                ["zhCN"] = "",
+            },
+            innkeeper = Draghos_GuideStore.npcs[6747], -- Innkeeper Kauth
         },
     },
     npcs = {

@@ -26,12 +26,12 @@ function TomTomDestination:WatchNextStep()
     repeat
         watchedStep = steps[stepIndex];
         stepIndex = stepIndex + 1;
-    until (not watchedStep or not watchedStep:SkipWaypoint());
+    until (not watchedStep or (not watchedStep:SkipWaypoint() and watchedStep:CanAddWaypoints()));
 
-    -- We need to always watch a step even if we cannot put waypoints on it, otherwise TomTom will never show up
-    if watchedStep --[[and watchedStep:CanAddWaypoints()]] then
-        watchedStep:Watch(self, OnStepUpdated);
+    if watchedStep and watchedStep:CanAddWaypoints() then
         self.watchedStep = watchedStep;
+        watchedStep:Watch(self, OnStepUpdated);
+        OnStepUpdated(self, self.watchedStep);
     end
 end
 

@@ -1,3 +1,5 @@
+local Str = DraghosUtils.Str;
+
 local HearthMixin = {};
 
 Mixin(HearthMixin, DraghosMixins.Observable);
@@ -8,11 +10,11 @@ function HearthMixin:HearthInit(location)
     Draghos_GuideStore:RegisterForNotifications(self, "HEARTHSTONE_BOUND");
 end
 
-function HearthMixin:IsHearthAvailable()
-    return true;
+function HearthMixin:IsValidHearth()
+    return not Str:IsBlankString(self:GetHearthLabel());
 end
 
-function HearthMixin:IsValidHearth()
+function HearthMixin:IsCurrentHearth()
     local hearthName = GetBindLocation();
     return self:GetHearthLabel() == hearthName;
 end

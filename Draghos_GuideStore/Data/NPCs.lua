@@ -37,6 +37,26 @@ Draghos_GuideStore.npcs = {
         reactHorde = 1,
         reactAlliance = -1,
     },
+    [6747] = { -- Innkeeper Kauth
+        npcID = 6747,
+        names = {
+            ["deDE"] = "Gastwirt Kauth",
+            ["enUS"] = "Innkeeper Kauth",
+            ["enGB"] = "Innkeeper Kauth",
+            ["esES"] = "Tabernero Kauth",
+            ["esMX"] = "Tabernero Kauth",
+            ["frFR"] = "Kauth l'aubergiste",
+            ["itIT"] = "Locandiere Kauth",
+            ["koKR"] = "여관주인 카우스",
+            ["ptBR"] = "Estalajadeiro Kauth",
+            ["ruRU"] = "Каут",
+            ["zhTW"] = "旅店老板考乌斯",
+            ["zhCN"] = "旅店老板考乌斯",
+        },
+        reactHorde = 1,
+        reactAlliance = -1,
+        isInnkeeper = true,
+    },
     [36943] = {
         npcID = 36943,
         names = {

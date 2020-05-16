@@ -1,3 +1,4 @@
+local Helpers = DraghosUtils.Helpers;
 local Hacks = DraghosUtils.Hacks;
 local Str = DraghosUtils.Str;
 local FP = DraghosUtils.FP;
@@ -56,6 +57,7 @@ local StepTypeIconTextureInfos = {
     ["OtherObjective"] = {filePath = "Interface\\Scenarios\\ScenarioIcon-Interact", x = 16, y = 16},
     ["Grind"] = {filePath = "Interface\\PaperDollInfoFrame\\Character-Plus", x = 14, y = 14},
     ["Move"] = {filePath = "Interface\\MINIMAP\\TRACKING\\FlightMaster", x = 18, y = 18},
+    ["Hearth"] = {filePath = "Interface\\MINIMAP\\TRACKING\\Innkeeper", x = 18, y = 18},
 };
 
 local guideObjectiveLeftIconPool = CreateFramePool("Frame", nil, "GuideStepTypeIconTemplate", OnRelease);
@@ -127,17 +129,17 @@ end
 -- ***** RIGHT BUTTON MANAGER
 -- *****************************************************************************************************
 
-local g_guideObjectiveButtonPool = Hacks:CreateNamedFramePool(
-                                       "BUTTON", nil, "GuideObjectiveButtonTemplate", OnRelease, "GuideObjectiveButton"
-                                   );
+local guideObjectiveButtonPool = Hacks:CreateNamedFramePool(
+                                     "BUTTON", nil, "GuideObjectiveButtonTemplate", OnRelease, "GuideObjectiveButton"
+                                 );
 function GuideObjectiveButton_Acquire(parent)
-    local button = g_guideObjectiveButtonPool:Acquire();
+    local button = guideObjectiveButtonPool:Acquire();
     button:SetParent(parent);
     return button;
 end
 
 function GuideObjectiveButton_Release(button)
-    g_guideObjectiveButtonPool:Release(button);
+    guideObjectiveButtonPool:Release(button);
 end
 
 function GuideObjectiveSetupBlockButton_AddRightButton(block, button, initialAnchorOffsets)
@@ -350,18 +352,32 @@ local function TargetUnitMacro(name)
     return "/targetexact " .. name;
 end
 
+local buttonActionPattern = "CLICK " .. guideObjectiveButtonPool.namePrefix .. "(%d+):LeftButton";
+
+local function CanSetBindingToTargetsButton(button)
+    if not guideObjectiveButtonPool.currentTartgetBtnBind then
+        -- No target button currently bound to the bindingKey
+        return true;
+    elseif guideObjectiveButtonPool.currentTartgetBtnBind:GetID() > button:GetID() then
+        -- The target button currently bound to the bindingKey has least priority
+        return true;
+    else
+        return false;
+    end
+end
+
 function GuideObjectiveButton_InitializeTargets(targetsButton, step)
     local macroTargets = table.concat(FP:Map(step:GetTargetNames(), TargetUnitMacro), "\n");
 
-    -- targetButton:SetID(item:GetItemID());
+    -- targetsButton:SetID(item:GetItemID());
     targetsButton.targets = step:GetTargetIDs();
 
     targetsButton:SetAttribute("type1", "macro");
     targetsButton:SetAttribute("macrotext", "/cleartaget\n" .. macroTargets);
 
-    if bindingKey and not g_guideObjectiveButtonPool.hasKeyBind then
+    if bindingKey and CanSetBindingToTargetsButton(targetsButton) then
         local bindingAction = GetBindingAction(bindingKey);
-        if not Str:IsBlankString(bindingAction) then
+        if not Str:IsBlankString(bindingAction) and not bindingAction:find(buttonActionPattern) then
             if not StaticPopup_Visible("DRAGHOS_GOT_KEYBIND_EXISTS") then
                 local bindingActionName = _G["BINDING_NAME_" .. bindingAction];
                 bindingActionName = bindingActionName and "'" .. bindingActionName .. "'" or ANOTHER_ACTION;
@@ -369,8 +385,8 @@ function GuideObjectiveButton_InitializeTargets(targetsButton, step)
             end
         else
             SetBindingClick(bindingKey, targetsButton:GetName());
-            targetsButton.hasKeyBind = true;
-            g_guideObjectiveButtonPool.hasKeyBind = true;
+            targetsButton.hasTargetBinding = true;
+            guideObjectiveButtonPool.currentTartgetBtnBind = targetsButton;
         end
     end
 
@@ -387,15 +403,12 @@ function GuideObjectiveButton_ShowTargetTooltip(self)
 end
 
 function GuideObjectiveButton_OnTargetClick(self, button)
-    -- if (IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow()) then
-    --     local link = self.item:GetItemLink();
-    --     if (link) then
-    --         ChatEdit_InsertLink(link);
-    --     end
-    -- end
+    local function IsTarget(targetID)
+        return Helpers:UnitHasUnitID("target", targetID);
+    end
 
     -- Mark the target
-    if not GetRaidTargetIndex("target") then
+    if not GetRaidTargetIndex("target") and FP:Any(self.targets, IsTarget) then
         if UnitIsFriend("player", "target") then
             -- With a star for friendly units
             SetRaidTarget("target", 1);
@@ -428,9 +441,9 @@ end
 
 function GuideObjectiveReleaseBlockButton_Targets(block)
     if block.targetsButton then
-        if block.targetsButton.hasKeyBind then
-            block.targetsButton.hasKeyBind = false;
-            g_guideObjectiveButtonPool.hasKeyBind = false;
+        if block.targetsButton.hasTargetBinding then
+            block.targetsButton.hasTargetBinding = false;
+            guideObjectiveButtonPool.currentTartgetBtnBind = nil;
         end
         GuideObjectiveButton_Release(block.targetsButton);
         block.targetsButton = nil;

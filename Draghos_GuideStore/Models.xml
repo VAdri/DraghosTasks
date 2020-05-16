@@ -25,4 +25,5 @@
     <Script file="Models/Steps/StepPickUpQuest.lua"/>
     <Script file="Models/Steps/StepProgressQuestObjectives.lua"/>
     <Script file="Models/Steps/StepUseHearthstone.lua"/>
+    <Script file="Models/Steps/StepSetHearth.lua"/>
 </Ui>
