@@ -12,6 +12,10 @@ function StepMixin:StepInit(step)
     self.completedAfterCompletedStepIDs = step.completedAfterCompletedStepIDs or {}; -- TODO: Detect potential circular references
 end
 
+function StepMixin:GetStepLines()
+    return self.stepLines or {};
+end
+
 function StepMixin:IsStepAvailable()
     return self:RequiredStepsCompleted();
 end
@@ -29,11 +33,11 @@ function StepMixin:SkipWaypoint()
 end
 
 function StepMixin:CanAddWaypoints()
-    return FP:Any(self.stepLines or {}, FP:CallOnSelf("CanAddWaypoints"));
+    return FP:Any(self:GetStepLines(), FP:CallOnSelf("CanAddWaypoints"));
 end
 
 function StepMixin:GetWaypointsInfo()
-    local stepLineLocations = FP:Filter(self.stepLines or {}, FP:CallOnSelf("CanAddWaypoints"));
+    local stepLineLocations = FP:Filter(self:GetStepLines(), FP:CallOnSelf("CanAddWaypoints"));
     return FP:Flatten(FP:Map(stepLineLocations, FP:CallOnSelf("GetWaypointsInfo")));
 end
 
@@ -67,11 +71,11 @@ function StepMixin:DependentStepsCompleted()
 end
 
 function StepMixin:AddOneStepLine(stepLine)
-    self.stepLines = FP:Append(self.stepLines, stepLine);
+    self.stepLines = FP:Append(self:GetStepLines(), stepLine);
 end
 
 function StepMixin:AddMultipleStepLines(stepLines)
-    self.stepLines = FP:Concat(self.stepLines, stepLines);
+    self.stepLines = FP:Concat(self:GetStepLines(), stepLines);
 end
 
 DraghosMixins.Step = StepMixin;

@@ -14,6 +14,7 @@ function QuestMixin:QuestInit(quest)
     Draghos_GuideStore:RegisterForNotifications(self, "UNIT_QUEST_LOG_CHANGED");
     Draghos_GuideStore:RegisterForNotifications(self, "SUPER_TRACKED_QUEST_CHANGED");
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_DATA_LOAD_RESULT");
+    Draghos_GuideStore:RegisterForNotifications(self, "QUEST_LOG_CRITERIA_UPDATE");
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_AUTOCOMPLETE");
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_TURNED_IN");
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_REMOVED");
@@ -76,10 +77,11 @@ function QuestMixin:IsQuestItemToUse()
 end
 
 function QuestMixin:GetQuestObjectives()
+    -- ! Do not use self:GetStepLines() to avoid circular reference within Virtual_StepWithObjectivesMixin:GetStepLines()
     return FP:FilterByProp(self.stepLines or {}, "QuestObjectiveInit", DraghosMixins.QuestObjective.QuestObjectiveInit);
 end
 
-function QuestMixin:CreateQuestObjectives(questObjectivesIndexes)
+function QuestMixin:CreateQuestObjectives()
     if not self:IsValidQuest() then
         return nil;
     end
@@ -100,6 +102,7 @@ function QuestMixin:CreateQuestObjectives(questObjectivesIndexes)
     end
 
     -- If no index was supplied we create all the objectives
+    local questObjectivesIndexes = self.questObjectivesIndexes;
     if questObjectivesIndexes == nil then
         questObjectivesIndexes = questObjectivesIndexes or FP:Keys(questObjectives);
     end

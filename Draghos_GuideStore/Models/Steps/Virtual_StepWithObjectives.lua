@@ -2,12 +2,31 @@ local FP = DraghosUtils.FP;
 
 local Virtual_StepWithObjectivesMixin = {};
 
-local function IsQuestObjective(object)
-    return object.QuestObjectiveInit ~= nil;
+function Virtual_StepWithObjectivesMixin:AllObjectivesHaveBeenFetched()
+    local currentQuestObjectives = self:GetQuestObjectives();
+
+    if self.questObjectivesIndexes == nil and #currentQuestObjectives ~= C_QuestLog.GetNumQuestObjectives(self.questID) then
+        return false;
+    elseif self.questObjectivesIndexes ~= nil and #currentQuestObjectives ~= #self.questObjectivesIndexes then
+        return false;
+    else
+        return true;
+    end
+end
+
+-- Sometimes (after login for instance), the objectives are not loaded so we need to check them after
+function Virtual_StepWithObjectivesMixin:GetStepLines()
+    if not self:AllObjectivesHaveBeenFetched() then
+        -- The last fetch couldn't get all the objectives
+        local newQuestObjectives = self:CreateQuestObjectives();
+        self.stepLines = FP:UniqueBy(FP:Concat(self.stepLines or {}, newQuestObjectives), "index");
+    end
+
+    return self.stepLines or {};
 end
 
 function Virtual_StepWithObjectivesMixin:GetObjectivesType()
-    local questObjectives = FP:Filter(self.stepLines, IsQuestObjective);
+    local questObjectives = self:GetQuestObjectives();
     local questObjectivesCount = #questObjectives;
     if questObjectivesCount == 0 then
         return nil;

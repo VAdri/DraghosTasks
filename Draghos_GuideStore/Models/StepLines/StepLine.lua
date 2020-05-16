@@ -17,4 +17,8 @@ function StepLineMixin:CanAddWaypoints()
     return false;
 end
 
+function StepLineMixin:GetStepLines()
+    return {};
+end
+
 DraghosMixins.StepLine = StepLineMixin

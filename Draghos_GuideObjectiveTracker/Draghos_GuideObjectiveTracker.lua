@@ -282,7 +282,7 @@ function GUIDE_TRACKER_MODULE:UpdateSingle(step, stepIndex)
 
     self:SetBlockHeader(block, step);
 
-    for stepIndexIndex, stepLine in pairs(step.stepLines) do
+    for stepIndexIndex, stepLine in pairs(step:GetStepLines()) do
         local line;
         if (stepLine:IsCompleted()) then
             line = self:AddObjective(

@@ -2,8 +2,8 @@ local FP = DraghosUtils.FP;
 
 local StepCompleteQuestMixin = {};
 
-Mixin(StepCompleteQuestMixin, DraghosMixins.Virtual_StepWithObjectives);
 Mixin(StepCompleteQuestMixin, DraghosMixins.Step);
+Mixin(StepCompleteQuestMixin, DraghosMixins.Virtual_StepWithObjectives);
 Mixin(StepCompleteQuestMixin, DraghosMixins.Quest);
 Mixin(StepCompleteQuestMixin, DraghosMixins.Target);
 
@@ -13,7 +13,8 @@ function StepCompleteQuestMixin:Init(step)
     self:TargetInit(FP:Concat(step.targets or {}, step.quest.targets or {}));
     -- self:LocationInit(step.location);
 
-    self:AddMultipleStepLines(self:CreateQuestObjectives(nil));
+    self.questObjectivesIndexes = nil;
+    self:AddMultipleStepLines(self:CreateQuestObjectives());
 end
 
 function StepCompleteQuestMixin:GetStepType()

@@ -13,7 +13,7 @@ function TargetMixin:TargetInit(targets)
 end
 
 function TargetMixin:GetTargetNPCs()
-    local incompleteStepLines = FP:Filter(self.stepLines or {}, FP:ReverseResult(FP:CallOnSelf("IsCompleted")));
+    local incompleteStepLines = FP:Filter(self:GetStepLines(), FP:ReverseResult(FP:CallOnSelf("IsCompleted")));
     local stepLinesTargets = FP:Flatten(FP:MapProp(incompleteStepLines, "targets"));
     return FP:Concat(self.targets, stepLinesTargets);
 end

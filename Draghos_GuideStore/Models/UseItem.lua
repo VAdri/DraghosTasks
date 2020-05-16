@@ -21,48 +21,91 @@ local UseItemMixin = {};
 Mixin(UseItemMixin, DraghosMixins.Observable);
 
 function UseItemMixin:UseItemInit(item)
-    self.itemID = item.itemID;
-    self.itemSpellID = item.spellID;
-    self.item = item.itemID and Item:CreateFromItemID(self.itemID);
-    self.spell = item.spellID and Spell:CreateFromSpellID(self.itemSpellID);
+    if type(item.getItemID) == "function" then
+        self.getItemID = item.getItemID;
+    end
+
+    if type(item.getItemSpellID) == "function" then
+        self.getItemSpellID = item.getItemSpellID;
+    end
+
+    self.itemID = tonumber(item.itemID);
+    self.itemSpellID = tonumber(item.spellID);
+    self.item = self.itemID and Item:CreateFromItemID(self.itemID);
+    self.spell = self.itemSpellID and Spell:CreateFromSpellID(self.itemSpellID);
 
     Draghos_GuideStore:RegisterForNotifications(self, "BAG_UPDATE_COOLDOWN");
     Draghos_GuideStore:RegisterForNotifications(self, "UNIT_SPELLCAST_SUCCEEDED");
     Draghos_GuideStore:RegisterForNotifications(self, "UNIT_SPELLCAST_INTERRUPTED");
+    Draghos_GuideStore:RegisterForNotifications(self, "UNIT_SPELLCAST_FAILED");
     Draghos_GuideStore:RegisterForNotifications(self, "SPELL_UPDATE_COOLDOWN");
     Draghos_GuideStore:RegisterForNotifications(self, "SPELL_UPDATE_USABLE");
 end
 
+function UseItemMixin:GetItem()
+    if self.item then
+        return self.item;
+    elseif self.getItemID then
+        local itemID = self.getItemID();
+        if itemID then
+            self.item = self.itemID and Item:CreateFromItemID(self.itemID);
+            return self.item;
+        end
+    end
+end
+
+function UseItemMixin:GetItemSpell()
+    if self.spell then
+        return self.spell;
+    elseif self.getItemSpellID then
+        local itemSpellID = self.getItemSpellID(self.itemID);
+        if itemSpellID then
+            self.itemSpellID = itemSpellID;
+            self.spell = self.itemSpellID and Spell:CreateFromSpellID(self.itemSpellID);
+            return self.spell;
+        end
+    end
+end
+
 function UseItemMixin:IsValidItemToUse()
-    return self.item and --[[self.spell and]] self.item:IsItemDataCached();
+    local item = self:GetItem();
+    return item and --[[self.spell and]] item:IsItemDataCached();
 end
 
 function UseItemMixin:IsItemAvailableToUse()
-    local spellID = self.spell and self.spell:GetSpellID();
+    local item = self:GetItem();
+    if not item then
+        return false;
+    end
+
+    local spell = self:GetItemSpell();
+    local spellID = spell and spell:GetSpellID();
     if spellID and Helpers:PlayerIsCastingSpellID(spellID) then
         -- Player is currently using the item
         return true;
     end
 
-    local _, duration, enabled = GetItemCooldown(self.item:GetItemID());
+    local _, duration, enabled = GetItemCooldown(item:GetItemID());
     if duration == 0 and enabled == 1 then
         return true;
     else
-        ItemWatcherFrame.items[self.item:GetItemID()] = self;
+        ItemWatcherFrame.items[item:GetItemID()] = self;
         return false;
     end
 end
 
 function UseItemMixin:GetItemLabel()
-    return self.item:GetItemName();
+    local item = self:GetItem();
+    return item and item:GetItemName() or nil;
 end
 
 function UseItemMixin:CanUseItem()
-    return true;
+    return self:GetItem() and true or false;
 end
 
 function UseItemMixin:UsedItemID()
-    return self.item.itemID;
+    local item = self:GetItem();
+    return item and item.itemID or nil;
 end
 
 DraghosMixins.UseItem = UseItemMixin;

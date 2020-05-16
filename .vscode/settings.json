@@ -122,6 +122,9 @@
         "StaticPopup_Visible",
         "YES",
         "NO",
-        "SaveBindings"
+        "SaveBindings",
+        "GetRaidTargetIndex",
+        "UnitIsFriend",
+        "SetRaidTarget"
     ]
 }

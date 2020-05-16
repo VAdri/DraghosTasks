@@ -214,14 +214,33 @@ function DraghosUtils.FP:Append(t, item)
     return DraghosUtils.FP:Concat(t, {item});
 end
 
+--- @param prop any
+--- @return function
+function DraghosUtils.FP:PropsAreEqual(prop)
+    return function(v1, v2)
+        return v1[prop] == v2[prop];
+    end
+end
+
+local function BaseCompare(v1, v2)
+    return v1 == v2;
+end
+
 --- @param t table
 --- @return table
 function DraghosUtils.FP:Unique(t)
+    return self:UniqueWith(t, BaseCompare);
+end
+
+--- @param t table
+--- @param func function
+--- @return table
+function DraghosUtils.FP:UniqueWith(t, func)
     local _t = {};
     for _, v1 in pairs(t) do
         local isUnique = true;
         for _, v2 in pairs(_t) do
-            if v1 == v2 then
+            if func(v1, v2) then
                 isUnique = false;
                 break
             end
@@ -231,6 +250,13 @@ function DraghosUtils.FP:Unique(t)
         end
     end
     return _t;
+end
+
+--- @param t table
+--- @param prop any
+--- @return table
+function DraghosUtils.FP:UniqueBy(t, prop)
+    return self:UniqueWith(t, self:PropsAreEqual(prop));
 end
 
 --- @param func function

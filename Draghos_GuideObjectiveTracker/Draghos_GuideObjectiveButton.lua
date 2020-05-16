@@ -393,6 +393,17 @@ function GuideObjectiveButton_OnTargetClick(self, button)
     --         ChatEdit_InsertLink(link);
     --     end
     -- end
+
+    -- Mark the target
+    if not GetRaidTargetIndex("target") then
+        if UnitIsFriend("player", "target") then
+            -- With a star for friendly units
+            SetRaidTarget("target", 1);
+        else
+            -- With a skull for ennemy units
+            SetRaidTarget("target", 8);
+        end
+    end
 end
 
 function GuideObjectiveButton_UpdateTarget(self, elapsed)
