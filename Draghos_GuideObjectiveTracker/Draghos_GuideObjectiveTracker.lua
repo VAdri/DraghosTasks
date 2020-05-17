@@ -133,6 +133,10 @@ function GUIDE_TRACKER_MODULE:SetBlockHeader(block, step)
     end
 
     local color;
+    -- if step:IsImportant() then
+    --     -- TODO: Important steps should be displayed in red
+    --     color = OBJECTIVE_TRACKER_COLOR["ImportantHeader"];
+    -- else
     if step.IsPartial and step:IsPartial() then
         -- Partial steps are grayed out
         color = OBJECTIVE_TRACKER_COLOR["PartialHeader"];
@@ -283,11 +287,20 @@ function GUIDE_TRACKER_MODULE:UpdateSingle(step, stepIndex)
     self:SetBlockHeader(block, step);
 
     for stepIndexIndex, stepLine in pairs(step:GetStepLines()) do
+        local baseColor = nil;
+        local baseCompleteColor = OBJECTIVE_TRACKER_COLOR["Complete"];
+
+        if stepLine:IsImportant() then
+            baseColor = OBJECTIVE_TRACKER_COLOR["TimeLeft"];
+        elseif step.IsPartial and step:IsPartial() then
+            baseColor = OBJECTIVE_TRACKER_COLOR["Partial"];
+        end
+
         local line;
         if (stepLine:IsCompleted()) then
             line = self:AddObjective(
                        block, stepID .. ":" .. stepIndexIndex, stepLine:GetLabel(), LINE_TYPE_ANIM, nil,
-                       OBJECTIVE_DASH_STYLE_HIDE, OBJECTIVE_TRACKER_COLOR["Complete"]
+                       OBJECTIVE_DASH_STYLE_HIDE, baseCompleteColor
                    );
             line.Check:Show();
             if (not line.state or line.state == "PRESENT") then
@@ -299,8 +312,7 @@ function GUIDE_TRACKER_MODULE:UpdateSingle(step, stepIndex)
         else
             line = self:AddObjective(
                        block, stepID .. ":" .. stepIndexIndex, stepLine:GetLabel(), LINE_TYPE_ANIM, nil,
-                       OBJECTIVE_DASH_STYLE_SHOW,
-                       step.IsPartial and step:IsPartial() and OBJECTIVE_TRACKER_COLOR["Partial"] or nil
+                       OBJECTIVE_DASH_STYLE_SHOW, baseColor
                    );
             line.Check:Hide();
         end

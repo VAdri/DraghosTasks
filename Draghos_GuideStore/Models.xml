@@ -15,6 +15,7 @@
 
     <Script file="Models/StepLines/StepLine.lua"/>
     <Script file="Models/StepLines/StepLineGrindProgress.lua"/>
+    <Script file="Models/StepLines/StepLineNote.lua"/>
     <Script file="Models/StepLines/StepLineQuestObjective.lua"/>
     <Script file="Models/StepLines/StepLineSpeakTo.lua"/>
 

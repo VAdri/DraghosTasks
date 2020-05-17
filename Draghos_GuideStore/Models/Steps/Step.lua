@@ -18,6 +18,10 @@ function StepMixin:StepInit(step)
     self.stepLines = {};
     self.requiredStepIDs = step.requiredStepIDs or {}; -- TODO: Detect potential circular references
     self.completedAfterCompletedStepIDs = step.completedAfterCompletedStepIDs or {}; -- TODO: Detect potential circular references
+
+    if step.note then
+        self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineNote, step.note))
+    end
 end
 
 -- *********************************************************************************************************************
@@ -132,7 +136,7 @@ end
 -- *********************************************************************************************************************
 
 function StepMixin:GetStepLines()
-    return self.stepLines or {};
+    return FP:Filter(self.stepLines or {}, FP:ReverseResult(FP:CallOnSelf("IsDisabled")));
 end
 
 function StepMixin:AddOneStepLine(stepLine)

@@ -10,6 +10,7 @@ The guide currently support these kinds of steps:
 - [ ] Abandon a quest
 - [ ] Display a note
 - [x] Grind until reaching a specific level (and potentially an amount of XP)
+- [ ] Grind until reaching a specific reputation level (and potentially an amount of reputation points)
 - [x] Use Hearthstone
 - [x] Set hearth
 - [ ] Go to a zone
@@ -46,7 +47,7 @@ Other features:
     - [x] Item
     - [x] Spell
     - [x] Location
-    - [ ] Notes
+    - [x] Notes
     - [ ] Requirements
 - [ ] Determine automatically if the step is available:
   - [x] Using one of the step logic (see above)

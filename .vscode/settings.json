@@ -136,6 +136,7 @@
         "ERR_NEWTAXIPATH",
         "C_TaxiMap",
         "FlightMapFrame",
-        "Enum"
+        "Enum",
+        "bit"
     ]
 }

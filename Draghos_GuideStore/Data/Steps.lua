@@ -11,11 +11,28 @@ STEP_TYPE_GO = 9;
 STEP_TYPE_GET_FLIGHT_PATH = 10;
 
 Draghos_GuideStore.steps = {
+    [-4] = { --
+        id = -4,
+        stepType = STEP_TYPE_SET_HEARTH,
+        location = Draghos_GuideStore.locations.hearths[2],
+    },
+    [-3] = { --
+        id = -3,
+        stepType = STEP_TYPE_SET_HEARTH,
+        location = Draghos_GuideStore.locations.hearths[1],
+    },
     [-2] = { --
         id = -2,
         stepType = STEP_TYPE_USE_HEARTHSTONE,
         location = Draghos_GuideStore.locations.hearths[2],
         completedAfterCompletedStepIDs = {27},
+        note = {
+            noteType = 0x2,
+            message = {
+                fr = "Ceci est une note qui apparaît commme étant complétée",
+                enUS = "This is a note that appears as completed",
+            },
+        },
     },
     [-1] = { --
         id = -1,
@@ -34,6 +51,7 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[14449],
         npc = Draghos_GuideStore.npcs[2981],
         location = Draghos_GuideStore.locations.npcs[1],
+        note = {noteType = 0x4, message = {enUS = "This note should not be displayed"}},
     },
     [2] = { -- Hand in The First Step
         id = 2,
@@ -41,6 +59,13 @@ Draghos_GuideStore.steps = {
         quest = Draghos_GuideStore.quests[14449],
         npc = Draghos_GuideStore.npcs[2980],
         location = Draghos_GuideStore.locations.npcs[2],
+        note = {
+            noteType = 0x1,
+            message = {
+                enUS = "This note is important! It should appear in red!",
+                es = "¡Esta nota es importante! ¡Debería aparecer en rojo!",
+            },
+        },
     },
     [3] = { -- Pick up Rite of Strength
         id = 3,
