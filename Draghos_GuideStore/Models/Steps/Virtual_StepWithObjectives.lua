@@ -2,6 +2,10 @@ local FP = DraghosUtils.FP;
 
 local Virtual_StepWithObjectivesMixin = {};
 
+-- *********************************************************************************************************************
+-- ***** Quest with objectives
+-- *********************************************************************************************************************
+
 function Virtual_StepWithObjectivesMixin:AllObjectivesHaveBeenFetched()
     local currentQuestObjectives = self:GetQuestObjectives();
 
@@ -56,5 +60,9 @@ function Virtual_StepWithObjectivesMixin:GetObjectivesType()
         return nil;
     end
 end
+
+-- *********************************************************************************************************************
+-- ***** Export
+-- *********************************************************************************************************************
 
 DraghosMixins.Virtual_StepWithObjectives = Virtual_StepWithObjectivesMixin;

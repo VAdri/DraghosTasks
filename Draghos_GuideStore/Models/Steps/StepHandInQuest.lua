@@ -1,10 +1,18 @@
 local StepHandInQuestMixin = {};
 
+-- *********************************************************************************************************************
+-- ***** Mixins
+-- *********************************************************************************************************************
+
 Mixin(StepHandInQuestMixin, DraghosMixins.Step);
 Mixin(StepHandInQuestMixin, DraghosMixins.Quest);
 Mixin(StepHandInQuestMixin, DraghosMixins.NPC);
 Mixin(StepHandInQuestMixin, DraghosMixins.Location);
 Mixin(StepHandInQuestMixin, DraghosMixins.Target);
+
+-- *********************************************************************************************************************
+-- ***** Init
+-- *********************************************************************************************************************
 
 function StepHandInQuestMixin:Init(step)
     self:StepInit(step);
@@ -15,6 +23,10 @@ function StepHandInQuestMixin:Init(step)
 
     self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineSpeakTo, step));
 end
+
+-- *********************************************************************************************************************
+-- ***** Public
+-- *********************************************************************************************************************
 
 function StepHandInQuestMixin:GetStepType()
     return "HandInQuest";
@@ -32,9 +44,17 @@ function StepHandInQuestMixin:IsCompleted()
     return self:IsQuestTurnedIn();
 end
 
+-- *********************************************************************************************************************
+-- ***** Override Step
+-- *********************************************************************************************************************
+
 function StepHandInQuestMixin:RequiredStepsCompleted()
     local requiredStepsCompleted = DraghosMixins.Step.RequiredStepsCompleted(self);
     return requiredStepsCompleted and self:IsQuestCompleted();
 end
+
+-- *********************************************************************************************************************
+-- ***** Export
+-- *********************************************************************************************************************
 
 DraghosMixins.StepHandInQuest = StepHandInQuestMixin;

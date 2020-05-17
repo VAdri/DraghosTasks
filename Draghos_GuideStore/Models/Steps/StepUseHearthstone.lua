@@ -1,9 +1,17 @@
 local StepUseHearthstoneMixin = {}
 
+-- *********************************************************************************************************************
+-- ***** Mixins
+-- *********************************************************************************************************************
+
 Mixin(StepUseHearthstoneMixin, DraghosMixins.Step);
 Mixin(StepUseHearthstoneMixin, DraghosMixins.Location);
 Mixin(StepUseHearthstoneMixin, DraghosMixins.Hearth);
 Mixin(StepUseHearthstoneMixin, DraghosMixins.UseItem);
+
+-- *********************************************************************************************************************
+-- ***** Init
+-- *********************************************************************************************************************
 
 local function GetHearthstoneSpellIDByItemID(hearthstoneID)
     local hearthstone = Draghos_GuideStore:GetHearthstoneItemByID(hearthstoneID);
@@ -29,6 +37,10 @@ function StepUseHearthstoneMixin:Init(step)
     end
 end
 
+-- *********************************************************************************************************************
+-- ***** Public
+-- *********************************************************************************************************************
+
 function StepUseHearthstoneMixin:GetStepType()
     return "Move";
 end
@@ -50,5 +62,9 @@ end
 function StepUseHearthstoneMixin:IsCompleted()
     return self:DependentStepsCompleted();
 end
+
+-- *********************************************************************************************************************
+-- ***** Export
+-- *********************************************************************************************************************
 
 DraghosMixins.StepUseHearthstone = StepUseHearthstoneMixin;

@@ -1,9 +1,17 @@
 local StepSetHearthMixin = {};
 
+-- *********************************************************************************************************************
+-- ***** Mixins
+-- *********************************************************************************************************************
+
 Mixin(StepSetHearthMixin, DraghosMixins.Step);
 Mixin(StepSetHearthMixin, DraghosMixins.Location);
 Mixin(StepSetHearthMixin, DraghosMixins.Hearth);
 Mixin(StepSetHearthMixin, DraghosMixins.Target);
+
+-- *********************************************************************************************************************
+-- ***** Init
+-- *********************************************************************************************************************
 
 function StepSetHearthMixin:Init(step)
     self:StepInit(step);
@@ -17,6 +25,10 @@ function StepSetHearthMixin:Init(step)
         self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineSpeakTo, step));
     end
 end
+
+-- *********************************************************************************************************************
+-- ***** Public
+-- *********************************************************************************************************************
 
 function StepSetHearthMixin:GetStepType()
     return "Hearth";
@@ -37,5 +49,9 @@ end
 function StepSetHearthMixin:IsCompleted()
     return self:IsCurrentHearth();
 end
+
+-- *********************************************************************************************************************
+-- ***** Export
+-- *********************************************************************************************************************
 
 DraghosMixins.StepSetHearth = StepSetHearthMixin;

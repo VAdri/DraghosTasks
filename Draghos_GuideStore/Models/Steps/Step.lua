@@ -3,10 +3,14 @@ local FP = DraghosUtils.FP;
 --- @class Step
 local StepMixin = {};
 
+-- *********************************************************************************************************************
+-- ***** Mixins
+-- *********************************************************************************************************************
+
 Mixin(StepMixin, DraghosMixins.Observable);
 
 -- *********************************************************************************************************************
--- ***** Step
+-- ***** Init
 -- *********************************************************************************************************************
 
 function StepMixin:StepInit(step)
@@ -16,12 +20,33 @@ function StepMixin:StepInit(step)
     self.completedAfterCompletedStepIDs = step.completedAfterCompletedStepIDs or {}; -- TODO: Detect potential circular references
 end
 
-function StepMixin:IsStepAvailable()
-    return self:RequiredStepsCompleted();
+-- *********************************************************************************************************************
+-- ***** Public
+-- *********************************************************************************************************************
+
+function StepMixin:GetStepType()
+    return "";
+end
+
+function StepMixin:GetLabel()
+    return "";
+end
+
+function StepMixin:IsValid()
+    -- Needs to be overriden to be valid
+    return false;
 end
 
 function StepMixin:IsAvailable()
     return self:IsStepAvailable();
+end
+
+-- *********************************************************************************************************************
+-- ***** Step
+-- *********************************************************************************************************************
+
+function StepMixin:IsStepAvailable()
+    return self:RequiredStepsCompleted();
 end
 
 function StepMixin:IsValidStep()
@@ -46,7 +71,7 @@ function StepMixin:DependentStepsCompleted()
 end
 
 -- *********************************************************************************************************************
--- ***** Location
+-- ***** Waypoints
 -- *********************************************************************************************************************
 
 function StepMixin:SkipWaypoint()
@@ -63,7 +88,7 @@ function StepMixin:GetWaypointsInfo()
 end
 
 -- *********************************************************************************************************************
--- ***** Target
+-- ***** Target Button
 -- *********************************************************************************************************************
 
 function StepMixin:GetTargetNPCs()
@@ -87,7 +112,7 @@ function StepMixin:GetTargetIDs()
 end
 
 -- *********************************************************************************************************************
--- ***** Item
+-- ***** Item Button
 -- *********************************************************************************************************************
 
 function StepMixin:CanUseItem()
@@ -95,7 +120,7 @@ function StepMixin:CanUseItem()
 end
 
 -- *********************************************************************************************************************
--- ***** Quest
+-- ***** Quest Item Button
 -- *********************************************************************************************************************
 
 function StepMixin:IsQuestItemToUse()

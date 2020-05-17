@@ -2,10 +2,18 @@ local FP = DraghosUtils.FP;
 
 local StepCompleteQuestMixin = {};
 
+-- *********************************************************************************************************************
+-- ***** Mixins
+-- *********************************************************************************************************************
+
 Mixin(StepCompleteQuestMixin, DraghosMixins.Step);
 Mixin(StepCompleteQuestMixin, DraghosMixins.Virtual_StepWithObjectives);
 Mixin(StepCompleteQuestMixin, DraghosMixins.Quest);
 Mixin(StepCompleteQuestMixin, DraghosMixins.Target);
+
+-- *********************************************************************************************************************
+-- ***** Init
+-- *********************************************************************************************************************
 
 function StepCompleteQuestMixin:Init(step)
     self:StepInit(step);
@@ -16,6 +24,10 @@ function StepCompleteQuestMixin:Init(step)
     self.questObjectivesIndexes = nil;
     self:AddMultipleStepLines(self:CreateQuestObjectives());
 end
+
+-- *********************************************************************************************************************
+-- ***** Public
+-- *********************************************************************************************************************
 
 function StepCompleteQuestMixin:GetStepType()
     return self:GetObjectivesType() or "CompleteQuest";
@@ -33,9 +45,17 @@ function StepCompleteQuestMixin:IsCompleted()
     return self:IsQuestCompleted();
 end
 
+-- *********************************************************************************************************************
+-- ***** Override Step
+-- *********************************************************************************************************************
+
 function StepCompleteQuestMixin:RequiredStepsCompleted()
     local requiredStepsCompleted = DraghosMixins.Step.RequiredStepsCompleted(self);
     return requiredStepsCompleted and DraghosMixins.StepPickUpQuest.IsCompleted(self);
 end
+
+-- *********************************************************************************************************************
+-- ***** Export
+-- *********************************************************************************************************************
 
 DraghosMixins.StepCompleteQuest = StepCompleteQuestMixin;

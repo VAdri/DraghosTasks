@@ -2,11 +2,19 @@ local FP = DraghosUtils.FP;
 
 local StepProgressQuestObjectivesMixin = {};
 
+-- *********************************************************************************************************************
+-- ***** Mixins
+-- *********************************************************************************************************************
+
 Mixin(StepProgressQuestObjectivesMixin, DraghosMixins.Step);
 Mixin(StepProgressQuestObjectivesMixin, DraghosMixins.Virtual_StepWithObjectives);
 Mixin(StepProgressQuestObjectivesMixin, DraghosMixins.Quest);
 -- Mixin(StepProgressQuestObjectiveMixin, LocationMixin);
 Mixin(StepProgressQuestObjectivesMixin, DraghosMixins.Target);
+
+-- *********************************************************************************************************************
+-- ***** Init
+-- *********************************************************************************************************************
 
 function StepProgressQuestObjectivesMixin:Init(step)
     self:StepInit(step);
@@ -18,10 +26,9 @@ function StepProgressQuestObjectivesMixin:Init(step)
     self:AddMultipleStepLines(self:CreateQuestObjectives());
 end
 
-function StepProgressQuestObjectivesMixin:SkipWaypoint()
-    -- The waypoint will be set for the next step
-    return true;
-end
+-- *********************************************************************************************************************
+-- ***** Public
+-- *********************************************************************************************************************
 
 function StepProgressQuestObjectivesMixin:GetStepType()
     return self:GetObjectivesType() or "ProgressQuestObjectives";
@@ -35,17 +42,38 @@ function StepProgressQuestObjectivesMixin:IsValid()
     return self:IsValidStep() and self:IsValidQuest() and not self:HasInvalidTargets();
 end
 
+function StepProgressQuestObjectivesMixin:IsCompleted()
+    return self:IsQuestCompleted() or self:DependentStepsCompleted();
+end
+
+-- *********************************************************************************************************************
+-- ***** Quest with objectives
+-- *********************************************************************************************************************
+
 function StepProgressQuestObjectivesMixin:IsPartial()
     return true;
 end
 
-function StepProgressQuestObjectivesMixin:IsCompleted()
-    return self:IsQuestCompleted() or self:DependentStepsCompleted();
+-- *********************************************************************************************************************
+-- ***** Waypoints
+-- *********************************************************************************************************************
+
+function StepProgressQuestObjectivesMixin:SkipWaypoint()
+    -- The waypoint will be set for the next step
+    return true;
 end
+
+-- *********************************************************************************************************************
+-- ***** Override Step
+-- *********************************************************************************************************************
 
 function StepProgressQuestObjectivesMixin:RequiredStepsCompleted()
     local requiredStepsCompleted = DraghosMixins.Step.RequiredStepsCompleted(self);
     return requiredStepsCompleted and DraghosMixins.StepPickUpQuest.IsCompleted(self);
 end
+
+-- *********************************************************************************************************************
+-- ***** Export
+-- *********************************************************************************************************************
 
 DraghosMixins.StepProgressQuestObjectives = StepProgressQuestObjectivesMixin;

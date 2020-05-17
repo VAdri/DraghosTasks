@@ -1,10 +1,18 @@
 local StepPickUpQuestMixin = {};
 
+-- *********************************************************************************************************************
+-- ***** Mixins
+-- *********************************************************************************************************************
+
 Mixin(StepPickUpQuestMixin, DraghosMixins.Step);
 Mixin(StepPickUpQuestMixin, DraghosMixins.Quest);
 Mixin(StepPickUpQuestMixin, DraghosMixins.NPC);
 Mixin(StepPickUpQuestMixin, DraghosMixins.Location);
 Mixin(StepPickUpQuestMixin, DraghosMixins.Target);
+
+-- *********************************************************************************************************************
+-- ***** Init
+-- *********************************************************************************************************************
 
 function StepPickUpQuestMixin:Init(step)
     self:StepInit(step);
@@ -15,6 +23,10 @@ function StepPickUpQuestMixin:Init(step)
 
     self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineSpeakTo, step));
 end
+
+-- *********************************************************************************************************************
+-- ***** Public
+-- *********************************************************************************************************************
 
 function StepPickUpQuestMixin:GetStepType()
     return "PickUpQuest";
@@ -35,5 +47,9 @@ end
 function StepPickUpQuestMixin:IsCompleted()
     return (C_QuestLog.IsOnQuest(self.questID) or self:IsQuestCompleted());
 end
+
+-- *********************************************************************************************************************
+-- ***** Export
+-- *********************************************************************************************************************
 
 DraghosMixins.StepPickUpQuest = StepPickUpQuestMixin;

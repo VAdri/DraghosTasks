@@ -2,10 +2,18 @@ local Helpers = DraghosUtils.Helpers;
 
 local StepLineSpeakToMixin = {};
 
+-- *********************************************************************************************************************
+-- ***** Mixins
+-- *********************************************************************************************************************
+
 Mixin(StepLineSpeakToMixin, DraghosMixins.StepLine);
 Mixin(StepLineSpeakToMixin, DraghosMixins.NPC);
 Mixin(StepLineSpeakToMixin, DraghosMixins.Location);
 Mixin(StepLineSpeakToMixin, DraghosMixins.Target);
+
+-- *********************************************************************************************************************
+-- ***** Init
+-- *********************************************************************************************************************
 
 function StepLineSpeakToMixin:Init(stepLine)
     self:StepLineInit();
@@ -31,6 +39,10 @@ function StepLineSpeakToMixin:Init(stepLine)
     Draghos_GuideStore:RegisterForNotifications(self, "TAXIMAP_CLOSED");
 end
 
+-- *********************************************************************************************************************
+-- ***** Public
+-- *********************************************************************************************************************
+
 function StepLineSpeakToMixin:GetLabel()
     return SPEAK_TO_NPC_IN_LOCATION:format(self:GetNPCName(), self:GetZoneName());
 end
@@ -42,5 +54,9 @@ end
 function StepLineSpeakToMixin:IsCompleted()
     return Helpers:UnitHasUnitID("npc", self.npcID);
 end
+
+-- *********************************************************************************************************************
+-- ***** Export
+-- *********************************************************************************************************************
 
 DraghosMixins.StepLineSpeakTo = StepLineSpeakToMixin;

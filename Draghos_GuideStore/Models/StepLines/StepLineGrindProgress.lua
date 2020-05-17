@@ -1,12 +1,24 @@
 local StepLineGrindProgressMixin = {};
 
+-- *********************************************************************************************************************
+-- ***** Mixins
+-- *********************************************************************************************************************
+
 Mixin(StepLineGrindProgressMixin, DraghosMixins.StepLine);
 Mixin(StepLineGrindProgressMixin, DraghosMixins.Experience);
+
+-- *********************************************************************************************************************
+-- ***** Init
+-- *********************************************************************************************************************
 
 function StepLineGrindProgressMixin:Init(stepLine)
     self:StepLineInit();
     self:ExperienceInit(stepLine.experience);
 end
+
+-- *********************************************************************************************************************
+-- ***** Public
+-- *********************************************************************************************************************
 
 function StepLineGrindProgressMixin:GetLabel()
     local isCurrentLevel = self:GetXPRequired();
@@ -17,6 +29,18 @@ function StepLineGrindProgressMixin:GetLabel()
     end
 end
 
+function StepLineGrindProgressMixin:IsValid()
+    return self:IsValidStepLine() and self:IsValidExperience();
+end
+
+function StepLineGrindProgressMixin:IsCompleted()
+    return self:IsAboveLevelXP();
+end
+
+-- *********************************************************************************************************************
+-- ***** Progress Bar
+-- *********************************************************************************************************************
+
 function StepLineGrindProgressMixin:IsProgress()
     return true;
 end
@@ -26,12 +50,8 @@ function StepLineGrindProgressMixin:GetProgressValues()
     return currentXP, requiredXP;
 end
 
-function StepLineGrindProgressMixin:IsValid()
-    return self:IsValidStepLine() and self:IsValidExperience();
-end
-
-function StepLineGrindProgressMixin:IsCompleted()
-    return self:IsAboveLevelXP();
-end
+-- *********************************************************************************************************************
+-- ***** Export
+-- *********************************************************************************************************************
 
 DraghosMixins.StepLineGrindProgress = StepLineGrindProgressMixin
