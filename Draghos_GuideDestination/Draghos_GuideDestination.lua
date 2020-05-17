@@ -1,37 +1,42 @@
 local TomTomDestination = CreateFrame("Frame");
 
+TomTom.waydb:ResetProfile();
+TomTom:ReloadWaypoints();
+
 local function OnStepUpdated(self, watchedItem, event, ...)
     TomTom.waydb:ResetProfile();
     TomTom:ReloadWaypoints();
 
-    if not watchedItem:CanAddWaypoints() then
-        self.watchedStep = nil;
+    if not watchedItem or not watchedItem:CanAddWaypoints() then
+        self.watchedItem = nil;
         self:WatchNextStep();
         return;
     end
 
-    local waypoints = watchedItem:GetWaypointsInfo();
-    for _, waypoint in pairs(waypoints) do
-        waypoint.options.callbacks = TomTom:DefaultCallbacks(waypoint.options);
-        TomTom:AddWaypoint(waypoint.uiMapID, waypoint.x, waypoint.y, waypoint.options);
+    if watchedItem:IsAvailable() and not watchedItem:IsCompleted() then
+        local waypoints = watchedItem:GetWaypointsInfo();
+        for _, waypoint in pairs(waypoints) do
+            waypoint.options.callbacks = TomTom:DefaultCallbacks(waypoint.options);
+            TomTom:AddWaypoint(waypoint.uiMapID, waypoint.x, waypoint.y, waypoint.options);
+        end
+        TomTom:SetClosestWaypoint();
     end
-    TomTom:SetClosestWaypoint();
 end
 
 function TomTomDestination:WatchNextStep()
     local steps = Draghos_GuideStore:GetRemainingSteps();
 
     local stepIndex = 1;
-    local watchedStep;
+    local watchedItem;
     repeat
-        watchedStep = steps[stepIndex];
+        watchedItem = steps[stepIndex];
         stepIndex = stepIndex + 1;
-    until (not watchedStep or (not watchedStep:SkipWaypoint() and watchedStep:CanAddWaypoints()));
+    until (not watchedItem or (not watchedItem:SkipWaypoint() and watchedItem:CanAddWaypoints()));
 
-    if watchedStep and watchedStep:CanAddWaypoints() then
-        self.watchedStep = watchedStep;
-        watchedStep:Watch(self, OnStepUpdated);
-        OnStepUpdated(self, self.watchedStep);
+    if watchedItem and watchedItem:CanAddWaypoints() then
+        self.watchedItem = watchedItem;
+        watchedItem:Watch(self, OnStepUpdated);
+        OnStepUpdated(self, self.watchedItem);
     end
 end
 

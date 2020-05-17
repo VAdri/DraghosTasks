@@ -7,40 +7,15 @@ Draghos_GuideStore.locations = {
         [1] = { -- Camp Narache Hearth location
             locationType = LOCATION_TYPE_COORDS,
             uiMapID = 462, -- Camp Narache
+            areaID = 221, -- Camp Narache
             coords = {27.77, 28.76},
-            hearthNames = {
-                ["deDE"] = "Camp Narache",
-                ["enUS"] = "Camp Narache",
-                ["enGB"] = "Camp Narache",
-                ["esES"] = "Campamento Narache",
-                ["esMX"] = "Campamento Narache",
-                ["frFR"] = "Camp Narache",
-                ["itIT"] = "Campo Narache",
-                ["koKR"] = "나라체 야영지",
-                ["ptBR"] = "Aldeia Narache",
-                ["ruRU"] = "Лагерь Нараче",
-                ["zhTW"] = "纳拉其营地",
-                ["zhCN"] = "纳拉其营地",
-            },
+            -- No innkeeper here as it is a starting zone
         },
         [2] = { -- Innkeeper Kauth's Bloodhoof Village Hearth location in Mulgore
             locationType = LOCATION_TYPE_COORDS,
             uiMapID = 1306, -- Mulgore
+            areaID = 222, -- Bloodhoof Village
             coords = {46.8, 60.4},
-            hearthNames = {
-                ["deDE"] = "",
-                ["enUS"] = "Bloodhoof Village",
-                ["enGB"] = "Bloodhoof Village",
-                ["esES"] = "",
-                ["esMX"] = "",
-                ["frFR"] = "Sabot-de-Sang",
-                ["itIT"] = "",
-                ["koKR"] = "",
-                ["ptBR"] = "",
-                ["ruRU"] = "",
-                ["zhTW"] = "",
-                ["zhCN"] = "",
-            },
             innkeeper = Draghos_GuideStore.npcs[6747], -- Innkeeper Kauth
         },
     },
@@ -83,6 +58,20 @@ Draghos_GuideStore.locations = {
             locationType = LOCATION_TYPE_COORDS,
             uiMapID = 462, -- Camp Narache
             coords = {26.4, 66.3},
+        },
+    },
+    flightMasters = {
+        [1] = { -- Tak's location
+            locationType = LOCATION_TYPE_COORDS,
+            uiMapID = 1306, -- Mulgore
+            areaID = 222, -- Bloodhoof Village
+            coords = {47.4, 58.7},
+        },
+        [2] = { -- Tal's location
+            locationType = LOCATION_TYPE_COORDS,
+            uiMapID = 1306, -- Mulgore
+            areaID = 1638, -- or 470 or 5345, -- Thunder Bluff
+            coords = {46.66, 49.9},
         },
     },
 };

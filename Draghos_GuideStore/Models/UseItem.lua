@@ -48,6 +48,7 @@ function UseItemMixin:GetItem()
     elseif self.getItemID then
         local itemID = self.getItemID();
         if itemID then
+            self.itemID = itemID;
             self.item = self.itemID and Item:CreateFromItemID(self.itemID);
             return self.item;
         end

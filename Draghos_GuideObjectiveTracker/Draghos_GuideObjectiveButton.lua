@@ -58,6 +58,7 @@ local StepTypeIconTextureInfos = {
     ["Grind"] = {filePath = "Interface\\PaperDollInfoFrame\\Character-Plus", x = 14, y = 14},
     ["Move"] = {filePath = "Interface\\MINIMAP\\TRACKING\\FlightMaster", x = 18, y = 18},
     ["Hearth"] = {filePath = "Interface\\MINIMAP\\TRACKING\\Innkeeper", x = 18, y = 18},
+    ["FlightMaster"] = {filePath = "Interface\\MINIMAP\\ObjectIconsAtlas", objectIconID = 4728, x = 22, y = 20},
 };
 
 local guideObjectiveLeftIconPool = CreateFramePool("Frame", nil, "GuideStepTypeIconTemplate", OnRelease);

@@ -38,11 +38,13 @@ function StepUseHearthstoneMixin:GetLabel()
 end
 
 function StepUseHearthstoneMixin:IsValid()
-    return self:IsValidStep() and self:IsValidItemToUse() and self:IsValidHearth() and self:IsValidLocation();
+    return self.completedAfterCompletedStepIDs and #self.completedAfterCompletedStepIDs > 0 and self:IsValidStep() and
+               self:IsValidItemToUse() and self:IsValidHearth() and self:IsValidLocation();
 end
 
 function StepUseHearthstoneMixin:IsAvailable()
-    return self:IsStepAvailable() and self:IsItemAvailableToUse() and self:IsCurrentHearth();
+    return self:IsStepAvailable() and self:IsItemAvailableToUse() and self:IsCurrentHearth() and
+               not self:IsPlayerAtHearth();
 end
 
 function StepUseHearthstoneMixin:IsCompleted()

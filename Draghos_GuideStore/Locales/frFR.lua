@@ -11,6 +11,7 @@ local function UseThisLocalization()
     GRIND_PROGRESS_TO_NEXT_LEVEL = "Progression jusqu'au prochain niveau";
     USE_HEARTHSTONE_TO_TELEPORT = "Utiliser la %s pour retourner à %s";
     SET_HEARTH_TO_LOCATION = "Faire de %s votre nouveau foyer";
+    DISCOVER_FLIGHT_PATH_AT = "Découvrir le trajet de vol de %s";
 end
 
 local Locale = GetLocale();

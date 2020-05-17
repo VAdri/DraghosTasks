@@ -145,6 +145,13 @@ function DraghosUtils.FP:Flatten(t)
 end
 
 --- @param t table
+--- @param func function
+--- @return table
+function DraghosUtils.FP:FlatMap(t, func)
+    return DraghosUtils.FP:Flatten(DraghosUtils.FP:Map(t, func));
+end
+
+--- @param t table
 --- @param func function|any
 --- @return boolean
 function DraghosUtils.FP:Any(t, func)
@@ -212,6 +219,21 @@ end
 --- @return table
 function DraghosUtils.FP:Append(t, item)
     return DraghosUtils.FP:Concat(t, {item});
+end
+
+--- @param t table
+--- @param props table
+--- @param value any
+--- @return table
+function DraghosUtils.FP:FillWith(t, props, value)
+    local _t = {};
+    for k, v in pairs(t) do
+        _t[k] = v;
+    end
+    for _, v in pairs(props) do
+        _t[v] = value;
+    end
+    return _t;
 end
 
 --- @param prop any
@@ -346,6 +368,20 @@ end
 --- @return string
 function DraghosUtils.Str:IsBlankString(s)
     return s == nil or DraghosUtils.Str:Trim(s) == "";
+end
+
+--- @param s string
+--- @param prefix string
+--- @return boolean
+function DraghosUtils.Str:StartsWith(s, prefix)
+    return s ~= nil and (prefix == "" or s:sub(1, prefix:len()) == prefix);
+end
+
+--- @param s string
+--- @param suffix string
+--- @return boolean
+function DraghosUtils.Str:EndsWith(s, suffix)
+    return s ~= nil and (suffix == "" or s:sub(-suffix:len()) == suffix);
 end
 
 -- *********************************************************************************************************************

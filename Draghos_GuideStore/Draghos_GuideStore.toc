@@ -4,6 +4,7 @@
 ## Version: 0.0.1
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
+## SavedVariablesPerCharacter: TaxiNodesDB
 
 Utils.lua
 Locales.xml

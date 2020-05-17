@@ -3,9 +3,10 @@ local Str = DraghosUtils.Str;
 local HearthMixin = {};
 
 Mixin(HearthMixin, DraghosMixins.Observable);
+Mixin(HearthMixin, DraghosMixins.Zone);
 
 function HearthMixin:HearthInit(location)
-    self.hearthNames = location and location.hearthNames;
+    self:ZoneInit(location);
 
     Draghos_GuideStore:RegisterForNotifications(self, "HEARTHSTONE_BOUND");
 end
@@ -19,9 +20,13 @@ function HearthMixin:IsCurrentHearth()
     return self:GetHearthLabel() == hearthName;
 end
 
+function HearthMixin:IsPlayerAtHearth()
+    local currentZoneName = GetSubZoneText();
+    return not Str:IsBlankString(currentZoneName) and self:GetHearthLabel() == currentZoneName;
+end
+
 function HearthMixin:GetHearthLabel()
-    local locale = GetLocale();
-    return self.hearthNames and self.hearthNames[locale] or nil;
+    return self.areaID and C_Map.GetAreaInfo(self.areaID);
 end
 
 DraghosMixins.Hearth = HearthMixin;

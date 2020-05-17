@@ -125,6 +125,17 @@
         "SaveBindings",
         "GetRaidTargetIndex",
         "UnitIsFriend",
-        "SetRaidTarget"
+        "SetRaidTarget",
+        "GetSubZoneText",
+        "GetRealmName",
+        "UnitClass",
+        "UnitRace",
+        "UnitFactionGroup",
+        "GetCurrentRegion",
+        "LibStub",
+        "ERR_NEWTAXIPATH",
+        "C_TaxiMap",
+        "FlightMapFrame",
+        "Enum"
     ]
 }

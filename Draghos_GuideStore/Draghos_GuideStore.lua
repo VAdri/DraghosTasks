@@ -1,4 +1,6 @@
 local CreateAndInitFromMixin = CreateAndInitFromMixin;
+
+local Str = DraghosUtils.Str;
 local FP = DraghosUtils.FP;
 
 -- *********************************************************************************************************************
@@ -22,6 +24,8 @@ local function InitStep(step)
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepUseHearthstone, step);
     elseif step.stepType == STEP_TYPE_SET_HEARTH then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepSetHearth, step);
+    elseif step.stepType == STEP_TYPE_GET_FLIGHT_PATH then
+        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepDiscoverTaxiNode, step);
     else
         -- ? return Draghos_GuideStore:CreateObject(StepUnknownMixin, step);
     end
@@ -54,6 +58,10 @@ function Draghos_GuideStore:GetHearthstoneItemByID(itemID)
     return self.items.hearth[itemID];
 end
 
+function Draghos_GuideStore:GetTaxiNodeByID(nodeID)
+    return self.taxiNodes[nodeID];
+end
+
 -- *********************************************************************************************************************
 -- ***** OBJECTS CREATION
 -- *********************************************************************************************************************
@@ -83,11 +91,20 @@ function Draghos_GuideStore:CreateGuideItem(mixin, data)
     return setmetatable(object, GuideItemMetatable);
 end
 
+function Draghos_GuideStore:CreateBaseItem(mixin, data)
+    local object = {};
+    Mixin(object, mixin);
+    object:InitBase(data);
+    return setmetatable(object, GuideItemMetatable);
+end
+
 -- *********************************************************************************************************************
 -- ***** HOOKS
 -- *********************************************************************************************************************
 
 local frame;
+
+Draghos_GuideStore.customEventsSuffix = "DRAGHOS";
 
 function GuideStoreFrame_OnLoad(self)
     frame = self;
@@ -102,11 +119,17 @@ function GuideStoreFrame_OnEvent(self, event, ...)
     end
 end
 
+function Draghos_GuideStore:SendCustomEvent(event, ...)
+    GuideStoreFrame_OnEvent(self, event, ...);
+end
+
 function Draghos_GuideStore:RegisterForNotifications(item, event)
     self.notifiers = self.notifiers or {};
     self.notifiers[event] = self.notifiers[event] or {};
     table.insert(self.notifiers[event], item);
-    if not frame:IsEventRegistered(event) then
+    if Str:StartsWith(event, Draghos_GuideStore.customEventsSuffix) then
+        -- This is not a real event we don't need to register it
+    elseif not frame:IsEventRegistered(event) then
         frame:RegisterEvent(event, self.OnEvent);
     end
 end

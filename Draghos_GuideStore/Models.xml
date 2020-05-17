@@ -4,10 +4,12 @@
     <Script file="Models/Observable.lua"/>
     <Script file="Models/Experience.lua"/>
     <Script file="Models/Location.lua"/>
+    <Script file="Models/Zone.lua"/>
     <Script file="Models/UseItem.lua"/>
     <Script file="Models/Hearth.lua"/>
     <Script file="Models/NPC.lua"/>
     <Script file="Models/Target.lua"/>
+    <Script file="Models/TaxiNode.lua"/>
     <Script file="Models/Quest.lua"/>
     <Script file="Models/QuestObjective.lua"/>
 
@@ -26,4 +28,5 @@
     <Script file="Models/Steps/StepProgressQuestObjectives.lua"/>
     <Script file="Models/Steps/StepUseHearthstone.lua"/>
     <Script file="Models/Steps/StepSetHearth.lua"/>
+    <Script file="Models/Steps/StepDiscoverTaxiNode.lua"/>
 </Ui>

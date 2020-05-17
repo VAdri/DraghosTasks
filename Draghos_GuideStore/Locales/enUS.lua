@@ -11,6 +11,7 @@ local function UseThisLocalization()
     GRIND_PROGRESS_TO_NEXT_LEVEL = "Progress to reach next level";
     USE_HEARTHSTONE_TO_TELEPORT = "Use %s to return to %s";
     SET_HEARTH_TO_LOCATION = "Set hearth at %s";
+    DISCOVER_FLIGHT_PATH_AT = "Get the flight path at %s";
 end
 
 -- Use these on any case, another localization may override some or all of them afterwards.

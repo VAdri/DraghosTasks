@@ -2,12 +2,32 @@ STEP_TYPE_PICKUP_QUEST = 1;
 STEP_TYPE_PROGRESS_QUEST_OBJECTIVE = 2;
 STEP_TYPE_COMPLETE_QUEST_OBJECTIVE = 3;
 STEP_TYPE_COMPLETE_QUEST = 4;
+-- STEP_TYPE_ABANDON_QUEST = ; -- Needed?
 STEP_TYPE_HANDIN_QUEST = 5;
 STEP_TYPE_GRIND = 6; -- TODO: Grind reputation
 STEP_TYPE_USE_HEARTHSTONE = 7;
 STEP_TYPE_SET_HEARTH = 8;
+STEP_TYPE_GO = 9;
+STEP_TYPE_GET_FLIGHT_PATH = 10;
 
 Draghos_GuideStore.steps = {
+    [-2] = { --
+        id = -2,
+        stepType = STEP_TYPE_USE_HEARTHSTONE,
+        location = Draghos_GuideStore.locations.hearths[2],
+        completedAfterCompletedStepIDs = {27},
+    },
+    [-1] = { --
+        id = -1,
+        stepType = STEP_TYPE_USE_HEARTHSTONE,
+        location = Draghos_GuideStore.locations.hearths[1],
+        completedAfterCompletedStepIDs = {27},
+    },
+    [0] = { --
+        id = 0,
+        stepType = STEP_TYPE_GET_FLIGHT_PATH,
+        taxiNode = Draghos_GuideStore.taxiNodes[402],
+    },
     [1] = { -- Pick up The First Step
         id = 1,
         stepType = STEP_TYPE_PICKUP_QUEST,

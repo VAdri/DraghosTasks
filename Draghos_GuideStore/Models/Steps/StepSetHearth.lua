@@ -12,11 +12,9 @@ function StepSetHearthMixin:Init(step)
     self:TargetInit();
 
     if step.location.innkeeper then
-        self:AddOneStepLine(
-            Draghos_GuideStore:CreateGuideItem(
-                DraghosMixins.StepLineSpeakTo, {location = step.location, npc = step.location.innkeeper}
-            )
-        );
+        self.hasInnkeeper = true;
+        step.npc = step.location.innkeeper;
+        self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineSpeakTo, step));
     end
 end
 
@@ -29,7 +27,7 @@ function StepSetHearthMixin:GetLabel()
 end
 
 function StepSetHearthMixin:IsValid()
-    return self:IsValidStep() and self:IsValidHearth();
+    return self.hasInnkeeper and self:IsValidStep() and self:IsValidHearth();
 end
 
 function StepSetHearthMixin:IsAvailable()

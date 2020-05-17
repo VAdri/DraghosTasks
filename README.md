@@ -13,7 +13,7 @@ The guide currently support these kinds of steps:
 - [x] Use Hearthstone
 - [x] Set hearth
 - [ ] Go to a zone
-- [ ] Discover a flight path
+- [x] Discover a flight path
 - [ ] Fly somewhere
 - [ ] Teleport
 - [ ] Discover an area

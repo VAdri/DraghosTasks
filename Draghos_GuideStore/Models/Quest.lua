@@ -83,7 +83,7 @@ end
 
 function QuestMixin:CreateQuestObjectives()
     if not self:IsValidQuest() then
-        return nil;
+        return {};
     end
 
     local questObjectives = Draghos_GuideStore:GetQuestByID(self.questID).questObjectives;

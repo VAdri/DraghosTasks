@@ -19,7 +19,7 @@ function Virtual_StepWithObjectivesMixin:GetStepLines()
     if not self:AllObjectivesHaveBeenFetched() then
         -- The last fetch couldn't get all the objectives
         local newQuestObjectives = self:CreateQuestObjectives();
-        self.stepLines = FP:UniqueBy(FP:Concat(self.stepLines or {}, newQuestObjectives), "index");
+        self.stepLines = FP:UniqueBy(FP:Concat(self.stepLines or {}, newQuestObjectives or {}), "index");
     end
 
     return self.stepLines or {};

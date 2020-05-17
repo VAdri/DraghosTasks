@@ -25,6 +25,10 @@ function StepLineSpeakToMixin:Init(stepLine)
     -- When speaking to a merchant
     Draghos_GuideStore:RegisterForNotifications(self, "MERCHANT_SHOW");
     Draghos_GuideStore:RegisterForNotifications(self, "MERCHANT_CLOSED");
+
+    -- When speaking to a flight master
+    Draghos_GuideStore:RegisterForNotifications(self, "TAXIMAP_OPENED");
+    Draghos_GuideStore:RegisterForNotifications(self, "TAXIMAP_CLOSED");
 end
 
 function StepLineSpeakToMixin:GetLabel()
