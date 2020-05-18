@@ -7,6 +7,7 @@ local defaultInitialAnchorOffsets = {0, 0};
 
 function GuideObjective_SetupHeader(block, initialLineWidth)
     block.leftIcon = nil;
+    block.leftCheckbox = nil;
     block.rightButton = nil;
     block.lineWidth = initialLineWidth or OBJECTIVE_TRACKER_TEXT_WIDTH;
 end
@@ -24,8 +25,9 @@ end
 -- See https://www.wowinterface.com/forums/showthread.php?t=53870 for a complete list of objectIconIDs
 -- Speak: https://github.com/Gethe/wow-ui-textures/blob/live/CHATFRAME/UI-ChatWhisperIcon.PNG
 -- Rest: https://raw.githubusercontent.com/Gethe/wow-ui-textures/live/CHARACTERFRAME/UI-StateIcon.PNG
--- Information: https://github.com/Gethe/wow-ui-textures/blob/live/MINIMAP/TRACKING/Profession.PNG
+-- Train: https://github.com/Gethe/wow-ui-textures/blob/live/MINIMAP/TRACKING/Profession.PNG
 -- Search: https://github.com/Gethe/wow-ui-textures/blob/live/MINIMAP/TRACKING/None.PNG
+--         Interface/GuildFrame/Communities | communities-icon-searchmagnifyingglass
 -- Hearthstone: https://github.com/Gethe/wow-ui-textures/blob/live/MINIMAP/TRACKING/Innkeeper.PNG
 -- Food: https://github.com/Gethe/wow-ui-textures/blob/live/MINIMAP/TRACKING/Food.PNG
 -- Fly: https://github.com/Gethe/wow-ui-textures/blob/live/MINIMAP/TRACKING/FlightMaster.PNG
@@ -37,51 +39,67 @@ end
 -- Dices: https://github.com/Gethe/wow-ui-textures/blob/live/Buttons/UI-GroupLoot-Dice-Up.PNG
 -- Skip: https://github.com/Gethe/wow-ui-textures/blob/live/Buttons/UI-GroupLoot-Pass-Up.PNG
 -- Refresh: https://github.com/Gethe/wow-ui-textures/blob/live/Buttons/UI-RefreshButton.PNG or https://github.com/Gethe/wow-ui-textures/blob/live/Buttons/UIFrameButtons.PNG
+-- Undo: Interface/Glues/CharacterSelect/CharacterUndelete | characterundelete-RestoreButton
 -- Stop?: https://github.com/Gethe/wow-ui-textures/blob/live/Buttons/UI-StopButton.PNG
+--        transmog-icon-remove
 -- Plus: https://github.com/Gethe/wow-ui-textures/blob/live/PaperDollInfoFrame/Character-Plus.PNG
+-- Set free: Interface/GuildFrame/Communities | communities-icon-lock
+--           Interface/LFGFrame/LFG | Interface/LFGFrame/LFG
+-- Star: Interface/Common/FavoritesIcon | PetJournal-FavoritesIcon
+-- XP: Interface/Garrison/GarrisonCurrencyIcons | GarrMission_CurrencyIcon-Xp
+-- Box: Interface/Garrison/GarrisonCurrencyIcons | GarrMission_CurrencyIcon-Material
+-- Die: Interface/LFGFrame/LFG | DungeonTargetIndicator
+-- Shovel: Interface/Garrison/MobileAppIcons | Mobile-Archeology
+-- Alchemy: Interface/Garrison/MobileAppIcons | Mobile-Alchemy
+-- First aid: Interface/Garrison/MobileAppIcons | Mobile-FirstAid
+-- Cooking: Interface/Garrison/MobileAppIcons | Mobile-Cooking
+-- Leatherworking: Interface/Garrison/MobileAppIcons | Mobile-Leatherworking
+-- Mining: Interface/Garrison/MobileAppIcons | Mobile-Mining
+-- Combat: Interface/Garrison/MobileAppIcons | Mobile-MechanicIcon-Powerful
+-- Wait: Interface/Garrison/MobileAppIcons | Mobile-MechanicIcon-Slowing
 
 local StepTypeIconTextureInfos = {
-    ["PickUpQuest"] = {filePath = "Interface\\MINIMAP\\ObjectIconsAtlas", objectIconID = 4726, x = 22, y = 20},
-    ["HandInQuest"] = {filePath = "Interface\\MINIMAP\\ObjectIconsAtlas", objectIconID = 4699, x = 20, y = 20},
-    ["CombatObjective"] = {
-        filePath = "Interface\\CHARACTERFRAME\\UI-StateIcon",
-        left = "0.5",
-        right = "1",
-        top = "0",
-        bottom = "0.5",
-        x = 24,
-        y = 24,
-    },
-    ["LootObjective"] = {filePath = "Interface\\MINIMAP\\TRACKING\\Banker", x = 20, y = 20},
-    -- ["ObjectInteractionObjective"] = {filePath = "Interface\\Scenarios\\ScenarioIcon-Interact", x = 16, y = 16},
-    ["OtherObjective"] = {filePath = "Interface\\Scenarios\\ScenarioIcon-Interact", x = 16, y = 16},
-    ["Grind"] = {filePath = "Interface\\PaperDollInfoFrame\\Character-Plus", x = 14, y = 14},
-    ["Move"] = {filePath = "Interface\\MINIMAP\\TRACKING\\FlightMaster", x = 18, y = 18},
-    ["Hearth"] = {filePath = "Interface\\MINIMAP\\TRACKING\\Innkeeper", x = 18, y = 18},
-    ["FlightMaster"] = {filePath = "Interface\\MINIMAP\\ObjectIconsAtlas", objectIconID = 4728, x = 22, y = 20},
+    ["PickUpQuest"] = {atlasName = "QuestNormal", x = 22, y = 20},
+    ["HandInQuest"] = {atlasName = "QuestTurnin", x = 20, y = 20},
+    ["CombatObjective"] = {atlasName = "Ammunition", x = 24, y = 24},
+    ["Bank"] = {atlasName = "Banker", x = 20, y = 20},
+    ["OtherObjective"] = {atlasName = "mechagon-projects", x = 16, y = 16},
+    ["Grind"] = {atlasName = "GreenCross", x = 14, y = 14},
+    ["Move"] = {atlasName = "FlightMaster", x = 18, y = 18},
+    ["Hearth"] = {atlasName = "Innkeeper", x = 18, y = 18},
+    ["FlightMaster"] = {atlasName = "FlightPath", x = 22, y = 20},
+    ["Note"] = {atlasName = "poi-workorders", x = 22, y = 20},
+    ["LootObjective"] = {atlasName = "ParagonReputation_Bag", x = 20, y = 20},
+    ["Warning"] = {atlasName = "services-icon-warning", x = 20, y = 20},
 };
 
 local guideObjectiveLeftIconPool = CreateFramePool("Frame", nil, "GuideStepTypeIconTemplate", OnRelease);
 
-function GuideObjectiveBlock_AcquireLeftIcon(parent)
+local function AcquireLeftIcon(parent)
     local icon = guideObjectiveLeftIconPool:Acquire();
     icon:SetParent(parent);
 
     return icon;
 end
 
-function GuideObjectiveBlock_InitializeTexture(frame, textureInfo)
-    frame.MainIcon:SetTexture(textureInfo.filePath);
-    frame.MainIcon:SetSize(textureInfo.x, textureInfo.y);
+local function InitializeLeftIconTexture(frame, textureInfo)
+    if textureInfo.atlasName then
+        frame.MainIcon:SetAtlas(textureInfo.atlasName);
+    elseif textureInfo.filePath then
+        frame.MainIcon:SetTexture(textureInfo.filePath);
+        local left, right, top, bottom;
+        if textureInfo.objectIconID then
+            left, right, top, bottom = GetObjectIconTextureCoords(textureInfo.objectIconID);
+        else
+            left, right, top, bottom = textureInfo.left, textureInfo.right, textureInfo.top, textureInfo.bottom;
+        end
 
-    local left, right, top, bottom;
-    if textureInfo.objectIconID then
-        left, right, top, bottom = GetObjectIconTextureCoords(textureInfo.objectIconID);
+        frame.MainIcon:SetTexCoord(left or 0, right or 1, top or 0, bottom or 1);
     else
-        left, right, top, bottom = textureInfo.left, textureInfo.right, textureInfo.top, textureInfo.bottom;
+        return;
     end
 
-    frame.MainIcon:SetTexCoord(left or 0, right or 1, top or 0, bottom or 1);
+    frame.MainIcon:SetSize(textureInfo.x, textureInfo.y);
 end
 
 function GuideObjectiveBlock_AddLeftIcon(block, iconName, initialAnchorOffsets)
@@ -92,11 +110,11 @@ function GuideObjectiveBlock_AddLeftIcon(block, iconName, initialAnchorOffsets)
 
     local icon = block.leftIcon;
     if not icon then
-        icon = GuideObjectiveBlock_AcquireLeftIcon(block);
+        icon = AcquireLeftIcon(block);
         -- block.stepTypeIcon = icon;
     end
 
-    GuideObjectiveBlock_InitializeTexture(icon, textureInfo);
+    InitializeLeftIconTexture(icon, textureInfo);
 
     if block.leftIcon == icon then
         return;
@@ -127,20 +145,68 @@ function GuideObjectiveBlock_ReleaseLeftIcon(block)
 end
 
 -- *****************************************************************************************************
+-- ***** LEFT CHECKBOX
+-- *****************************************************************************************************
+
+local guideObjectiveLeftCheckboxPool = CreateFramePool("CheckButton", nil, "GuideStepTypeCheckboxTemplate", OnRelease);
+
+local function AcquireLeftCheckbox(parent)
+    local checkbox = guideObjectiveLeftCheckboxPool:Acquire();
+    checkbox:SetParent(parent);
+
+    return checkbox;
+end
+
+function GuideObjectiveBlock_AddLeftCheckbox(block, initialAnchorOffsets)
+    local checkbox = block.leftCheckbox;
+    if not checkbox then
+        checkbox = AcquireLeftCheckbox(block);
+    end
+
+    checkbox.block = block;
+
+    if block.leftCheckbox == checkbox then
+        return;
+    end
+
+    checkbox:ClearAllPoints();
+
+    local paddingBetweenButtons = block.module.paddingBetweenButtons or 0;
+
+    if block.leftIcon then
+        checkbox:SetPoint("RIGHT", block.leftIcon, "LEFT", -paddingBetweenButtons, 0);
+    else
+        initialAnchorOffsets = initialAnchorOffsets or defaultInitialAnchorOffsets;
+        -- icon:SetPoint("TOPLEFT", block, initialAnchorOffsets[1], initialAnchorOffsets[2]);
+        checkbox:SetPoint("RIGHT", block.HeaderText, "LEFT", -2, 0);
+    end
+
+    checkbox:Show();
+
+    block.leftCheckbox = checkbox;
+end
+
+function GuideObjectiveBlock_ReleaseLeftCheckbox(block)
+    if block.leftCheckbox then
+        block.leftCheckbox.block = nil;
+        block.leftCheckbox:SetChecked(false);
+        guideObjectiveLeftCheckboxPool:Release(block.leftCheckbox);
+        block.leftCheckbox = nil;
+    end
+end
+
+-- *****************************************************************************************************
 -- ***** RIGHT BUTTON MANAGER
 -- *****************************************************************************************************
 
 local guideObjectiveButtonPool = Hacks:CreateNamedFramePool(
                                      "BUTTON", nil, "GuideObjectiveButtonTemplate", OnRelease, "GuideObjectiveButton"
                                  );
-function GuideObjectiveButton_Acquire(parent)
+
+local function AcquireRightButton(parent)
     local button = guideObjectiveButtonPool:Acquire();
     button:SetParent(parent);
     return button;
-end
-
-function GuideObjectiveButton_Release(button)
-    guideObjectiveButtonPool:Release(button);
 end
 
 function GuideObjectiveSetupBlockButton_AddRightButton(block, button, initialAnchorOffsets)
@@ -165,6 +231,10 @@ function GuideObjectiveSetupBlockButton_AddRightButton(block, button, initialAnc
 
     block.rightButton = button;
     block.lineWidth = block.lineWidth - button:GetWidth() - paddingBetweenButtons;
+end
+
+function GuideObjectiveBlock_ReleaseRightButton(button)
+    guideObjectiveButtonPool:Release(button);
 end
 
 -- *****************************************************************************************************
@@ -302,7 +372,7 @@ function GuideObjectiveSetupBlockButton_Item(block, item)
     if item then
         local itemButton = block.itemButton;
         if not itemButton then
-            itemButton = GuideObjectiveButton_Acquire(block);
+            itemButton = AcquireRightButton(block);
             block.itemButton = itemButton;
         end
 
@@ -317,7 +387,7 @@ end
 
 function GuideObjectiveReleaseBlockButton_Item(block)
     if block.itemButton then
-        GuideObjectiveButton_Release(block.itemButton);
+        GuideObjectiveBlock_ReleaseRightButton(block.itemButton);
         block.itemButton = nil;
     end
 end
@@ -427,7 +497,7 @@ function GuideObjectiveSetupBlockButton_Targets(block, step)
     if step:HasTargets() then
         local targetsButton = block.targetsButton;
         if not targetsButton then
-            targetsButton = GuideObjectiveButton_Acquire(block);
+            targetsButton = AcquireRightButton(block);
             block.targetsButton = targetsButton;
         end
 
@@ -446,7 +516,7 @@ function GuideObjectiveReleaseBlockButton_Targets(block)
             block.targetsButton.hasTargetBinding = false;
             guideObjectiveButtonPool.currentTartgetBtnBind = nil;
         end
-        GuideObjectiveButton_Release(block.targetsButton);
+        GuideObjectiveBlock_ReleaseRightButton(block.targetsButton);
         block.targetsButton = nil;
     end
 end

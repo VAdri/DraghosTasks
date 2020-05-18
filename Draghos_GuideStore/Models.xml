@@ -7,6 +7,8 @@
     <Script file="Models/Zone.lua"/>
     <Script file="Models/UseItem.lua"/>
     <Script file="Models/Hearth.lua"/>
+    <Script file="Models/ManualCompletion.lua"/>
+    <Script file="Models/Note.lua"/>
     <Script file="Models/NPC.lua"/>
     <Script file="Models/Target.lua"/>
     <Script file="Models/TaxiNode.lua"/>
@@ -25,6 +27,7 @@
     <Script file="Models/Steps/StepCompleteQuestObjectives.lua"/>
     <Script file="Models/Steps/StepGrind.lua"/>
     <Script file="Models/Steps/StepHandInQuest.lua"/>
+    <Script file="Models/Steps/StepNote.lua"/>
     <Script file="Models/Steps/StepPickUpQuest.lua"/>
     <Script file="Models/Steps/StepProgressQuestObjectives.lua"/>
     <Script file="Models/Steps/StepUseHearthstone.lua"/>

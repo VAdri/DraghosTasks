@@ -24,7 +24,7 @@ function TaxiNodeMixin:IsValidTaxiNode()
 end
 
 function TaxiNodeMixin:IsTaxiNodeDiscovered()
-    return TaxiNodesDB and TaxiNodesDB[self.nodeID] == true;
+    return DraghosTaxiNodesDB and DraghosTaxiNodesDB[self.nodeID] == true;
 end
 
 function TaxiNodeMixin:GetFlightMasterName()

@@ -4,7 +4,7 @@
 ## Version: 0.0.1
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
-## SavedVariablesPerCharacter: TaxiNodesDB
+## SavedVariablesPerCharacter: DraghosTaxiNodesDB, DraghosStepsCompletedDB
 
 Utils.lua
 Locales.xml

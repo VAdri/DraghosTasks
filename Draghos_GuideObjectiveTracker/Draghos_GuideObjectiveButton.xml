@@ -4,6 +4,22 @@
 
     <Script file="Draghos_GuideObjectiveButton.lua"/>
 
+    <CheckButton name="GuideStepTypeCheckboxTemplate" virtual="true">
+        <Size x="20" y="20"/>
+        <Scripts>
+            <OnClick>
+                if self.block then
+                    Draghos_GuideStore:SendMesage(DraghosEnums.Mesages.ToggleStepCompleted, self.block.step);
+                end
+            </OnClick>
+        </Scripts>
+        <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+        <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+        <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+        <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+        <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+    </CheckButton>
+
     <Frame name="GuideStepTypeIconTemplate" virtual="true">
         <Size x="20" y="20"/>
         <Layers>

@@ -98,15 +98,15 @@ local lightgray = CreateColor(0.8, 0.8, 0.8);
 local gray = LIGHTGRAY_FONT_COLOR;
 local darkgray = DISABLED_FONT_COLOR;
 
-OBJECTIVE_TRACKER_COLOR["PartialHeader"] = {r = lightgray.r, g = lightgray.g, b = lightgray.b};
-OBJECTIVE_TRACKER_COLOR["PartialHeaderHighlight"] = {r = white.r, g = white.g, b = white.b};
-OBJECTIVE_TRACKER_COLOR["PartialHeader"].reverse = OBJECTIVE_TRACKER_COLOR["PartialHeaderHighlight"];
-OBJECTIVE_TRACKER_COLOR["PartialHeaderHighlight"].reverse = OBJECTIVE_TRACKER_COLOR["PartialHeader"];
+OBJECTIVE_TRACKER_COLOR["TrivialHeader"] = {r = lightgray.r, g = lightgray.g, b = lightgray.b};
+OBJECTIVE_TRACKER_COLOR["TrivialHeaderHighlight"] = {r = white.r, g = white.g, b = white.b};
+OBJECTIVE_TRACKER_COLOR["TrivialHeader"].reverse = OBJECTIVE_TRACKER_COLOR["TrivialHeaderHighlight"];
+OBJECTIVE_TRACKER_COLOR["TrivialHeaderHighlight"].reverse = OBJECTIVE_TRACKER_COLOR["TrivialHeader"];
 
-OBJECTIVE_TRACKER_COLOR["Partial"] = {r = darkgray.r, g = darkgray.g, b = darkgray.b};
-OBJECTIVE_TRACKER_COLOR["PartialHighlight"] = {r = gray.r, g = gray.g, b = gray.b};
-OBJECTIVE_TRACKER_COLOR["Partial"].reverse = OBJECTIVE_TRACKER_COLOR["PartialHighlight"];
-OBJECTIVE_TRACKER_COLOR["PartialHighlight"].reverse = OBJECTIVE_TRACKER_COLOR["Partial"];
+OBJECTIVE_TRACKER_COLOR["Trivial"] = {r = darkgray.r, g = darkgray.g, b = darkgray.b};
+OBJECTIVE_TRACKER_COLOR["TrivialHighlight"] = {r = gray.r, g = gray.g, b = gray.b};
+OBJECTIVE_TRACKER_COLOR["Trivial"].reverse = OBJECTIVE_TRACKER_COLOR["TrivialHighlight"];
+OBJECTIVE_TRACKER_COLOR["TrivialHighlight"].reverse = OBJECTIVE_TRACKER_COLOR["Trivial"];
 
 --- @param block table
 --- @param step Step
@@ -133,13 +133,12 @@ function GUIDE_TRACKER_MODULE:SetBlockHeader(block, step)
     end
 
     local color;
-    -- if step:IsImportant() then
-    --     -- TODO: Important steps should be displayed in red
-    --     color = OBJECTIVE_TRACKER_COLOR["ImportantHeader"];
-    -- else
-    if step.IsPartial and step:IsPartial() then
-        -- Partial steps are grayed out
-        color = OBJECTIVE_TRACKER_COLOR["PartialHeader"];
+    if step:IsImportant() then
+        -- Important steps are displayed in red
+        color = OBJECTIVE_TRACKER_COLOR["TimeLeft"];
+    elseif step:IsTrivial() then
+        -- Trivial steps are grayed out
+        color = OBJECTIVE_TRACKER_COLOR["TrivialHeader"];
     else
         color = OBJECTIVE_TRACKER_COLOR["Header"];
     end
@@ -157,11 +156,21 @@ function GUIDE_TRACKER_MODULE:OnBlockHeaderEnter(block)
     DefaultOnBlockHeaderEnter(self, block);
 
     -- Show the highlight color
-    if (block.HeaderText and block.step and block.step.IsPartial and block.step:IsPartial()) then
-        local reverseColorStyle = headerColorStyle.reverse or headerColorStyle;
-        block.HeaderText:SetTextColor(reverseColorStyle.r, reverseColorStyle.g, reverseColorStyle.b);
+    local step = block.step;
+    if (block.HeaderText and step) then
+        if step:IsImportant() or step:IsTrivial() then
+            local reverseColorStyle = headerColorStyle.reverse or headerColorStyle;
+            block.HeaderText:SetTextColor(reverseColorStyle.r, reverseColorStyle.g, reverseColorStyle.b);
+        end
     end
     block.HeaderText.colorStyle = headerColorStyle;
+
+    -- Show the text in the tooltip
+    if (block.HeaderText and step) then
+        GameTooltip:SetOwner(block.HeaderText);
+        GameTooltip:SetText(step:GetLabel());
+        GameTooltip:Show();
+    end
 end
 
 local DefaultOnBlockHeaderLeave = DEFAULT_OBJECTIVE_TRACKER_MODULE.OnBlockHeaderLeave;
@@ -171,10 +180,16 @@ function GUIDE_TRACKER_MODULE:OnBlockHeaderLeave(block)
     DefaultOnBlockHeaderLeave(self, block)
 
     -- Show the normal color
-    if (block.HeaderText and block.step and block.step.IsPartial and block.step:IsPartial()) then
-        block.HeaderText:SetTextColor(headerColorStyle.r, headerColorStyle.g, headerColorStyle.b);
+    local step = block.step;
+    if (block.HeaderText and step) then
+        if step:IsImportant() or step:IsTrivial() then
+            block.HeaderText:SetTextColor(headerColorStyle.r, headerColorStyle.g, headerColorStyle.b);
+        end
     end
     block.HeaderText.colorStyle = headerColorStyle;
+
+    -- Hide the tooltip
+    GameTooltip:Hide();
 end
 
 -- *********************************************************************************************************************
@@ -292,8 +307,8 @@ function GUIDE_TRACKER_MODULE:UpdateSingle(step, stepIndex)
 
         if stepLine:IsImportant() then
             baseColor = OBJECTIVE_TRACKER_COLOR["TimeLeft"];
-        elseif step.IsPartial and step:IsPartial() then
-            baseColor = OBJECTIVE_TRACKER_COLOR["Partial"];
+        elseif stepLine:IsTrivial() then
+            baseColor = OBJECTIVE_TRACKER_COLOR["Trivial"];
         end
 
         local line;
@@ -349,6 +364,10 @@ function GUIDE_TRACKER_MODULE:UpdateSingle(step, stepIndex)
                 end
             end
         end
+
+        if step:IsManualCompletion() then
+            GuideObjectiveBlock_AddLeftCheckbox(block);
+        end
     else
         block.used = false;
         return true; -- Can't add the block, we're done enumerating tasks
@@ -362,7 +381,8 @@ end
 function GUIDE_TRACKER_MODULE:ClearBlockData(block)
     -- Hide icon and button
     GuideObjectiveBlock_ReleaseLeftIcon(block);
-    GuideObjectiveButton_Release(block);
+    GuideObjectiveBlock_ReleaseLeftCheckbox(block);
+    GuideObjectiveBlock_ReleaseRightButton(block);
 
     -- Unwatch step
     if block.step:IsCompleted() then

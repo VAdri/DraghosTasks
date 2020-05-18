@@ -13,14 +13,18 @@ Mixin(StepMixin, DraghosMixins.Observable);
 -- ***** Init
 -- *********************************************************************************************************************
 
+local function CreateNote(note)
+    return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineNote, note);
+end
+
 function StepMixin:StepInit(step)
     self.stepID = tonumber(step.id);
     self.stepLines = {};
     self.requiredStepIDs = step.requiredStepIDs or {}; -- TODO: Detect potential circular references
     self.completedAfterCompletedStepIDs = step.completedAfterCompletedStepIDs or {}; -- TODO: Detect potential circular references
 
-    if step.note then
-        self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineNote, step.note))
+    if step.notes and #step.notes > 0 then
+        self:AddMultipleStepLines(FP:Map(step.notes, CreateNote));
     end
 end
 
@@ -68,6 +72,10 @@ end
 
 local function GetStepByID(stepID)
     return Draghos_GuideStore:GetStepByID(stepID);
+end
+
+function StepMixin:HasDependentSteps()
+    return #self.completedAfterCompletedStepIDs > 0;
 end
 
 function StepMixin:DependentStepsCompleted()
@@ -132,6 +140,26 @@ function StepMixin:IsQuestItemToUse()
 end
 
 -- *********************************************************************************************************************
+-- ***** Complete Step Checkbox
+-- *********************************************************************************************************************
+
+function StepMixin:IsManualCompletion()
+    return false;
+end
+
+-- *********************************************************************************************************************
+-- ***** Styling
+-- *********************************************************************************************************************
+
+function StepMixin:IsImportant()
+    return false;
+end
+
+function StepMixin:IsTrivial()
+    return false;
+end
+
+-- *********************************************************************************************************************
 -- ***** StepLines
 -- *********************************************************************************************************************
 
@@ -142,11 +170,13 @@ end
 function StepMixin:AddOneStepLine(stepLine)
     stepLine.step = self;
     self.stepLines = FP:Append(self:GetStepLines(), stepLine);
+    stepLine.lineIndex = #self.stepLines;
 end
 
 function StepMixin:AddMultipleStepLines(stepLines)
-    for _, stepLine in pairs(stepLines) do
+    for i, stepLine in pairs(stepLines) do
         stepLine.step = self;
+        stepLine.lineIndex = #self.stepLines + i;
     end
     self.stepLines = FP:Concat(self:GetStepLines(), stepLines);
 end

@@ -8,7 +8,9 @@ local FP = DraghosUtils.FP;
 -- *********************************************************************************************************************
 
 local function InitStep(step)
-    if step.stepType == STEP_TYPE_PICKUP_QUEST then
+    if step.stepType == STEP_TYPE_NOTE then
+        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepNote, step);
+    elseif step.stepType == STEP_TYPE_PICKUP_QUEST then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepPickUpQuest, step);
     elseif step.stepType == STEP_TYPE_PROGRESS_QUEST_OBJECTIVE then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepProgressQuestObjectives, step);
@@ -24,6 +26,8 @@ local function InitStep(step)
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepUseHearthstone, step);
     elseif step.stepType == STEP_TYPE_SET_HEARTH then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepSetHearth, step);
+    elseif step.stepType == STEP_TYPE_GO then
+        -- TODO: return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepGo, step);
     elseif step.stepType == STEP_TYPE_GET_FLIGHT_PATH then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepDiscoverTaxiNode, step);
     else
@@ -99,21 +103,29 @@ function Draghos_GuideStore:CreateBaseItem(mixin, data)
 end
 
 -- *********************************************************************************************************************
--- ***** HOOKS
+-- ***** INITIALIZATION
 -- *********************************************************************************************************************
 
 local frame;
 
-Draghos_GuideStore.customEventsSuffix = "DRAGHOS";
-
 function GuideStoreFrame_OnLoad(self)
     frame = self;
+    Draghos_GuideStore.notifiers = {};
+    Draghos_GuideStore.handlers = {};
+
     Draghos_GuideStore:LoadSteps();
+
     Draghos_GuideStore.initialized = true;
 end
 
+-- *********************************************************************************************************************
+-- ***** EVENTS (from store to UI)
+-- *********************************************************************************************************************
+
+Draghos_GuideStore.customEventsPrefix = "DRAGHOS";
+
 function GuideStoreFrame_OnEvent(self, event, ...)
-    local notifiers = Draghos_GuideStore.notifiers and Draghos_GuideStore.notifiers[event] or {};
+    local notifiers = Draghos_GuideStore.notifiers[event] or {};
     for _, notifier in pairs(notifiers) do
         notifier:NotifyWatchers(event, ...);
     end
@@ -124,10 +136,9 @@ function Draghos_GuideStore:SendCustomEvent(event, ...)
 end
 
 function Draghos_GuideStore:RegisterForNotifications(item, event)
-    self.notifiers = self.notifiers or {};
     self.notifiers[event] = self.notifiers[event] or {};
     table.insert(self.notifiers[event], item);
-    if Str:StartsWith(event, Draghos_GuideStore.customEventsSuffix) then
+    if Str:StartsWith(event, Draghos_GuideStore.customEventsPrefix) then
         -- This is not a real event we don't need to register it
     elseif not frame:IsEventRegistered(event) then
         frame:RegisterEvent(event, self.OnEvent);
@@ -137,4 +148,20 @@ end
 function Draghos_GuideStore:UnregisterForNotifications(item)
     self.notifiers = self.notifiers or {};
     self.notifiers[item] = nil;
+end
+
+-- *********************************************************************************************************************
+-- ***** MESSAGES (from UI to store)
+-- *********************************************************************************************************************
+
+function Draghos_GuideStore:OnMessageReceived(messageType, handler)
+    self.handlers[messageType] = self.handlers[messageType] or {};
+    table.insert(self.handlers[messageType], handler);
+end
+
+function Draghos_GuideStore:SendMesage(messageType, ...)
+    local handlers = self.handlers[messageType] or {};
+    for _, handler in pairs(handlers) do
+        handler(...);
+    end
 end

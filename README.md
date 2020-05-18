@@ -8,7 +8,7 @@ The guide currently support these kinds of steps:
 - [x] Complete a quest
 - [x] Hand in a quest
 - [ ] Abandon a quest
-- [ ] Display a note
+- [x] Display a note
 - [x] Grind until reaching a specific level (and potentially an amount of XP)
 - [ ] Grind until reaching a specific reputation level (and potentially an amount of reputation points)
 - [x] Use Hearthstone
@@ -55,8 +55,6 @@ Other features:
   - [ ] When the requirements are not met (level/race/class/reputation/money...)
   - [ ] Conditional steps (for instance: if the step `Use Hearthstone` is not available, display a `Go` step and/or a `Note`).
 - [ ] Skip to the next step automatically when it is completed:
-  - [x] Using one of the step logic (see above)
-  - [x] When another step has been successfully
   - [ ] If the step is too low level/not worth it
 - [ ] Skip a step manually
   - [ ] Warn the player that several steps will be missed
@@ -68,3 +66,11 @@ Other features:
   - [x] Target NPC and show a mark above him
     - [ ] Glow when the NPC is in range
     - [ ] Display the model of the NPC in a side frame
+  - [x] Mark the step as completed (if it has been define manual completion)
+- [ ] Calculate the best itinerary to go to the next step
+  - [ ] Indicate the point on the map and an arrow
+  - [ ] Show the point where to change zone (gate)
+  - [ ] Allow to use flight paths when they are discovered
+  - [ ] Tell the player to use a spell/mount to go faster
+  - [ ] Use portals/boats/zeppelin/...
+  - [ ] Optionally, use the hearthstone or a teleport spell (but it is difficult to know if the player should use that cooldown)

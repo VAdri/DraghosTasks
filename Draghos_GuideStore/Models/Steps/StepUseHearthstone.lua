@@ -50,8 +50,8 @@ function StepUseHearthstoneMixin:GetLabel()
 end
 
 function StepUseHearthstoneMixin:IsValid()
-    return self.completedAfterCompletedStepIDs and #self.completedAfterCompletedStepIDs > 0 and self:IsValidStep() and
-               self:IsValidItemToUse() and self:IsValidHearth() and self:IsValidLocation();
+    return self:HasDependentSteps() and self:IsValidStep() and self:IsValidItemToUse() and self:IsValidHearth() and
+               self:IsValidLocation();
 end
 
 function StepUseHearthstoneMixin:IsAvailable()

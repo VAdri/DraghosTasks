@@ -1,6 +1,24 @@
 DraghosUtils = {};
 DraghosMixins = {};
+DraghosEnums = {};
+DraghosFlags = {};
 Draghos_GuideStore = {};
+
+-- *********************************************************************************************************************
+-- ***** Enums and Flags
+-- *********************************************************************************************************************
+
+DraghosEnums.Mesages = {
+    ToggleStepCompleted = 1, -- The UI send an event indicating that a step completed state has been manually changed
+};
+
+DraghosFlags.NoteState = {
+    Normal = 0x0, -- Default state
+    Important = 0x1, -- The note is emphasized (in a red color for instance)
+    Checked = 0x2, -- The note is displayed with a checkmark (only for subnotes)
+    Disabled = 0x4, -- The note is not displayed
+    Trivial = 0x8, -- The note is grayed out
+};
 
 -- *********************************************************************************************************************
 -- ***** Functional Programming
