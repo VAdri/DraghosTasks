@@ -137,6 +137,23 @@
         "C_TaxiMap",
         "FlightMapFrame",
         "Enum",
-        "bit"
+        "bit",
+        "strmatch",
+        "geterrorhandler",
+        "GetBuildInfo",
+        "UnitPosition",
+        "wipe",
+        "CreateVector2D",
+        "C_Timer",
+        "IsLoggedIn",
+        "MapCanvasDataProviderMixin",
+        "MapCanvasPinMixin",
+        "Minimap",
+        "GetPlayerFacing",
+        "GetCVar",
+        "GetMinimapShape",
+        "WorldMapFrame",
+        "UIParent",
+        "floor"
     ]
 }

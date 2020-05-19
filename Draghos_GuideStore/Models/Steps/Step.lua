@@ -58,20 +58,26 @@ function StepMixin:IsStepAvailable()
 end
 
 function StepMixin:IsValidStep()
-    return self.stepID and FP:All(self:GetStepLines(), FP:CallOnSelf("IsValid"));
-end
-
-local function IsCompleted(stepID)
-    local step = Draghos_GuideStore:GetStepByID(stepID);
-    return step and step:IsCompleted();
-end
-
-function StepMixin:RequiredStepsCompleted()
-    return #self.requiredStepIDs == 0 or FP:All(self.requiredStepIDs, IsCompleted);
+    local function isValidStep()
+        return FP:All(self:GetStepLines(), FP:CallOnSelf("IsValid"));
+    end
+    return self.stepID and FP:Memo("IsValidStep:" .. tostring(self), isValidStep);
 end
 
 local function GetStepByID(stepID)
     return Draghos_GuideStore:GetStepByID(stepID);
+end
+
+local function IsCompleted(stepID)
+    local step = GetStepByID(stepID);
+    return step and step:IsCompleted();
+end
+
+function StepMixin:RequiredStepsCompleted()
+    local function requiredStepsCompleted()
+        return FP:All(self.requiredStepIDs, IsCompleted);
+    end
+    return #self.requiredStepIDs == 0 or FP:Memo("RequiredStepsCompleted:" .. tostring(self), requiredStepsCompleted);
 end
 
 function StepMixin:HasDependentSteps()
@@ -79,7 +85,10 @@ function StepMixin:HasDependentSteps()
 end
 
 function StepMixin:DependentStepsCompleted()
-    return FP:All(FP:Map(self.completedAfterCompletedStepIDs, GetStepByID), FP:CallOnSelf("IsCompleted"));
+    local function dependentStepsCompleted()
+        return FP:All(FP:Map(self.completedAfterCompletedStepIDs, GetStepByID), FP:CallOnSelf("IsCompleted"));
+    end
+    return FP:Memo("DependentStepsCompleted:" .. tostring(self), dependentStepsCompleted);
 end
 
 -- *********************************************************************************************************************
@@ -91,12 +100,18 @@ function StepMixin:SkipWaypoint()
 end
 
 function StepMixin:CanAddWaypoints()
-    return FP:Any(self:GetStepLines(), FP:CallOnSelf("CanAddWaypoints"));
+    local function canAddWaypoints()
+        return FP:Any(self:GetStepLines(), FP:CallOnSelf("CanAddWaypoints"));
+    end
+    return FP:Memo("CanAddWaypoints:" .. tostring(self), canAddWaypoints);
 end
 
 function StepMixin:GetWaypointsInfo()
-    local stepLineLocations = FP:Filter(self:GetStepLines(), FP:CallOnSelf("CanAddWaypoints"));
-    return FP:Flatten(FP:Map(stepLineLocations, FP:CallOnSelf("GetWaypointsInfo")));
+    local function getWaypointsInfo()
+        local stepLineLocations = FP:Filter(self:GetStepLines(), FP:CallOnSelf("CanAddWaypoints"));
+        return FP:Flatten(FP:Map(stepLineLocations, FP:CallOnSelf("GetWaypointsInfo")));
+    end
+    return FP:Memo("GetWaypointsInfo:" .. tostring(self), getWaypointsInfo);
 end
 
 -- *********************************************************************************************************************
@@ -104,23 +119,38 @@ end
 -- *********************************************************************************************************************
 
 function StepMixin:GetTargetNPCs()
-    return FP:FlatMap(self:GetStepLines(), FP:CallOnSelf("GetTargetNPCs"));
+    local function getTargetNPCs()
+        return FP:FlatMap(self:GetStepLines(), FP:CallOnSelf("GetTargetNPCs"));
+    end
+    return FP:Memo("GetTargetNPCs:" .. tostring(self), getTargetNPCs);
 end
 
 function StepMixin:HasTargets()
-    return FP:Any(self:GetStepLines(), FP:CallOnSelf("HasTargets"));
+    local function hasTargets()
+        return FP:Any(self:GetStepLines(), FP:CallOnSelf("HasTargets"));
+    end
+    return FP:Memo("HasTargets:" .. tostring(self), hasTargets);
 end
 
 function StepMixin:HasInvalidTargets()
-    return FP:Any(self:GetStepLines(), FP:CallOnSelf("HasInvalidTargets"));
+    local function hasInvalidTargets()
+        return FP:Any(self:GetStepLines(), FP:CallOnSelf("HasInvalidTargets"));
+    end
+    return FP:Memo("HasInvalidTargets:" .. tostring(self), hasInvalidTargets);
 end
 
 function StepMixin:GetTargetNames()
-    return FP:FlatMap(self:GetStepLines(), FP:CallOnSelf("GetTargetNames"));
+    local function getTargetNames()
+        return FP:FlatMap(self:GetStepLines(), FP:CallOnSelf("GetTargetNames"));
+    end
+    return FP:Memo("GetTargetNames:" .. tostring(self), getTargetNames);
 end
 
 function StepMixin:GetTargetIDs()
-    return FP:FlatMap(self:GetStepLines(), FP:CallOnSelf("GetTargetIDs"));
+    local function getTargetIDs()
+        return FP:FlatMap(self:GetStepLines(), FP:CallOnSelf("GetTargetIDs"));
+    end
+    return FP:Memo("GetTargetIDs:" .. tostring(self), getTargetIDs);
 end
 
 -- *********************************************************************************************************************
@@ -164,7 +194,10 @@ end
 -- *********************************************************************************************************************
 
 function StepMixin:GetStepLines()
-    return FP:Filter(self.stepLines or {}, FP:ReverseResult(FP:CallOnSelf("IsDisabled")));
+    local function getStepLines()
+        return FP:Filter(self.stepLines or {}, FP:ReverseResult(FP:CallOnSelf("IsDisabled")));
+    end
+    return FP:Memo("GetStepLines:" .. tostring(self), getStepLines);
 end
 
 function StepMixin:AddOneStepLine(stepLine)

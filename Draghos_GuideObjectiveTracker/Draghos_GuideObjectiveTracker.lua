@@ -168,7 +168,7 @@ function GUIDE_TRACKER_MODULE:OnBlockHeaderEnter(block)
     -- Show the text in the tooltip
     if (block.HeaderText and step) then
         GameTooltip:SetOwner(block.HeaderText);
-        GameTooltip:SetText(step:GetLabel());
+        GameTooltip:AddLine(step:GetLabel(), nil, nil, nil, true);
         GameTooltip:Show();
     end
 end

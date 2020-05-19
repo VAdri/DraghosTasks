@@ -20,10 +20,6 @@ function QuestMixin:QuestInit(quest)
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_REMOVED");
 end
 
-function QuestMixin:QuestUnload()
-    Draghos_GuideStore:UnregisterForNotifications(self);
-end
-
 function QuestMixin:GetQuestLabel()
     return self.questID and C_QuestLog.GetQuestInfo(self.questID);
 end

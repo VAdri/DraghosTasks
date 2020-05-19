@@ -254,6 +254,33 @@ function DraghosUtils.FP:FillWith(t, props, value)
     return _t;
 end
 
+DraghosUtils.FP.cache = {};
+DraghosUtils.FP.cacheAge = time();
+DraghosUtils.FP.cacheMaxAge = 0.2;
+
+function DraghosUtils.FP:ClearMemo()
+    self.cacheAge = time();
+    self.cache = {};
+end
+
+--- @param key string
+--- @param func function
+--- @return any
+function DraghosUtils.FP:Memo(key, func)
+    if time() - self.cacheAge > self.cacheMaxAge then
+        self:ClearMemo();
+    end
+
+    if self.cache[key] and self.cache[key][func] then
+        return self.cache[key][func];
+    else
+        local result = func();
+        self.cache[key] = self.cache[key] or {};
+        self.cache[key][func] = result;
+        return result;
+    end
+end
+
 --- @param prop any
 --- @return function
 function DraghosUtils.FP:PropsAreEqual(prop)
@@ -448,6 +475,27 @@ function DraghosUtils.Helpers:PlayerIsCastingSpellID(spellID)
     else
         -- Retail
         return select(9, UnitCastingInfo("player")) == spellID;
+    end
+end
+
+function DraghosUtils.Helpers:StartGarbageCollection()
+    if self.isCollectingGarbage then
+        return;
+    end
+
+    -- print("garbage collection step at " .. time())
+    self.isCollectingGarbage = true;
+    self.isGarbageCollected = collectgarbage("step", 1000);
+
+    if self.isGarbageCollected then
+        self.isCollectingGarbage = false;
+    else
+        C_Timer.After(
+            0.1, function()
+                self.isCollectingGarbage = false;
+                self:StartGarbageCollection();
+            end
+        );
     end
 end
 

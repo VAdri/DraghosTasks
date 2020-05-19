@@ -46,7 +46,7 @@ function StepUseHearthstoneMixin:GetStepType()
 end
 
 function StepUseHearthstoneMixin:GetLabel()
-    return USE_HEARTHSTONE_TO_TELEPORT:format(self:GetItemLabel(), self:GetHearthLabel());
+    return USE_HEARTHSTONE_TO_TELEPORT:format(self:GetItemLabel() or "", self:GetHearthLabel());
 end
 
 function StepUseHearthstoneMixin:IsValid()

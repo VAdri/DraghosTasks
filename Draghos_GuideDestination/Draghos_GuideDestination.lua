@@ -3,18 +3,18 @@ local TomTomDestination = CreateFrame("Frame");
 TomTom.waydb:ResetProfile();
 TomTom:ReloadWaypoints();
 
-local function OnStepUpdated(self, watchedItem, event, ...)
+local function OnStepUpdated()
     TomTom.waydb:ResetProfile();
     TomTom:ReloadWaypoints();
 
-    if not watchedItem or not watchedItem:CanAddWaypoints() then
-        self.watchedItem = nil;
-        self:WatchNextStep();
+    if not TomTomDestination.watchedItem or not TomTomDestination.watchedItem:CanAddWaypoints() then
+        TomTomDestination.watchedItem = nil;
+        TomTomDestination:WatchNextStep();
         return;
     end
 
-    if watchedItem:IsAvailable() and not watchedItem:IsCompleted() then
-        local waypoints = watchedItem:GetWaypointsInfo();
+    if TomTomDestination.watchedItem:IsAvailable() and not TomTomDestination.watchedItem:IsCompleted() then
+        local waypoints = TomTomDestination.watchedItem:GetWaypointsInfo();
         for _, waypoint in pairs(waypoints) do
             waypoint.options.callbacks = TomTom:DefaultCallbacks(waypoint.options);
             TomTom:AddWaypoint(waypoint.uiMapID, waypoint.x, waypoint.y, waypoint.options);

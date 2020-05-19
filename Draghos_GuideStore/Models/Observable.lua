@@ -26,11 +26,11 @@ function ObservableMixin:Unwatch(frame)
     end
 end
 
-function ObservableMixin:NotifyWatchers(event, ...)
-    assert(type(self) == "table", "Usage: ObservableMixin:NotifyWatchers(event, ...)");
-    for frame, handler in pairs(self.watchers or {}) do
-        handler(frame, self, event, ...);
-    end
-end
+-- function ObservableMixin:NotifyWatchers(event, ...)
+--     assert(type(self) == "table", "Usage: ObservableMixin:NotifyWatchers(event, ...)");
+--     for frame, handler in pairs(self.watchers or {}) do
+--         handler(frame, self, event, ...);
+--     end
+-- end
 
 DraghosMixins.Observable = ObservableMixin;

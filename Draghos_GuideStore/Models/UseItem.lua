@@ -7,7 +7,8 @@ ItemWatcherFrame.items = {};
 local function WatchAvailability(elapsed)
     for itemID, item in pairs(ItemWatcherFrame.items) do
         if item:IsItemAvailableToUse() then
-            item:NotifyWatchers("ITEM_AVAILABLE", itemID);
+            Draghos_GuideStore:SendCustomEvent("DRAGHOS_ITEM_AVAILABLE", itemID);
+            -- item:NotifyWatchers("DRAGHOS_ITEM_AVAILABLE", itemID);
             ItemWatcherFrame.items[itemID] = nil;
         end
     end
@@ -40,6 +41,7 @@ function UseItemMixin:UseItemInit(item)
     Draghos_GuideStore:RegisterForNotifications(self, "UNIT_SPELLCAST_FAILED");
     Draghos_GuideStore:RegisterForNotifications(self, "SPELL_UPDATE_COOLDOWN");
     Draghos_GuideStore:RegisterForNotifications(self, "SPELL_UPDATE_USABLE");
+    Draghos_GuideStore:RegisterForNotifications(self, "DRAGHOS_ITEM_AVAILABLE");
 end
 
 function UseItemMixin:GetItem()

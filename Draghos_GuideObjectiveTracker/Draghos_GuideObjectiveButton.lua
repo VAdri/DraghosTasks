@@ -61,7 +61,8 @@ end
 local StepTypeIconTextureInfos = {
     ["PickUpQuest"] = {atlasName = "QuestNormal", x = 22, y = 20},
     ["HandInQuest"] = {atlasName = "QuestTurnin", x = 20, y = 20},
-    ["CombatObjective"] = {atlasName = "Ammunition", x = 24, y = 24},
+    ["CombatObjective"] = {filePath = "Interface\\CURSOR\\Attack", x = 18, y = 18},
+    -- ["CombatObjective"] = {atlasName = "Ammunition", x = 24, y = 24},
     ["Bank"] = {atlasName = "Banker", x = 20, y = 20},
     ["OtherObjective"] = {atlasName = "mechagon-projects", x = 16, y = 16},
     ["Grind"] = {atlasName = "GreenCross", x = 14, y = 14},

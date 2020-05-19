@@ -1,5 +1,6 @@
 local CreateAndInitFromMixin = CreateAndInitFromMixin;
 
+local Helpers = DraghosUtils.Helpers;
 local Str = DraghosUtils.Str;
 local FP = DraghosUtils.FP;
 
@@ -72,23 +73,23 @@ end
 
 local GuideItemMetatable = {};
 
--- TODO: Deactivate this on release builds
+-- -- TODO: Deactivate this on release builds
 
--- Trick from this conversation: http://lua-users.org/lists/lua-l/2011-05/msg00029.html
-local function meta_tostring(object)
-    -- Disable the custom __tostring to get the original value
-    GuideItemMetatable.__tostring = nil;
-    local originalString = tostring(object);
+-- -- Trick from this conversation: http://lua-users.org/lists/lua-l/2011-05/msg00029.html
+-- local function meta_tostring(object)
+--     -- Disable the custom __tostring to get the original value
+--     GuideItemMetatable.__tostring = nil;
+--     local originalString = tostring(object);
 
-    -- Re-enable meta_tostring and return the result
-    GuideItemMetatable.__tostring = meta_tostring;
-    if object and type(object.GetLabel) == "function" then
-        return "guide_item: " .. originalString:sub(8) .. " (" .. object:GetLabel() .. ")";
-    else
-        return originalString;
-    end
-end
-GuideItemMetatable.__tostring = meta_tostring;
+--     -- Re-enable meta_tostring and return the result
+--     GuideItemMetatable.__tostring = meta_tostring;
+--     if object and type(object.GetLabel) == "function" then
+--         return "guide_item: " .. originalString:sub(8) .. " (" .. object:GetLabel() .. ")";
+--     else
+--         return originalString;
+--     end
+-- end
+-- GuideItemMetatable.__tostring = meta_tostring;
 
 function Draghos_GuideStore:CreateGuideItem(mixin, data)
     local object = CreateAndInitFromMixin(mixin, data);
@@ -125,10 +126,17 @@ end
 Draghos_GuideStore.customEventsPrefix = "DRAGHOS";
 
 function GuideStoreFrame_OnEvent(self, event, ...)
+    FP:ClearMemo();
     local notifiers = Draghos_GuideStore.notifiers[event] or {};
-    for _, notifier in pairs(notifiers) do
-        notifier:NotifyWatchers(event, ...);
+    -- for _, notifier in pairs(notifiers) do
+    --     notifier:NotifyWatchers(event, ...);
+    -- end
+    local handlers = FP:Unique(FP:Flatten(FP:MapProp(notifiers, "watchers")));
+    for _, handler in pairs(handlers) do
+        handler();
     end
+    FP:ClearMemo();
+    Helpers:StartGarbageCollection();
 end
 
 function Draghos_GuideStore:SendCustomEvent(event, ...)
@@ -160,8 +168,10 @@ function Draghos_GuideStore:OnMessageReceived(messageType, handler)
 end
 
 function Draghos_GuideStore:SendMesage(messageType, ...)
+    FP:ClearMemo();
     local handlers = self.handlers[messageType] or {};
     for _, handler in pairs(handlers) do
         handler(...);
     end
+    FP:ClearMemo();
 end
