@@ -1,4 +1,4 @@
-local FP = DraghosUtils.FP;
+local M = LibStub("Moses");
 
 local Virtual_StepWithObjectivesMixin = {};
 
@@ -23,11 +23,15 @@ function Virtual_StepWithObjectivesMixin:GetStepLines()
     if not self:AllObjectivesHaveBeenFetched() then
         -- The last fetch couldn't get all the objectives
         local newQuestObjectives = self:CreateQuestObjectives();
-        self.stepLines = FP:UniqueBy(FP:Concat(self.stepLines or {}, newQuestObjectives or {}), "index");
+        self.stepLines = M(self.stepLines or {}):append(newQuestObjectives or {}):uniqueProp("index"):value();
     end
 
     return self.stepLines or {};
 end
+
+local isCombat = M.partial(M.result, "_", "IsCombat");
+local isObjectInteraction = M.partial(M.result, "_", "IsObjectInteraction");
+local isLoot = M.partial(M.result, "_", "IsLoot");
 
 function Virtual_StepWithObjectivesMixin:GetObjectivesType()
     local questObjectives = self:GetQuestObjectives();
@@ -35,22 +39,22 @@ function Virtual_StepWithObjectivesMixin:GetObjectivesType()
     if questObjectivesCount == 0 then
         return nil;
     else
-        local combatObjectivesCount = FP:Count(questObjectives, FP:CallOnSelf("IsCombat"));
+        local combatObjectivesCount = M(questObjectives):countf(isCombat):value();
         if combatObjectivesCount == questObjectivesCount then
             return "CombatObjective";
         end
 
-        local objectInteractObjectivesCount = FP:Count(questObjectives, FP:CallOnSelf("IsObjectInteraction"));
+        local objectInteractObjectivesCount = M(questObjectives):countf(isObjectInteraction):value();
         if objectInteractObjectivesCount == questObjectivesCount then
             return "ObjectInteractionObjective";
         end
 
-        local lootObjectivesCount = FP:Count(questObjectives, FP:CallOnSelf("IsLoot"));
+        local lootObjectivesCount = M(questObjectives):countf(isLoot):value();
         if lootObjectivesCount == questObjectivesCount then
             return "LootObjective";
         end
 
-        -- local setFreeObjectivesCount = Count(questObjectives, CallOnSelf("IsSetFree"));
+        -- local setFreeObjectivesCount = M(questObjectives):countf(isSetFree):value();
         -- if setFreeObjectivesCount == questObjectivesCount then
         --     return "SetFreeObjective";
         -- end

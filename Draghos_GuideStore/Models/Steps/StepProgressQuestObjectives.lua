@@ -1,4 +1,4 @@
-local FP = DraghosUtils.FP;
+local M = LibStub("Moses");
 
 local StepProgressQuestObjectivesMixin = {};
 
@@ -20,7 +20,7 @@ function StepProgressQuestObjectivesMixin:Init(step)
     self:StepInit(step);
     self:QuestInit(step.quest);
     -- self:LocationInit(step.location);
-    self:TargetInit(FP:Concat(step.targets or {}, step.quest.targets or {}));
+    self:TargetInit(M.append(step.targets or {}, step.quest.targets or {}));
 
     self.questObjectivesIndexes = step.questObjectivesIndexes;
     self:AddMultipleStepLines(self:CreateQuestObjectives());

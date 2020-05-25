@@ -1,4 +1,4 @@
-local FP = DraghosUtils.FP;
+local M = LibStub("Moses");
 
 --- @class Step
 local StepMixin = {};
@@ -24,7 +24,7 @@ function StepMixin:StepInit(step)
     self.completedAfterCompletedStepIDs = step.completedAfterCompletedStepIDs or {}; -- TODO: Detect potential circular references
 
     if step.notes and #step.notes > 0 then
-        self:AddMultipleStepLines(FP:Map(step.notes, CreateNote));
+        self:AddMultipleStepLines(M(step.notes):map(CreateNote):value());
     end
 end
 
@@ -53,31 +53,22 @@ end
 -- ***** Step
 -- *********************************************************************************************************************
 
+local isValid = M.partial(M.result, "_", "IsValid");
+local isCompleted = M.partial(M.result, "_", "IsCompleted");
+local function getStepByID(stepID)
+    return Draghos_GuideStore:GetStepByID(stepID);
+end
+
 function StepMixin:IsStepAvailable()
     return self:RequiredStepsCompleted();
 end
 
 function StepMixin:IsValidStep()
-    local function isValidStep()
-        return FP:All(self:GetStepLines(), FP:CallOnSelf("IsValid"));
-    end
-    return self.stepID and FP:Memo("IsValidStep:" .. tostring(self), isValidStep);
-end
-
-local function GetStepByID(stepID)
-    return Draghos_GuideStore:GetStepByID(stepID);
-end
-
-local function IsCompleted(stepID)
-    local step = GetStepByID(stepID);
-    return step and step:IsCompleted();
+    return self.stepID and M(self:GetStepLines()):all(isValid):value();
 end
 
 function StepMixin:RequiredStepsCompleted()
-    local function requiredStepsCompleted()
-        return FP:All(self.requiredStepIDs, IsCompleted);
-    end
-    return #self.requiredStepIDs == 0 or FP:Memo("RequiredStepsCompleted:" .. tostring(self), requiredStepsCompleted);
+    return #self.requiredStepIDs == 0 or M(self.requiredStepIDs):map(getStepByID):all(isCompleted):value();
 end
 
 function StepMixin:HasDependentSteps()
@@ -85,72 +76,57 @@ function StepMixin:HasDependentSteps()
 end
 
 function StepMixin:DependentStepsCompleted()
-    local function dependentStepsCompleted()
-        return FP:All(FP:Map(self.completedAfterCompletedStepIDs, GetStepByID), FP:CallOnSelf("IsCompleted"));
-    end
-    return FP:Memo("DependentStepsCompleted:" .. tostring(self), dependentStepsCompleted);
+    return not self:HasDependentSteps() or
+               M(self.completedAfterCompletedStepIDs):map(getStepByID):all(isCompleted):value();
 end
 
 -- *********************************************************************************************************************
 -- ***** Waypoints
 -- *********************************************************************************************************************
 
+local canAddWaypoints = M.partial(M.result, "_", "CanAddWaypoints");
+local getWaypointsInfo = M.partial(M.result, "_", "GetWaypointsInfo");
+
 function StepMixin:SkipWaypoint()
     return false;
 end
 
 function StepMixin:CanAddWaypoints()
-    local function canAddWaypoints()
-        return FP:Any(self:GetStepLines(), FP:CallOnSelf("CanAddWaypoints"));
-    end
-    return FP:Memo("CanAddWaypoints:" .. tostring(self), canAddWaypoints);
+    return M(self:GetStepLines()):any(canAddWaypoints):value();
 end
 
 function StepMixin:GetWaypointsInfo()
-    local function getWaypointsInfo()
-        local stepLineLocations = FP:Filter(self:GetStepLines(), FP:CallOnSelf("CanAddWaypoints"));
-        return FP:Flatten(FP:Map(stepLineLocations, FP:CallOnSelf("GetWaypointsInfo")));
-    end
-    return FP:Memo("GetWaypointsInfo:" .. tostring(self), getWaypointsInfo);
+    return M(self:GetStepLines()):filter(canAddWaypoints):map(getWaypointsInfo):flatten():value();
 end
 
 -- *********************************************************************************************************************
 -- ***** Target Button
 -- *********************************************************************************************************************
 
+local getTargetNPCs = M.partial(M.result, "_", "GetTargetNPCs");
+local hasTargets = M.partial(M.result, "_", "HasTargets");
+local hasInvalidTargets = M.partial(M.result, "_", "HasInvalidTargets");
+local getTargetNames = M.partial(M.result, "_", "GetTargetNames");
+local getTargetIDs = M.partial(M.result, "_", "GetTargetIDs");
+
 function StepMixin:GetTargetNPCs()
-    local function getTargetNPCs()
-        return FP:FlatMap(self:GetStepLines(), FP:CallOnSelf("GetTargetNPCs"));
-    end
-    return FP:Memo("GetTargetNPCs:" .. tostring(self), getTargetNPCs);
+    return M(self:GetStepLines()):map(getTargetNPCs):flatten():value();
 end
 
 function StepMixin:HasTargets()
-    local function hasTargets()
-        return FP:Any(self:GetStepLines(), FP:CallOnSelf("HasTargets"));
-    end
-    return FP:Memo("HasTargets:" .. tostring(self), hasTargets);
+    return M(self:GetStepLines()):any(hasTargets):value();
 end
 
 function StepMixin:HasInvalidTargets()
-    local function hasInvalidTargets()
-        return FP:Any(self:GetStepLines(), FP:CallOnSelf("HasInvalidTargets"));
-    end
-    return FP:Memo("HasInvalidTargets:" .. tostring(self), hasInvalidTargets);
+    return M(self:GetStepLines()):any(hasInvalidTargets):value();
 end
 
 function StepMixin:GetTargetNames()
-    local function getTargetNames()
-        return FP:FlatMap(self:GetStepLines(), FP:CallOnSelf("GetTargetNames"));
-    end
-    return FP:Memo("GetTargetNames:" .. tostring(self), getTargetNames);
+    return M(self:GetStepLines()):map(getTargetNames):flatten():value();
 end
 
 function StepMixin:GetTargetIDs()
-    local function getTargetIDs()
-        return FP:FlatMap(self:GetStepLines(), FP:CallOnSelf("GetTargetIDs"));
-    end
-    return FP:Memo("GetTargetIDs:" .. tostring(self), getTargetIDs);
+    return M(self:GetStepLines()):map(getTargetIDs):flatten():value();
 end
 
 -- *********************************************************************************************************************
@@ -193,25 +169,24 @@ end
 -- ***** StepLines
 -- *********************************************************************************************************************
 
+local isNotDisabled = M.complement(M.partial(M.result, "_", "IsDisabled"));
+
 function StepMixin:GetStepLines()
-    local function getStepLines()
-        return FP:Filter(self.stepLines or {}, FP:ReverseResult(FP:CallOnSelf("IsDisabled")));
-    end
-    return FP:Memo("GetStepLines:" .. tostring(self), getStepLines);
+    return M(self.stepLines or {}):filter(isNotDisabled):value();
 end
 
 function StepMixin:AddOneStepLine(stepLine)
     stepLine.step = self;
-    self.stepLines = FP:Append(self:GetStepLines(), stepLine);
+    self.stepLines = M.addTop(self.stepLines, stepLine);
     stepLine.lineIndex = #self.stepLines;
 end
 
 function StepMixin:AddMultipleStepLines(stepLines)
-    for i, stepLine in pairs(stepLines) do
+    for i, stepLine in ipairs(stepLines) do
         stepLine.step = self;
         stepLine.lineIndex = #self.stepLines + i;
     end
-    self.stepLines = FP:Concat(self:GetStepLines(), stepLines);
+    self.stepLines = M.append(self.stepLines, stepLines);
 end
 
 -- *********************************************************************************************************************

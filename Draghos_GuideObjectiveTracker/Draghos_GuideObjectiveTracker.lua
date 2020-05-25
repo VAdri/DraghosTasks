@@ -1,4 +1,4 @@
-local FP = DraghosUtils.FP;
+local M = LibStub("Moses");
 
 GUIDE_TRACKER_MODULE = ObjectiveTracker_GetModuleInfoTable();
 
@@ -398,12 +398,16 @@ function GUIDE_TRACKER_MODULE:OnFreeBlock(block)
     self:ClearBlockData(block);
 end
 
+function GUIDE_TRACKER_MODULE:GetUsedBlocksIDs()
+    return M(self.usedBlocks):map(M.property("id")):value();
+end
+
 function GUIDE_TRACKER_MODULE:Update()
     -- Clear
     for _, block in pairs(self.usedBlocks) do
         self:ClearBlockData(block);
     end
-    local previouslyDisplayedIDs = FP:MapProp(self.usedBlocks, "id");
+    local previouslyDisplayedIDs = self:GetUsedBlocksIDs();
     self.wapypointStepIndex = 1;
 
     -- Update the blocks
@@ -412,8 +416,8 @@ function GUIDE_TRACKER_MODULE:Update()
     self:EndLayout();
 
     -- Show animation if the steps have changed
-    local displayedIDs = FP:MapProp(self.usedBlocks, "id");
-    if #FP:XOR(previouslyDisplayedIDs, displayedIDs) > 0 then
+    local displayedIDs = self:GetUsedBlocksIDs();
+    if M(previouslyDisplayedIDs):symmetricDifference(displayedIDs):count():value() > 0 then
         if (not GUIDE_TRACKER_MODULE.header.animating) then
             GUIDE_TRACKER_MODULE.header.animating = true;
             GUIDE_TRACKER_MODULE.header.HeaderOpenAnim:Stop();

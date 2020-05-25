@@ -1,4 +1,4 @@
-local FP = DraghosUtils.FP;
+local M = LibStub("Moses");
 
 local QuestMixin = {};
 
@@ -28,8 +28,10 @@ function QuestMixin:IsQuestAvailable()
     return true; -- TODO: return false if faction/class/level/... requirements not met
 end
 
+local isNotValid = M.complement(M.partial(M.result, "_", "IsValid"));
+
 function QuestMixin:IsValidQuest()
-    return self.questID and HaveQuestData(self.questID) and FP:All(self:GetQuestObjectives(), FP:CallOnSelf("IsValid"));
+    return self.questID and HaveQuestData(self.questID) and not M(self:GetQuestObjectives()):any(isNotValid):value();
 end
 
 function QuestMixin:IsQuestFinishedButNotTurnedIn()
@@ -51,7 +53,7 @@ local function IsRequiredQuestCompleted(questID)
 end
 
 function QuestMixin:RequiredQuestsCompleted()
-    return FP:All(self.requiredQuestIDs, IsRequiredQuestCompleted);
+    return #self.requiredQuestIDs == 0 or M(self.requiredQuestIDs):all(IsRequiredQuestCompleted):value();
 end
 
 function QuestMixin:RequiredStepsCompleted()
@@ -74,7 +76,10 @@ end
 
 function QuestMixin:GetQuestObjectives()
     -- ! Do not use self:GetStepLines() to avoid circular reference within Virtual_StepWithObjectivesMixin:GetStepLines()
-    return FP:FilterByProp(self.stepLines or {}, "QuestObjectiveInit", DraghosMixins.QuestObjective.QuestObjectiveInit);
+    local questObjectives = M(self.stepLines or {}):where(
+                                {QuestObjectiveInit = DraghosMixins.QuestObjective.QuestObjectiveInit}
+                            ):value();
+    return questObjectives or {};
 end
 
 function QuestMixin:CreateQuestObjectives()
@@ -100,7 +105,7 @@ function QuestMixin:CreateQuestObjectives()
     -- If no index was supplied we create all the objectives
     local questObjectivesIndexes = self.questObjectivesIndexes;
     if questObjectivesIndexes == nil then
-        questObjectivesIndexes = questObjectivesIndexes or FP:Keys(questObjectives);
+        questObjectivesIndexes = questObjectivesIndexes or M.keys(questObjectives);
     end
 
     local function CreateQuestObjective(questObjectiveIndex)
@@ -108,7 +113,7 @@ function QuestMixin:CreateQuestObjectives()
                    DraghosMixins.StepLineQuestObjective, questObjectives[questObjectiveIndex]
                );
     end
-    return FP:Map(questObjectivesIndexes, CreateQuestObjective);
+    return M(questObjectivesIndexes):map(CreateQuestObjective):value();
 end
 
 DraghosMixins.Quest = QuestMixin;

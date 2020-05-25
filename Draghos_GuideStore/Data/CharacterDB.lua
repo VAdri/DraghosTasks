@@ -1,10 +1,18 @@
-local FP = DraghosUtils.FP;
+local M = LibStub("Moses");
 
 -- *********************************************************************************************************************
 -- ***** TAXI NODES DATABASE
 -- *********************************************************************************************************************
 
 local TaxiNodesStore = CreateFrame("Frame");
+
+-- Get the taxi node for the current zone
+local function IsInCurrentZone(taxiNode)
+    if taxiNode.location then
+        local zone = Draghos_GuideStore:CreateBaseItem(DraghosMixins.Zone, taxiNode.location);
+        return zone and zone:IsValidZone() and zone:PlayerIsInZone();
+    end
+end
 
 local function IsTaxiDiscovered(taxiNode)
     return taxiNode.state == Enum.FlightPathState.Reachable or taxiNode.state == Enum.FlightPathState.Current;
@@ -16,16 +24,7 @@ local function TaxiNodesStore_OnEvent(self, event, ...)
         if message == ERR_NEWTAXIPATH then
             -- The player has just discovered a new taxi node but the taxi map is not opened, so we just assume that the
             -- taxi node for the current zone is discovered.
-
-            -- Get the taxi node for the current zone
-            local function IsInCurrentZone(taxiNode)
-                if taxiNode.location then
-                    local zone = Draghos_GuideStore:CreateBaseItem(DraghosMixins.Zone, taxiNode.location);
-                    return zone and zone:IsValidZone() and zone:PlayerIsInZone();
-                end
-            end
-
-            local currentTaxiNode = FP:Find(Draghos_GuideStore.taxiNodes, IsInCurrentZone);
+            local currentTaxiNode = M(Draghos_GuideStore.taxiNodes):findWith(IsInCurrentZone):value();
             if currentTaxiNode and currentTaxiNode.nodeID then
                 -- A taxi node has been found in the current player's zone so it is probably the one discovered
                 DraghosTaxiNodesDB = DraghosTaxiNodesDB or {};
@@ -39,11 +38,11 @@ local function TaxiNodesStore_OnEvent(self, event, ...)
         local mapID = FlightMapFrame:GetMapID();
         local taxiNodes = C_TaxiMap.GetAllTaxiNodes(mapID);
 
-        local taxiNodesDiscovered = FP:Filter(taxiNodes, IsTaxiDiscovered);
+        local taxiNodesDiscovered = M(taxiNodes):filter(IsTaxiDiscovered):value();
         if taxiNodesDiscovered and #taxiNodesDiscovered > 0 then
             -- Set the nodes as discovered
-            local taxiNodeIDs = FP:MapProp(taxiNodesDiscovered, "nodeID");
-            DraghosTaxiNodesDB = FP:FillWith(DraghosTaxiNodesDB or {}, taxiNodeIDs, true);
+            local taxiNodesIDs = M(taxiNodesDiscovered):map(M.property("nodeID")):value();
+            DraghosTaxiNodesDB = M(DraghosTaxiNodesDB or {}):fillWith(taxiNodesIDs, true):value();
 
             Draghos_GuideStore:SendCustomEvent("DRAGHOS_NEWTAXIPATH");
         end

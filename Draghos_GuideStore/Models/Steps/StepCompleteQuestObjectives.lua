@@ -1,4 +1,4 @@
-local FP = DraghosUtils.FP;
+local M = LibStub("Moses");
 
 local StepCompleteQuestObjectivesMixin = {};
 
@@ -20,7 +20,7 @@ function StepCompleteQuestObjectivesMixin:Init(step)
     self:StepInit(step);
     self:QuestInit(step.quest);
     -- self:LocationInit(step.location);
-    self:TargetInit(FP:Concat(step.targets or {}, step.quest.targets or {}));
+    self:TargetInit(M.append(step.targets or {}, step.quest.targets or {}));
 
     self.questObjectivesIndexes = step.questObjectivesIndexes;
     self:AddMultipleStepLines(self:CreateQuestObjectives());
@@ -42,8 +42,10 @@ function StepCompleteQuestObjectivesMixin:IsValid()
     return self:IsValidStep() and self:IsValidQuest() and not self:HasInvalidTargets();
 end
 
+local isQuestObjectiveNotCompleted = M.complement(M.partial(M.result, "_", "IsQuestObjectiveCompleted"));
+
 function StepCompleteQuestObjectivesMixin:IsCompleted()
-    return self:IsQuestCompleted() or FP:All(self:GetQuestObjectives(), FP:CallOnSelf("IsQuestObjectiveCompleted"));
+    return self:IsQuestCompleted() or not M(self:GetQuestObjectives()):any(isQuestObjectiveNotCompleted):value();
 end
 
 -- *********************************************************************************************************************

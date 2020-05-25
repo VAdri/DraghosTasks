@@ -154,6 +154,8 @@
         "GetMinimapShape",
         "WorldMapFrame",
         "UIParent",
-        "floor"
+        "floor",
+        "describe",
+        "it"
     ]
 }

@@ -31,13 +31,20 @@ Draghos_GuideStore.steps = {
         },
         completedAfterCompletedStepIDs = {27},
         notes = {
-            [1] = {noteType = 0x0, message = {enUS = "Even notes can have note lines"}},
-            [3] = {noteType = 0x8, message = {frFR = "Cette note est grisée", enUS = "This note is grayed out"}},
+            [1] = {noteType = DraghosFlags.NoteState.Normal, message = {enUS = "Even notes can have note lines"}},
+            [3] = {
+                noteType = DraghosFlags.NoteState.Trivial,
+                message = {frFR = "Cette note est grisée", enUS = "This note is grayed out"},
+            },
             [2] = {
                 message = {
                     frFR = "Cette note devrait apparaître en seconde position",
                     enUS = "This note should appear in second position",
                 },
+            },
+            [4] = {
+                noteType = DraghosFlags.NoteState.Disabled,
+                message = {frFR = "Cette note ne doit pas s'afficher", enUS = "This note should not be displayed"},
             },
         },
     },

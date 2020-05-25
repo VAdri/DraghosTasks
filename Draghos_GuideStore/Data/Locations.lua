@@ -13,7 +13,7 @@ Draghos_GuideStore.locations = {
         },
         [2] = { -- Innkeeper Kauth's Bloodhoof Village Hearth location in Mulgore
             locationType = LOCATION_TYPE_COORDS,
-            uiMapID = 1306, -- Mulgore
+            uiMapID = 7, -- Mulgore
             areaID = 222, -- Bloodhoof Village
             coords = {46.8, 60.4},
             innkeeper = Draghos_GuideStore.npcs[6747], -- Innkeeper Kauth
@@ -63,15 +63,15 @@ Draghos_GuideStore.locations = {
     flightMasters = {
         [1] = { -- Tak's location
             locationType = LOCATION_TYPE_COORDS,
-            uiMapID = 1306, -- Mulgore
+            uiMapID = 7, -- Mulgore
             areaID = 222, -- Bloodhoof Village
             coords = {47.4, 58.7},
         },
         [2] = { -- Tal's location
             locationType = LOCATION_TYPE_COORDS,
-            uiMapID = 1306, -- Mulgore
+            uiMapID = 88, -- Thunder Bluff
             areaID = 1638, -- or 470 or 5345, -- Thunder Bluff
-            coords = {46.66, 49.9},
+            coords = {46.66, 49.9}, -- 29.7 1197.2
         },
     },
 };

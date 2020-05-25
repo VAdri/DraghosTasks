@@ -1,6 +1,8 @@
 local Helpers = DraghosUtils.Helpers;
 local Str = DraghosUtils.Str;
-local FP = DraghosUtils.FP;
+
+local M = LibStub("Moses");
+
 local next = next;
 
 local NPCMixin = {};
@@ -18,7 +20,7 @@ local function HasAllNPCNames(npcNames)
     local function hasName(locale)
         return not Str:IsBlankString(npcNames[locale]);
     end
-    return npcNames and next(npcNames) ~= nil and FP:All(FP:Keys(Helpers:GetSupportedLocales()), hasName);
+    return npcNames and next(npcNames) ~= nil and M(Helpers:GetSupportedLocales()):keys():all(hasName):value();
 end
 
 function NPCMixin:IsValidNPC()

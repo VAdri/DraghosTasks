@@ -1,4 +1,4 @@
-local FP = DraghosUtils.FP;
+local M = LibStub("Moses");
 
 local StepCompleteQuestMixin = {};
 
@@ -18,7 +18,7 @@ Mixin(StepCompleteQuestMixin, DraghosMixins.Target);
 function StepCompleteQuestMixin:Init(step)
     self:StepInit(step);
     self:QuestInit(step.quest);
-    self:TargetInit(FP:Concat(step.targets or {}, step.quest.targets or {}));
+    self:TargetInit(M.append(step.targets or {}, step.quest.targets or {}));
     -- self:LocationInit(step.location);
 
     self.questObjectivesIndexes = nil;

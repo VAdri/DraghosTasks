@@ -37,7 +37,7 @@ function StepNoteMixin:IsValid()
 end
 
 function StepNoteMixin:IsAvailable()
-    return not self:IsNoteDisabled() and self:IsStepAvailable();
+    return not self:IsDisabled() and self:IsStepAvailable();
 end
 
 function StepNoteMixin:IsCompleted()

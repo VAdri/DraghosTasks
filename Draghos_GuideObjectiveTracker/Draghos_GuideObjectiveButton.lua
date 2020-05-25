@@ -1,7 +1,8 @@
 local Helpers = DraghosUtils.Helpers;
 local Hacks = DraghosUtils.Hacks;
 local Str = DraghosUtils.Str;
-local FP = DraghosUtils.FP;
+
+local M = LibStub("Moses");
 
 local defaultInitialAnchorOffsets = {0, 0};
 
@@ -439,9 +440,9 @@ local function CanSetBindingToTargetsButton(button)
 end
 
 function GuideObjectiveButton_InitializeTargets(targetsButton, step)
-    local macroTargets = table.concat(FP:Map(step:GetTargetNames(), TargetUnitMacro), "\n");
+    local macroTargets = M(step:GetTargetNames()):map(TargetUnitMacro):join("\n"):value();
 
-    -- targetsButton:SetID(item:GetItemID());
+    -- targetsButton:SetID(?);
     targetsButton.targets = step:GetTargetIDs();
 
     targetsButton:SetAttribute("type1", "macro");
@@ -474,13 +475,13 @@ function GuideObjectiveButton_ShowTargetTooltip(self)
     -- GameTooltip:SetItemByID(self:GetID());
 end
 
-function GuideObjectiveButton_OnTargetClick(self, button)
-    local function IsTarget(targetID)
-        return Helpers:UnitHasUnitID("target", targetID);
-    end
+local function IsTarget(targetID)
+    return Helpers:UnitHasUnitID("target", targetID);
+end
 
+function GuideObjectiveButton_OnTargetClick(self, button)
     -- Mark the target
-    if not GetRaidTargetIndex("target") and FP:Any(self.targets, IsTarget) then
+    if not GetRaidTargetIndex("target") and M.any(self.targets, IsTarget) then
         if UnitIsFriend("player", "target") then
             -- With a star for friendly units
             SetRaidTarget("target", 1);

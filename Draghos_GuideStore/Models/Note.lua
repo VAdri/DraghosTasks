@@ -47,7 +47,7 @@ function NoteMixin:IsTrivial()
     return band(self.noteType, DraghosFlags.NoteState.Trivial) ~= 0;
 end
 
-function NoteMixin:IsNoteDisabled()
+function NoteMixin:IsDisabled()
     return band(self.noteType, DraghosFlags.NoteState.Disabled) ~= 0;
 end
 

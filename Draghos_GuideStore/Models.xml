@@ -12,8 +12,8 @@
     <Script file="Models/NPC.lua"/>
     <Script file="Models/Target.lua"/>
     <Script file="Models/TaxiNode.lua"/>
-    <Script file="Models/Quest.lua"/>
     <Script file="Models/QuestObjective.lua"/>
+    <Script file="Models/Quest.lua"/>
 
     <Script file="Models/StepLines/StepLine.lua"/>
     <Script file="Models/StepLines/StepLineGrindProgress.lua"/>

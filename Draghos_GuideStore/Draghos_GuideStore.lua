@@ -1,8 +1,8 @@
 local CreateAndInitFromMixin = CreateAndInitFromMixin;
 
-local Helpers = DraghosUtils.Helpers;
 local Str = DraghosUtils.Str;
-local FP = DraghosUtils.FP;
+
+local M = LibStub("Moses");
 
 -- *********************************************************************************************************************
 -- ***** LOADING AND RETRIEVING OBJECTS FROM THE STORE
@@ -37,11 +37,11 @@ local function InitStep(step)
 end
 
 function Draghos_GuideStore:LoadSteps()
-    self.steps = FP:MapIndexed(self.steps, InitStep);
+    self.steps = M(self.steps):map(InitStep):value();
 end
 
 function Draghos_GuideStore:GetStepByID(stepID)
-    return FP:FindByProp(self.steps, "stepID", stepID);
+    return M(self.steps):findWhere({stepID = stepID}):value();
 end
 
 local function IsStepRemaining(step)
@@ -49,14 +49,12 @@ local function IsStepRemaining(step)
 end
 
 function Draghos_GuideStore:GetRemainingSteps()
-    local steps = FP:Filter(self.steps, IsStepRemaining);
-    FP:SortByProp(steps, "stepID");
+    local steps = M(self.steps):filter(IsStepRemaining):sortBy("stepID"):value();
     return steps;
 end
 
 function Draghos_GuideStore:GetQuestByID(questID)
     return self.quests[questID];
-    -- return FP:FindByProp(self.quests, "questID", questID);
 end
 
 function Draghos_GuideStore:GetHearthstoneItemByID(itemID)
@@ -126,17 +124,14 @@ end
 Draghos_GuideStore.customEventsPrefix = "DRAGHOS";
 
 function GuideStoreFrame_OnEvent(self, event, ...)
-    FP:ClearMemo();
+    -- TODO: ClearMemo();
     local notifiers = Draghos_GuideStore.notifiers[event] or {};
-    -- for _, notifier in pairs(notifiers) do
-    --     notifier:NotifyWatchers(event, ...);
-    -- end
-    local handlers = FP:Unique(FP:Flatten(FP:MapProp(notifiers, "watchers")));
+    local handlers = M(notifiers):map(M.property("watchers")):flatten(true):unique():value();
     for _, handler in pairs(handlers) do
         handler();
     end
-    FP:ClearMemo();
-    Helpers:StartGarbageCollection();
+    -- TODO: ClearMemo();
+    -- TODO: Helpers:StartGarbageCollection();
 end
 
 function Draghos_GuideStore:SendCustomEvent(event, ...)
@@ -168,10 +163,11 @@ function Draghos_GuideStore:OnMessageReceived(messageType, handler)
 end
 
 function Draghos_GuideStore:SendMesage(messageType, ...)
-    FP:ClearMemo();
+    -- TODO: ClearMemo();
     local handlers = self.handlers[messageType] or {};
     for _, handler in pairs(handlers) do
         handler(...);
     end
-    FP:ClearMemo();
+    -- TODO: ClearMemo();
+    -- ? Helpers:StartGarbageCollection();
 end
