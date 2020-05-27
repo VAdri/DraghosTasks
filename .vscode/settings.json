@@ -156,6 +156,12 @@
         "UIParent",
         "floor",
         "describe",
-        "it"
+        "it",
+        "OBJECTIVE_TRACKER_UPDATE_ALL",
+        "InCombatLockdown",
+        "GuideTrackerFrame",
+        "tinsert",
+        "OBJECTIVE_TRACKER_LINE_WIDTH",
+        "ObjectiveTracker_CheckAndHideHeader"
     ]
 }

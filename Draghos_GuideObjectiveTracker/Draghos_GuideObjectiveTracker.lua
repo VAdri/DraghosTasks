@@ -1,6 +1,6 @@
-local M = LibStub("Moses");
+local Callbacks = DraghosUtils.Callbacks;
 
-GUIDE_TRACKER_MODULE = ObjectiveTracker_GetModuleInfoTable();
+local M = LibStub("Moses");
 
 OBJECTIVE_TRACKER_UPDATE_MODULE_GUIDE = 0x200000;
 
@@ -17,43 +17,27 @@ GUIDE_TRACKER_MODULE.paddingBetweenButtons = 2;
 -- *********************************************************************************************************************
 
 function GuideObjectiveTracker_OnLoad(self, ...)
-    GuideObjectiveTrackerInitialize(self);
-
-    if not self.initialized then
-        self:RegisterEvent("PLAYER_ENTERING_WORLD");
-    end
+    -- GuideObjectiveTrackerInitialize(self);
 end
 
 function GuideObjectiveTracker_OnEvent(self, event, ...)
-    if event == "PLAYER_ENTERING_WORLD" then
-        GuideObjectiveTrackerInitialize(self);
-    end
 end
 
 local function UpdateGuideObjectiveTracker()
     GUIDE_TRACKER_MODULE:ResetAnimations();
-    ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_GUIDE);
+    Callbacks.ExecuteOutOfCombatOnce(GuideTracker_Update);
+    -- ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_GUIDE);
 end
 
-function GuideObjectiveTrackerInitialize(self)
-    if self.initialized or not ObjectiveTrackerFrame.initialized then
-        return;
-    end
-
+function GuideObjectiveTrackerInitialize()
     GUIDE_TRACKER_MODULE.header = CreateFrame(
-                                      "Frame", "ObjectiveTrackerBlocksFrame.GuideHeader",
-                                      ObjectiveTrackerFrame.BlocksFrame, "ObjectiveTrackerHeaderTemplate"
+                                      "Frame", "GuideTrackerBlocksFrame.GuideHeader",
+                                      GuideTrackerFrame.BlocksFrame, "ObjectiveTrackerHeaderTemplate"
                                   );
 
-    GUIDE_TRACKER_MODULE:SetHeader(GUIDE_TRACKER_MODULE.header, TRACKER_HEADER_GUIDE, OBJECTIVE_TRACKER_UPDATE_REASON);
-
-    table.insert(ObjectiveTrackerFrame.MODULES, GUIDE_TRACKER_MODULE);
-    table.insert(ObjectiveTrackerFrame.MODULES_UI_ORDER, GUIDE_TRACKER_MODULE);
+    GUIDE_TRACKER_MODULE:SetHeader(GUIDE_TRACKER_MODULE.header, TRACKER_HEADER_GUIDE, OBJECTIVE_TRACKER_UPDATE_ALL);
 
     UpdateGuideObjectiveTracker();
-
-    self:UnregisterEvent("PLAYER_ENTERING_WORLD");
-    self.initialized = true;
 end
 
 -- *********************************************************************************************************************
@@ -345,7 +329,6 @@ function GUIDE_TRACKER_MODULE:UpdateSingle(step, stepIndex)
 
     if ObjectiveTracker_AddBlock(block) then
         block:Show();
-        self:FreeUnusedLines(block);
 
         -- Watch modifications on the step
         block.step:Watch(self, UpdateGuideObjectiveTracker);
@@ -368,9 +351,11 @@ function GUIDE_TRACKER_MODULE:UpdateSingle(step, stepIndex)
         if step:IsManualCompletion() then
             GuideObjectiveBlock_AddLeftCheckbox(block);
         end
+
+        self:FreeUnusedLines(block);
     else
         block.used = false;
-        return true; -- Can't add the block, we're done enumerating tasks
+        return true; -- Can't add the block, we're done enumerating
     end
 end
 
@@ -379,11 +364,6 @@ function GUIDE_TRACKER_MODULE:OnBlockHeaderClick(block, mouseButton)
 end
 
 function GUIDE_TRACKER_MODULE:ClearBlockData(block)
-    -- Hide icon and button
-    GuideObjectiveBlock_ReleaseLeftIcon(block);
-    GuideObjectiveBlock_ReleaseLeftCheckbox(block);
-    GuideObjectiveBlock_ReleaseRightButton(block);
-
     -- Unwatch step
     if block.step:IsCompleted() then
         block.step:Unwatch(self);
@@ -391,27 +371,40 @@ function GUIDE_TRACKER_MODULE:ClearBlockData(block)
 end
 
 function GUIDE_TRACKER_MODULE:OnFreeBlock(block)
-    GuideObjectiveReleaseBlockButton_Item(block);
-    -- TODO: GuideObjectiveReleaseBlockButton_Spell(block);
-    GuideObjectiveReleaseBlockButton_Targets(block);
+    Callbacks.ExecuteOutOfCombat(
+        function()
+            -- Hide icon and button
+            GuideObjectiveBlock_ReleaseLeftIcon(block);
+            GuideObjectiveBlock_ReleaseLeftCheckbox(block);
+            GuideObjectiveBlock_ReleaseRightButton(block);
+            GuideObjectiveReleaseBlockButton_Item(block);
+            -- TODO: GuideObjectiveReleaseBlockButton_Spell(block);
+            GuideObjectiveReleaseBlockButton_Targets(block);
+        end
+    );
 
     self:ClearBlockData(block);
 end
 
 function GUIDE_TRACKER_MODULE:GetUsedBlocksIDs()
-    return M(self.usedBlocks):map(M.property("id")):value();
+    return M(self.usedBlocks):map(M.property("id")):values():value();
 end
 
 function GUIDE_TRACKER_MODULE:Update()
+    if InCombatLockdown() then
+        Callbacks.ExecuteOutOfCombatOnce(UpdateGuideObjectiveTracker);
+        return;
+    end
+
     -- Clear
     for _, block in pairs(self.usedBlocks) do
         self:ClearBlockData(block);
     end
     local previouslyDisplayedIDs = self:GetUsedBlocksIDs();
-    self.wapypointStepIndex = 1;
 
     -- Update the blocks
     self:BeginLayout();
+    GUIDE_TRACKER_MODULE.lastBlock = nil;
     self:EnumStepWatchData(self.UpdateSingle);
     self:EndLayout();
 

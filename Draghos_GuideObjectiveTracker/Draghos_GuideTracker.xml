@@ -1,0 +1,77 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+	<Script file="Draghos_GuideTracker.lua"/>
+
+	<Frame name="GuideTrackerFrame" parent="UIParent" frameStrata="LOW">
+		<Size x="235" y="140"/>
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="PlayerFrame" relativePoint="BOTTOMLEFT" x="55" y="0"/>
+			<Anchor point="BOTTOMLEFT" relativeTo="UIParent" relativePoint="BOTTOMLEFT"/>
+		</Anchors>
+		<Frames>
+			<Frame name="GuideTrackerBlocksFrame" parentKey="BlocksFrame" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT"/>
+					<Anchor point="BOTTOMRIGHT"/>
+				</Anchors>
+				<!-- <Frames>
+					<Frame parentKey="QuestHeader" inherits="ObjectiveTrackerHeaderTemplate" mixin="QuestHeaderMixin">
+						<Scripts>
+							<OnShow method="OnShow"/>
+							<OnHide method="OnHide"/>
+							<OnEvent method="OnEvent"/>
+						</Scripts>
+					</Frame>
+					<Frame parentKey="AchievementHeader" inherits="ObjectiveTrackerHeaderTemplate"/>
+					<Frame parentKey="ScenarioHeader" inherits="ObjectiveTrackerHeaderTemplate"/>
+					<Frame parentKey="UIWidgetsHeader" inherits="ObjectiveTrackerHeaderTemplate"/>
+				</Frames> -->
+                <Scripts>
+                    <OnLoad function="GuideTrackerBlocksFrame_OnLoad"/>
+                </Scripts>
+			</Frame>
+			<Frame parentKey="HeaderMenu">
+				<Size x="10" y="10"/>
+				<Anchors>
+					<Anchor point="TOPLEFT"/>
+				</Anchors>
+				<Frames>
+					<Button parentKey="MinimizeButton">
+						<Size x="16" y="16"/>
+						<Anchors>
+							<Anchor point="TOPLEFT" x="-30" y="-4"/>
+						</Anchors>
+						<Scripts>
+							<OnClick function="GuideTracker_MinimizeButton_OnClick"/>
+						</Scripts>
+						<NormalTexture file="Interface\Buttons\UI-Panel-QuestHideButton">
+							<TexCoords left="0" right="0.5" top="0.5" bottom="1"/>
+						</NormalTexture>
+						<PushedTexture file="Interface\Buttons\UI-Panel-QuestHideButton">
+							<TexCoords left="0.5" right="1" top="0.5" bottom="1"/>
+						</PushedTexture>
+						<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD" />
+						<DisabledTexture file="Interface\Buttons\UI-Panel-QuestHideButton-disabled" />
+					</Button>
+				</Frames>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString parentKey="Title" inherits="GameFontNormal" hidden="true" text="OBJECTIVES_TRACKER_LABEL">
+							<Anchors>
+								<Anchor point="LEFT" relativeKey="$parent.MinimizeButton" relativePoint="RIGHT" x="3" y="1"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Frame name="GuideTrackerBlockDropDown" parentKey="BlockDropDown" inherits="UIDropDownMenuTemplate" hidden="true"/>
+		</Frames>
+		<Scripts>
+			<OnLoad function="GuideTracker_OnLoad"/>
+			<OnEvent function="GuideTracker_OnEvent"/>
+			<OnUpdate function="GuideTracker_OnUpdate"/>
+			<OnSizeChanged function="GuideTracker_OnSizeChanged"/>
+		</Scripts>
+	</Frame>
+</Ui>
