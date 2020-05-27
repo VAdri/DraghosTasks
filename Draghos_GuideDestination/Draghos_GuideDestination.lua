@@ -36,7 +36,7 @@ function TomTomDestination:WatchNextStep()
     if watchedItem and watchedItem:CanAddWaypoints() then
         self.watchedItem = watchedItem;
         watchedItem:Watch(self, OnStepUpdated);
-        OnStepUpdated(self, self.watchedItem);
+        OnStepUpdated();
     end
 end
 

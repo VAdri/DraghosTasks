@@ -54,6 +54,67 @@ function DraghosUtils.Str:EndsWith(s, suffix)
 end
 
 -- *********************************************************************************************************************
+-- ***** CALLBACKS
+-- *********************************************************************************************************************
+
+DraghosUtils.Callbacks = {};
+
+local EventHandler = CreateFrame("Frame");
+
+EventHandler.registeredCallbacks = {};
+
+local pack = function(...) return { n = select("#", ...), ... } end;
+
+function EventHandler:OnEvent(event, ...)
+    if self.registeredCallbacks[event] then
+        for _, callbackInfo in pairs(self.registeredCallbacks[event]) do
+            local callback = callbackInfo.callback;
+            local args = callbackInfo.args;
+            callback(unpack(args));
+        end
+        self.registeredCallbacks[event] = nil;
+    end
+end
+
+function EventHandler:RegisterCallback(event, once, callback, ...)
+    if not self:IsEventRegistered(event) then
+        self:RegisterEvent(event);
+    end
+
+    if not self.registeredCallbacks[event] then
+        self.registeredCallbacks[event] = {};
+    elseif once then
+        for _, callbackInfo in pairs(self.registeredCallbacks[event]) do
+            if callbackInfo.callback == callback then
+                -- Don't register the same callback more than once
+                return;
+            end
+        end
+    end
+
+    local callbackInfo = {callback = callback, args = pack(...)};
+    table.insert(self.registeredCallbacks[event], callbackInfo);
+end
+
+function DraghosUtils.Callbacks._BaseExecuteOutOfCombat(once, action, ...)
+    if not InCombatLockdown() then
+        action(...);
+    else
+        EventHandler:RegisterCallback("PLAYER_REGEN_ENABLED", once, action, ...);
+    end
+end
+
+function DraghosUtils.Callbacks.ExecuteOutOfCombatOnce(action, ...)
+    DraghosUtils.Callbacks._BaseExecuteOutOfCombat(true, action, ...);
+end
+
+function DraghosUtils.Callbacks.ExecuteOutOfCombat(action, ...)
+    DraghosUtils.Callbacks._BaseExecuteOutOfCombat(false, action, ...);
+end
+
+EventHandler:SetScript("OnEvent", EventHandler.OnEvent);
+
+-- *********************************************************************************************************************
 -- ***** HELPERS
 -- *********************************************************************************************************************
 

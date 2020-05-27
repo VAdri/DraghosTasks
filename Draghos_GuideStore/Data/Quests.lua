@@ -47,10 +47,12 @@ Draghos_GuideStore.quests = {
     [14456] = {
         questID = 14456, -- Stop the Thorncallers
         requiredQuestIDs = {14458},
+        targets = {Draghos_GuideStore.npcs[36708]},
     },
     [14455] = {
         questID = 14455, -- Rite of Courage
         requiredQuestIDs = {14458},
+        targets = {Draghos_GuideStore.npcs[36697]},
     },
     [14459] = {
         questID = 14459, -- The Battleboars

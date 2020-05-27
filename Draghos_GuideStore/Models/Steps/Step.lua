@@ -96,7 +96,7 @@ function StepMixin:CanAddWaypoints()
 end
 
 function StepMixin:GetWaypointsInfo()
-    return M(self:GetStepLines()):filter(canAddWaypoints):map(getWaypointsInfo):flatten():value();
+    return M(self:GetStepLines()):filter(canAddWaypoints):map(getWaypointsInfo):flatten(true):value();
 end
 
 -- *********************************************************************************************************************
@@ -110,7 +110,7 @@ local getTargetNames = M.partial(M.result, "_", "GetTargetNames");
 local getTargetIDs = M.partial(M.result, "_", "GetTargetIDs");
 
 function StepMixin:GetTargetNPCs()
-    return M(self:GetStepLines()):map(getTargetNPCs):flatten():value();
+    return M(self:GetStepLines()):map(getTargetNPCs):flatten(true):value();
 end
 
 function StepMixin:HasTargets()
@@ -122,11 +122,11 @@ function StepMixin:HasInvalidTargets()
 end
 
 function StepMixin:GetTargetNames()
-    return M(self:GetStepLines()):map(getTargetNames):flatten():value();
+    return M(self:GetStepLines()):map(getTargetNames):flatten(true):value();
 end
 
 function StepMixin:GetTargetIDs()
-    return M(self:GetStepLines()):map(getTargetIDs):flatten():value();
+    return M(self:GetStepLines()):map(getTargetIDs):flatten(true):value();
 end
 
 -- *********************************************************************************************************************

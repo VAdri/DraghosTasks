@@ -18,8 +18,8 @@ function LocationMixin:LocationInit(location)
 end
 
 function LocationMixin:CanAddWaypoints()
-    return self.locationType == LOCATION_TYPE_COORDS and self:IsValidLocation();
-    -- ? and self:IsAvailable() and not self:IsCompleted();
+    return self.locationType == LOCATION_TYPE_COORDS and self:IsValidLocation() and self:IsAvailable() and
+               not self:IsCompleted();
 end
 
 function LocationMixin:GetZoneName()
