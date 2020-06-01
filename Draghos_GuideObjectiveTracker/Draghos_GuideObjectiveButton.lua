@@ -211,7 +211,7 @@ local function AcquireRightButton(parent)
     return button;
 end
 
-function GuideObjectiveSetupBlockButton_AddRightButton(block, button, initialAnchorOffsets)
+local function GuideObjectiveSetupBlockButton_AddRightButton(block, button, initialAnchorOffsets)
     if block.rightButton == button then
         -- TODO: Fix for real, some event causes the findGroup button to get added twice (could happen for any button)
         -- so it doesn't need to be reanchored another time
@@ -235,7 +235,7 @@ function GuideObjectiveSetupBlockButton_AddRightButton(block, button, initialAnc
     block.lineWidth = block.lineWidth - button:GetWidth() - paddingBetweenButtons;
 end
 
-function GuideObjectiveBlock_ReleaseRightButton(button)
+local function GuideObjectiveBlock_ReleaseRightButton(button)
     guideObjectiveButtonPool:Release(button);
 end
 

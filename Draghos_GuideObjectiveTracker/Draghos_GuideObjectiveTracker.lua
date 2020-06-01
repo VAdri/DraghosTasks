@@ -31,8 +31,8 @@ end
 
 function GuideObjectiveTrackerInitialize()
     GUIDE_TRACKER_MODULE.header = CreateFrame(
-                                      "Frame", "GuideTrackerBlocksFrame.GuideHeader",
-                                      GuideTrackerFrame.BlocksFrame, "ObjectiveTrackerHeaderTemplate"
+                                      "Frame", "GuideTrackerBlocksFrame.GuideHeader", GuideTrackerFrame.BlocksFrame,
+                                      "ObjectiveTrackerHeaderTemplate"
                                   );
 
     GUIDE_TRACKER_MODULE:SetHeader(GUIDE_TRACKER_MODULE.header, TRACKER_HEADER_GUIDE, OBJECTIVE_TRACKER_UPDATE_ALL);
@@ -364,6 +364,17 @@ function GUIDE_TRACKER_MODULE:OnBlockHeaderClick(block, mouseButton)
 end
 
 function GUIDE_TRACKER_MODULE:ClearBlockData(block)
+    Callbacks.ExecuteOutOfCombat(
+        function()
+            -- Hide icon and button
+            GuideObjectiveBlock_ReleaseLeftIcon(block);
+            GuideObjectiveBlock_ReleaseLeftCheckbox(block);
+            GuideObjectiveReleaseBlockButton_Item(block);
+            -- TODO: GuideObjectiveReleaseBlockButton_Spell(block);
+            GuideObjectiveReleaseBlockButton_Targets(block);
+        end
+    );
+
     -- Unwatch step
     if block.step:IsCompleted() then
         block.step:Unwatch(self);
@@ -371,18 +382,6 @@ function GUIDE_TRACKER_MODULE:ClearBlockData(block)
 end
 
 function GUIDE_TRACKER_MODULE:OnFreeBlock(block)
-    Callbacks.ExecuteOutOfCombat(
-        function()
-            -- Hide icon and button
-            GuideObjectiveBlock_ReleaseLeftIcon(block);
-            GuideObjectiveBlock_ReleaseLeftCheckbox(block);
-            GuideObjectiveBlock_ReleaseRightButton(block);
-            GuideObjectiveReleaseBlockButton_Item(block);
-            -- TODO: GuideObjectiveReleaseBlockButton_Spell(block);
-            GuideObjectiveReleaseBlockButton_Targets(block);
-        end
-    );
-
     self:ClearBlockData(block);
 end
 
