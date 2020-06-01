@@ -45,7 +45,13 @@ end
 local isQuestObjectiveNotCompleted = M.complement(M.partial(M.result, "_", "IsQuestObjectiveCompleted"));
 
 function StepCompleteQuestObjectivesMixin:IsCompleted()
-    return self:IsQuestCompleted() or not M(self:GetQuestObjectives()):any(isQuestObjectiveNotCompleted):value();
+    if (not self:HasCache("IsCompleted")) then
+        self:SetCache(
+            "IsCompleted",
+            self:IsQuestCompleted() or not M(self:GetQuestObjectives()):any(isQuestObjectiveNotCompleted):value()
+        );
+    end
+    return self:GetCache("IsCompleted");
 end
 
 -- *********************************************************************************************************************

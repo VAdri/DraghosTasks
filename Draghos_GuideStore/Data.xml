@@ -6,7 +6,6 @@
     <Script file="Data/Locations.lua"/>
     <Script file="Data/Items.lua"/>
     <Script file="Data/Spells.lua"/>
-    <Script file="Data/Transportations.lua"/>
     <Script file="Data/Quests.lua"/>
     <Script file="Data/TaxiNodes.lua"/>
     <Script file="Data/Steps.lua"/>

@@ -12,6 +12,55 @@ DraghosEnums.Mesages = {
     ToggleStepCompleted = 1, -- The UI send an event indicating that a step completed state has been manually changed
 };
 
+DraghosEnums.StepType = {
+    Note = 1,
+    PickupQuest = 2,
+    ProgressQuestObjectives = 3,
+    CompleteQuestObjectives = 4,
+    CompleteQuest = 5,
+    -- AbandonQuest = , -- Needed?
+    HandinQuest = 6,
+    Grind = 7, -- TODO: Grind reputation
+    UseHearthstone = 8,
+    SetHearth = 9,
+    Go = 10,
+    GetFlightPath = 11,
+    -- Fly = ,
+    -- Teleport = ,
+    -- Discover = ,
+    -- Train = , -- Can be for professions too, complete on specific spell or just for speaking to the trainer (add a "hint" before?)
+    -- VendorRepair = ,
+    -- Skip/SkipForNow = ,
+    -- Buy = , -- Can require reput?
+    -- Loot = , -- Loot an item on an npc or an object
+    -- Craft = ,
+    -- BankDeposit = ,
+    -- BankWithdrawal = ,
+    -- KeepItem = ,
+    -- DestroyItem = ,
+    -- UseObject = ,
+    -- UseSpell = ,
+    -- Equip = ,
+    -- FindGroup = ,
+    -- StartDungeon = ,
+    -- FinishDungeon = ,
+    -- Die = ,
+    -- SpiritRez = ,
+};
+
+DraghosEnums.QuestObjectiveType = {
+    Item = "item",
+    Object = "object",
+    Monster = "monster",
+    Reputation = "reputation",
+    Log = "log",
+    Event = "event",
+    Player = "player",
+    ProgressBar = "progressbar",
+    -- CustomSetFree = "setfree";
+    CustomUseItem = "useitem",
+}
+
 DraghosFlags.NoteState = {
     Normal = 0x0, -- Default state
     Important = 0x1, -- The note is emphasized (in a red color for instance)
@@ -63,7 +112,9 @@ local EventHandler = CreateFrame("Frame");
 
 EventHandler.registeredCallbacks = {};
 
-local pack = function(...) return { n = select("#", ...), ... } end;
+local pack = function(...)
+    return {n = select("#", ...), ...};
+end;
 
 function EventHandler:OnEvent(event, ...)
     if self.registeredCallbacks[event] then

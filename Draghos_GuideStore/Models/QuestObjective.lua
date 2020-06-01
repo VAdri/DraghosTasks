@@ -66,20 +66,19 @@ function QuestObjectiveMixin:IsObjectiveType(objectiveType)
 end
 
 function QuestObjectiveMixin:IsCombat()
-    return self:IsObjectiveType(QUEST_OBJECTIVE_TYPE_MONSTER);
+    return self:IsObjectiveType(DraghosEnums.QuestObjectiveType.Monster);
 end
 
 function QuestObjectiveMixin:IsObjectInteraction()
-    return self:IsObjectiveType(QUEST_OBJECTIVE_TYPE_OBJECT);
+    return self:IsObjectiveType(DraghosEnums.QuestObjectiveType.Object);
 end
 
 function QuestObjectiveMixin:IsLoot()
-    return self:IsObjectiveType(QUEST_OBJECTIVE_TYPE_ITEM);
+    return self:IsObjectiveType(DraghosEnums.QuestObjectiveType.Item);
 end
 
 -- function QuestObjectiveMixin:IsSetFree()
--- return self:IsObjectiveType(CUSTOM_QUEST_OBJECTIVE_TYPE_SET_FREE);
---     return self.overrideObjectiveType == CUSTOM_QUEST_OBJECTIVE_TYPE_SET_FREE;
+--     return self:IsObjectiveType(DraghosEnums.QuestObjectiveType.CustomSetFree);
 -- end
 
 DraghosMixins.QuestObjective = QuestObjectiveMixin;

@@ -9,27 +9,27 @@ local M = LibStub("Moses");
 -- *********************************************************************************************************************
 
 local function InitStep(step)
-    if step.stepType == STEP_TYPE_NOTE then
+    if step.stepType == DraghosEnums.StepTypes.Note then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepNote, step);
-    elseif step.stepType == STEP_TYPE_PICKUP_QUEST then
+    elseif step.stepType == DraghosEnums.StepTypes.PickupQuest then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepPickUpQuest, step);
-    elseif step.stepType == STEP_TYPE_PROGRESS_QUEST_OBJECTIVE then
+    elseif step.stepType == DraghosEnums.StepTypes.ProgressQuestObjectives then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepProgressQuestObjectives, step);
-    elseif step.stepType == STEP_TYPE_COMPLETE_QUEST_OBJECTIVE then
+    elseif step.stepType == DraghosEnums.StepTypes.CompleteQuestObjectives then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepCompleteQuestObjectives, step);
-    elseif step.stepType == STEP_TYPE_COMPLETE_QUEST then
+    elseif step.stepType == DraghosEnums.StepTypes.CompleteQuest then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepCompleteQuest, step);
-    elseif step.stepType == STEP_TYPE_HANDIN_QUEST then
+    elseif step.stepType == DraghosEnums.StepTypes.HandinQuest then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepHandInQuest, step);
-    elseif step.stepType == STEP_TYPE_GRIND then
+    elseif step.stepType == DraghosEnums.StepTypes.Grind then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepGrind, step);
-    elseif step.stepType == STEP_TYPE_USE_HEARTHSTONE then
+    elseif step.stepType == DraghosEnums.StepTypes.UseHearthstone then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepUseHearthstone, step);
-    elseif step.stepType == STEP_TYPE_SET_HEARTH then
+    elseif step.stepType == DraghosEnums.StepTypes.SetHearth then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepSetHearth, step);
-    elseif step.stepType == STEP_TYPE_GO then
+    elseif step.stepType == DraghosEnums.StepTypes.Go then
         -- TODO: return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepGo, step);
-    elseif step.stepType == STEP_TYPE_GET_FLIGHT_PATH then
+    elseif step.stepType == DraghosEnums.StepTypes.GetFlightPath then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepDiscoverTaxiNode, step);
     else
         -- ? return Draghos_GuideStore:CreateObject(StepUnknownMixin, step);
@@ -49,8 +49,7 @@ local function IsStepRemaining(step)
 end
 
 function Draghos_GuideStore:GetRemainingSteps()
-    local steps = M(self.steps):filter(IsStepRemaining):sortBy("stepID"):value();
-    return steps;
+    return M(self.steps):filter(IsStepRemaining):sortBy("stepID"):value();
 end
 
 function Draghos_GuideStore:GetQuestByID(questID)
@@ -144,7 +143,7 @@ function Draghos_GuideStore:RegisterForNotifications(item, event)
     if Str:StartsWith(event, Draghos_GuideStore.customEventsPrefix) then
         -- This is not a real event we don't need to register it
     elseif not frame:IsEventRegistered(event) then
-        frame:RegisterEvent(event, self.OnEvent);
+        frame:RegisterEvent(event);
     end
 end
 
@@ -164,7 +163,7 @@ end
 
 function Draghos_GuideStore:SendMesage(messageType, ...)
     -- TODO: ClearMemo();
-    local handlers = self.handlers[messageType] or {};
+    local handlers = M(self.handlers[messageType] or {}):unique():value();
     for _, handler in pairs(handlers) do
         handler(...);
     end

@@ -32,9 +32,7 @@ end
 local isCombat = M.partial(M.result, "_", "IsCombat");
 local isObjectInteraction = M.partial(M.result, "_", "IsObjectInteraction");
 local isLoot = M.partial(M.result, "_", "IsLoot");
-
-function Virtual_StepWithObjectivesMixin:GetObjectivesType()
-    local questObjectives = self:GetQuestObjectives();
+local function getObjectivesType(questObjectives)
     local questObjectivesCount = #questObjectives;
     if questObjectivesCount == 0 then
         return nil;
@@ -63,6 +61,13 @@ function Virtual_StepWithObjectivesMixin:GetObjectivesType()
 
         return nil;
     end
+end
+
+function Virtual_StepWithObjectivesMixin:GetObjectivesType()
+    if (not self:HasCache("GetObjectivesType")) then
+        self:SetCache("GetObjectivesType", getObjectivesType(self:GetQuestObjectives()));
+    end
+    return self:GetCache("GetObjectivesType");
 end
 
 -- *********************************************************************************************************************

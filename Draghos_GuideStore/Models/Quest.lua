@@ -2,11 +2,15 @@ local M = LibStub("Moses");
 
 local QuestMixin = {};
 
+local getQuest = function(questID)
+    return Draghos_GuideStore:GetQuestByID(questID) or false;
+end
+
 function QuestMixin:QuestInit(quest)
     self.questID = tonumber(quest.questID);
     C_QuestLog.RequestLoadQuestByID(self.questID);
 
-    self.requiredQuestIDs = quest.requiredQuestIDs or {};
+    self.requiredQuests = M(quest.requiredQuestIDs or {}):map(getQuest):value();
 
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_ACCEPTED");
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_POI_UPDATE");
@@ -29,9 +33,15 @@ function QuestMixin:IsQuestAvailable()
 end
 
 local isNotValid = M.complement(M.partial(M.result, "_", "IsValid"));
-
 function QuestMixin:IsValidQuest()
-    return self.questID and HaveQuestData(self.questID) and not M(self:GetQuestObjectives()):any(isNotValid):value();
+    if (not self:HasCache("IsValidQuest")) then
+        self:SetCache(
+            "IsValidQuest",
+            self.questID and HaveQuestData(self.questID) and not M(self:GetQuestObjectives()):any(isNotValid):value() and
+                not M(self.requiredQuests):any(false):value()
+        );
+    end
+    return self:GetCache("IsValidQuest");
 end
 
 function QuestMixin:IsQuestFinishedButNotTurnedIn()
@@ -47,13 +57,23 @@ function QuestMixin:IsQuestCompleted()
     return self:IsQuestFinishedButNotTurnedIn() or self:IsQuestTurnedIn();
 end
 
-local function IsRequiredQuestCompleted(questID)
-    local quest = Draghos_GuideStore:GetQuestByID(questID);
+function QuestMixin:HasRequiredQuests()
+    return #self.requiredQuests > 0;
+end
+
+local isQuestCompleted = function(quest)
     return quest and QuestMixin.IsQuestTurnedIn(quest);
 end
 
 function QuestMixin:RequiredQuestsCompleted()
-    return #self.requiredQuestIDs == 0 or M(self.requiredQuestIDs):all(IsRequiredQuestCompleted):value();
+    if (not self:HasRequiredQuests()) then
+        return true;
+    end
+
+    if (not self:HasCache("RequiredQuestsCompleted")) then
+        self:SetCache("RequiredQuestsCompleted", M(self.requiredQuests):all(isQuestCompleted):value());
+    end
+    return self:GetCache("RequiredQuestsCompleted");
 end
 
 function QuestMixin:RequiredStepsCompleted()
@@ -75,15 +95,25 @@ function QuestMixin:IsQuestItemToUse()
 end
 
 function QuestMixin:GetQuestObjectives()
-    -- ! Do not use self:GetStepLines() to avoid circular reference within Virtual_StepWithObjectivesMixin:GetStepLines()
-    local questObjectives = M(self.stepLines or {}):where(
-                                {QuestObjectiveInit = DraghosMixins.QuestObjective.QuestObjectiveInit}
-                            ):value();
-    return questObjectives or {};
+    if (not self:HasCache("GetQuestObjectives")) then
+        -- ! Do not use self:GetStepLines() to avoid circular reference within Virtual_StepWithObjectivesMixin:GetStepLines()
+        self:SetCache(
+            "GetQuestObjectives", M(self.stepLines or {}):where(
+                {QuestObjectiveInit = DraghosMixins.QuestObjective.QuestObjectiveInit}
+            ):value()
+        );
+    end
+    return self:GetCache("GetQuestObjectives") or {};
 end
 
 function QuestMixin:CreateQuestObjectives()
-    if not self:IsValidQuest() then
+    local isValidQuest = self:IsValidQuest();
+
+    -- Clearing the quest objectives cache because new quest objectives may be added
+    self:ClearCache("GetQuestObjectives");
+    self:ClearCache("GetObjectivesType");
+
+    if (not isValidQuest) then
         return {};
     end
 

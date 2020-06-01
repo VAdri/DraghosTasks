@@ -7,9 +7,19 @@ local next = next;
 
 local NPCMixin = {};
 
-function NPCMixin:NPCInit(npc)
+Mixin(NPCMixin, DraghosMixins.Cache);
+
+function NPCMixin:InitBase(npc, cacheRequired)
+    if (cacheRequired ~= false) then
+        self:CacheInit();
+    end
+
     self.npcID = tonumber(npc.npcID);
     self.npcNames = npc.names;
+end
+
+function NPCMixin:NPCInit(npc)
+    self:InitBase(npc, false);
 end
 
 function NPCMixin:GetNPCName()
@@ -24,7 +34,14 @@ local function HasAllNPCNames(npcNames)
 end
 
 function NPCMixin:IsValidNPC()
-    return self.npcID and HasAllNPCNames(self.npcNames) and true or false;
+    if (not self.npcID) then
+        return false;
+    end
+
+    if (not self:HasCache("IsValidNPC")) then
+        self:SetCache("IsValidNPC", HasAllNPCNames(self.npcNames));
+    end
+    return self:GetCache("IsValidNPC");
 end
 
 DraghosMixins.NPC = NPCMixin;

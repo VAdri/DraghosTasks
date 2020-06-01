@@ -7,6 +7,7 @@ local StepMixin = {};
 -- ***** Mixins
 -- *********************************************************************************************************************
 
+Mixin(StepMixin, DraghosMixins.Cache);
 Mixin(StepMixin, DraghosMixins.Observable);
 
 -- *********************************************************************************************************************
@@ -18,6 +19,8 @@ local function CreateNote(note)
 end
 
 function StepMixin:StepInit(step)
+    self:CacheInit();
+
     self.stepID = tonumber(step.id);
     self.stepLines = {};
     self.requiredStepIDs = step.requiredStepIDs or {}; -- TODO: Detect potential circular references
@@ -64,11 +67,26 @@ function StepMixin:IsStepAvailable()
 end
 
 function StepMixin:IsValidStep()
-    return self.stepID and M(self:GetStepLines()):all(isValid):value();
+    if (not self:HasCache("IsValidStep")) then
+        self:SetCache("IsValidStep", self.stepID and M(self:GetStepLines()):all(isValid):value());
+    end
+    return self:GetCache("IsValidStep");
+end
+
+function StepMixin:HasRequiredSteps()
+    return #self.requiredStepIDs > 0;
 end
 
 function StepMixin:RequiredStepsCompleted()
-    return #self.requiredStepIDs == 0 or M(self.requiredStepIDs):map(getStepByID):all(isCompleted):value();
+    if (not self:HasRequiredSteps()) then
+        -- No required steps
+        return true;
+    end
+
+    if (not self:HasCache("RequiredStepsCompleted")) then
+        self:SetCache("RequiredStepsCompleted", M(self.requiredStepIDs):map(getStepByID):all(isCompleted):value());
+    end
+    return self:GetCache("RequiredStepsCompleted");
 end
 
 function StepMixin:HasDependentSteps()
@@ -76,8 +94,17 @@ function StepMixin:HasDependentSteps()
 end
 
 function StepMixin:DependentStepsCompleted()
-    return not self:HasDependentSteps() or
-               M(self.completedAfterCompletedStepIDs):map(getStepByID):all(isCompleted):value();
+    if (not self:HasDependentSteps()) then
+        -- No dependent steps
+        return true;
+    end
+
+    if (not self:HasCache("DependentStepsCompleted")) then
+        self:SetCache(
+            "DependentStepsCompleted", M(self.completedAfterCompletedStepIDs):map(getStepByID):all(isCompleted):value()
+        );
+    end
+    return self:GetCache("DependentStepsCompleted");
 end
 
 -- *********************************************************************************************************************
@@ -92,11 +119,20 @@ function StepMixin:SkipWaypoint()
 end
 
 function StepMixin:CanAddWaypoints()
-    return M(self:GetStepLines()):any(canAddWaypoints):value();
+    if (not self:HasCache("CanAddWaypoints")) then
+        self:SetCache("CanAddWaypoints", M(self:GetStepLines()):any(canAddWaypoints):value());
+    end
+    return self:GetCache("CanAddWaypoints");
 end
 
 function StepMixin:GetWaypointsInfo()
-    return M(self:GetStepLines()):filter(canAddWaypoints):map(getWaypointsInfo):flatten(true):value();
+    if (not self:HasCache("GetWaypointsInfo")) then
+        self:SetCache(
+            "GetWaypointsInfo",
+            M(self:GetStepLines()):filter(canAddWaypoints):map(getWaypointsInfo):flatten(true):value()
+        );
+    end
+    return self:GetCache("GetWaypointsInfo");
 end
 
 -- *********************************************************************************************************************
@@ -110,23 +146,38 @@ local getTargetNames = M.partial(M.result, "_", "GetTargetNames");
 local getTargetIDs = M.partial(M.result, "_", "GetTargetIDs");
 
 function StepMixin:GetTargetNPCs()
-    return M(self:GetStepLines()):map(getTargetNPCs):flatten(true):value();
+    if (not self:HasCache("GetTargetNPCs")) then
+        self:SetCache("GetTargetNPCs", M(self:GetStepLines()):map(getTargetNPCs):flatten(true):value());
+    end
+    return self:GetCache("GetTargetNPCs");
 end
 
 function StepMixin:HasTargets()
-    return M(self:GetStepLines()):any(hasTargets):value();
+    if (not self:HasCache("HasTargets")) then
+        self:SetCache("HasTargets", M(self:GetStepLines()):any(hasTargets):value());
+    end
+    return self:GetCache("HasTargets");
 end
 
 function StepMixin:HasInvalidTargets()
-    return M(self:GetStepLines()):any(hasInvalidTargets):value();
+    if (not self:HasCache("HasInvalidTargets")) then
+        self:SetCache("HasInvalidTargets", M(self:GetStepLines()):any(hasInvalidTargets):value());
+    end
+    return self:GetCache("HasInvalidTargets");
 end
 
 function StepMixin:GetTargetNames()
-    return M(self:GetStepLines()):map(getTargetNames):flatten(true):value();
+    if (not self:HasCache("GetTargetNames")) then
+        self:SetCache("GetTargetNames", M(self:GetStepLines()):map(getTargetNames):flatten(true):value());
+    end
+    return self:GetCache("GetTargetNames");
 end
 
 function StepMixin:GetTargetIDs()
-    return M(self:GetStepLines()):map(getTargetIDs):flatten(true):value();
+    if (not self:HasCache("GetTargetIDs")) then
+        self:SetCache("GetTargetIDs", M(self:GetStepLines()):map(getTargetIDs):flatten(true):value());
+    end
+    return self:GetCache("GetTargetIDs");
 end
 
 -- *********************************************************************************************************************
@@ -166,13 +217,15 @@ function StepMixin:IsTrivial()
 end
 
 -- *********************************************************************************************************************
--- ***** StepLines
+-- ***** Step Lines
 -- *********************************************************************************************************************
 
 local isNotDisabled = M.complement(M.partial(M.result, "_", "IsDisabled"));
-
 function StepMixin:GetStepLines()
-    return M(self.stepLines or {}):filter(isNotDisabled):value();
+    if (not self:HasCache("GetStepLines")) then
+        self:SetCache("GetStepLines", M.filter(self.stepLines or {}, isNotDisabled));
+    end
+    return self:GetCache("GetStepLines");
 end
 
 function StepMixin:AddOneStepLine(stepLine)

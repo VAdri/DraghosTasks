@@ -1,14 +1,3 @@
-QUEST_OBJECTIVE_TYPE_ITEM = "item";
-QUEST_OBJECTIVE_TYPE_OBJECT = "object";
-QUEST_OBJECTIVE_TYPE_MONSTER = "monster";
-QUEST_OBJECTIVE_TYPE_REPUTATION = "reputation";
-QUEST_OBJECTIVE_TYPE_LOG = "log";
-QUEST_OBJECTIVE_TYPE_EVENT = "event";
-QUEST_OBJECTIVE_TYPE_PLAYER = "player";
-QUEST_OBJECTIVE_TYPE_PROGRESSBAR = "progressbar";
--- CUSTOM_QUEST_OBJECTIVE_TYPE_SET_FREE = "setfree";
-CUSTOM_QUEST_OBJECTIVE_TYPE_USE_ITEM = "useitem";
-
 Draghos_GuideStore.quests = {
     [14449] = {
         questID = 14449, -- The First Step
@@ -32,7 +21,7 @@ Draghos_GuideStore.quests = {
                 questObjective = {
                     questID = 24852,
                     index = 1,
-                    -- overrideObjectiveType = CUSTOM_QUEST_OBJECTIVE_TYPE_SET_FREE,
+                    -- overrideObjectiveType = DraghosEnums.QuestObjectiveType.CustomSetFree,
                 },
                 location = {}, -- TODO
                 object = {}, -- TODO
@@ -72,7 +61,7 @@ Draghos_GuideStore.quests = {
                 questObjective = {
                     questID = 14461,
                     index = 1,
-                    overrideObjectiveType = CUSTOM_QUEST_OBJECTIVE_TYPE_USE_ITEM,
+                    overrideObjectiveType = DraghosEnums.QuestObjectiveType.CustomUseItem,
                 },
                 location = Draghos_GuideStore.locations.questObjectives[1],
                 -- npc = Draghos_GuideStore.npcs[36727],
@@ -82,7 +71,7 @@ Draghos_GuideStore.quests = {
                 questObjective = {
                     questID = 14461,
                     index = 2,
-                    overrideObjectiveType = CUSTOM_QUEST_OBJECTIVE_TYPE_USE_ITEM,
+                    overrideObjectiveType = DraghosEnums.QuestObjectiveType.CustomUseItem,
                 },
                 location = Draghos_GuideStore.locations.questObjectives[2],
                 -- npc = Draghos_GuideStore.npcs[37155],
@@ -92,7 +81,7 @@ Draghos_GuideStore.quests = {
                 questObjective = {
                     questID = 14461,
                     index = 3,
-                    overrideObjectiveType = CUSTOM_QUEST_OBJECTIVE_TYPE_USE_ITEM,
+                    overrideObjectiveType = DraghosEnums.QuestObjectiveType.CustomUseItem,
                 },
                 location = Draghos_GuideStore.locations.questObjectives[3],
                 -- npc = Draghos_GuideStore.npcs[37156],
