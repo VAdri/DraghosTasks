@@ -24,14 +24,12 @@ local function OnStepUpdated()
 end
 
 function TomTomDestination:WatchNextStep()
-    local steps = Draghos_GuideStore:GetRemainingSteps();
-
-    local stepIndex = 1;
     local watchedItem;
-    repeat
-        watchedItem = steps[stepIndex];
-        stepIndex = stepIndex + 1;
-    until (not watchedItem or (not watchedItem:SkipWaypoint() and watchedItem:CanAddWaypoints()));
+    for _, step in Draghos_GuideStore:GetRemainingSteps() do
+        if (not step:SkipWaypoint() and step:CanAddWaypoints()) then
+            watchedItem = step;
+        end
+    end
 
     if watchedItem and watchedItem:CanAddWaypoints() then
         self.watchedItem = watchedItem;

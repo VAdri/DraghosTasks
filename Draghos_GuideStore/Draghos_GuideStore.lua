@@ -1,35 +1,40 @@
 local CreateAndInitFromMixin = CreateAndInitFromMixin;
 
+local Lambdas = DraghosUtils.Lambdas;
+local Helpers = DraghosUtils.Helpers;
 local Str = DraghosUtils.Str;
 
-local M = LibStub("Moses");
+local Linq = LibStub("Linq");
+
+--- @type Enumerable
+local Enumerable = Linq.Enumerable;
 
 -- *********************************************************************************************************************
 -- ***** LOADING AND RETRIEVING OBJECTS FROM THE STORE
 -- *********************************************************************************************************************
 
 local function InitStep(step)
-    if step.stepType == DraghosEnums.StepTypes.Note then
+    if step.stepType == DraghosEnums.StepType.Note then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepNote, step);
-    elseif step.stepType == DraghosEnums.StepTypes.PickupQuest then
+    elseif step.stepType == DraghosEnums.StepType.PickupQuest then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepPickUpQuest, step);
-    elseif step.stepType == DraghosEnums.StepTypes.ProgressQuestObjectives then
+    elseif step.stepType == DraghosEnums.StepType.ProgressQuestObjectives then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepProgressQuestObjectives, step);
-    elseif step.stepType == DraghosEnums.StepTypes.CompleteQuestObjectives then
+    elseif step.stepType == DraghosEnums.StepType.CompleteQuestObjectives then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepCompleteQuestObjectives, step);
-    elseif step.stepType == DraghosEnums.StepTypes.CompleteQuest then
+    elseif step.stepType == DraghosEnums.StepType.CompleteQuest then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepCompleteQuest, step);
-    elseif step.stepType == DraghosEnums.StepTypes.HandinQuest then
+    elseif step.stepType == DraghosEnums.StepType.HandinQuest then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepHandInQuest, step);
-    elseif step.stepType == DraghosEnums.StepTypes.Grind then
+    elseif step.stepType == DraghosEnums.StepType.Grind then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepGrind, step);
-    elseif step.stepType == DraghosEnums.StepTypes.UseHearthstone then
+    elseif step.stepType == DraghosEnums.StepType.UseHearthstone then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepUseHearthstone, step);
-    elseif step.stepType == DraghosEnums.StepTypes.SetHearth then
+    elseif step.stepType == DraghosEnums.StepType.SetHearth then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepSetHearth, step);
-    elseif step.stepType == DraghosEnums.StepTypes.Go then
+    elseif step.stepType == DraghosEnums.StepType.Go then
         -- TODO: return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepGo, step);
-    elseif step.stepType == DraghosEnums.StepTypes.GetFlightPath then
+    elseif step.stepType == DraghosEnums.StepType.GetFlightPath then
         return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepDiscoverTaxiNode, step);
     else
         -- ? return Draghos_GuideStore:CreateObject(StepUnknownMixin, step);
@@ -37,11 +42,11 @@ local function InitStep(step)
 end
 
 function Draghos_GuideStore:LoadSteps()
-    self.steps = M(self.steps):map(InitStep):value();
+    self.steps = Enumerable.From(self.steps):Select(InitStep):ToList();
 end
 
 function Draghos_GuideStore:GetStepByID(stepID)
-    return M(self.steps):findWhere({stepID = stepID}):value();
+    return self.steps:FirstOrDefault(Lambdas.PropsEqual({stepID = stepID}));
 end
 
 local function IsStepRemaining(step)
@@ -49,7 +54,10 @@ local function IsStepRemaining(step)
 end
 
 function Draghos_GuideStore:GetRemainingSteps()
-    return M(self.steps):filter(IsStepRemaining):sortBy("stepID"):value();
+    return self.steps
+        :Where(IsStepRemaining)
+        :OrderBy(Lambdas.Property("stepID"))
+        :GetEnumerator();
 end
 
 function Draghos_GuideStore:GetQuestByID(questID)
@@ -68,7 +76,7 @@ end
 -- ***** OBJECTS CREATION
 -- *********************************************************************************************************************
 
-local GuideItemMetatable = {};
+-- local GuideItemMetatable = {};
 
 -- -- TODO: Deactivate this on release builds
 
@@ -90,14 +98,16 @@ local GuideItemMetatable = {};
 
 function Draghos_GuideStore:CreateGuideItem(mixin, data)
     local object = CreateAndInitFromMixin(mixin, data);
-    return setmetatable(object, GuideItemMetatable);
+    -- return setmetatable(object, GuideItemMetatable);
+    return object;
 end
 
 function Draghos_GuideStore:CreateBaseItem(mixin, data)
     local object = {};
     Mixin(object, mixin);
     object:InitBase(data);
-    return setmetatable(object, GuideItemMetatable);
+    -- return setmetatable(object, GuideItemMetatable);
+    return object;
 end
 
 -- *********************************************************************************************************************
@@ -122,15 +132,32 @@ end
 
 Draghos_GuideStore.customEventsPrefix = "DRAGHOS";
 
+local function GetStep(stepOrStepLine)
+    if stepOrStepLine.step ~= nil then
+        return stepOrStepLine.step;
+    else
+        return stepOrStepLine;
+    end
+end
+
 function GuideStoreFrame_OnEvent(self, event, ...)
-    -- TODO: ClearMemo();
-    local notifiers = Draghos_GuideStore.notifiers[event] or {};
-    local handlers = M(notifiers):map(M.property("watchers")):flatten(true):unique():value();
-    for _, handler in pairs(handlers) do
+    local notifiers = Enumerable.From(Draghos_GuideStore.notifiers[event] or {});
+
+    -- Clear cache on the step that has changed
+    -- If the item that was change is a step line, clear its parent step's cache
+    local stepsChanged = notifiers:Select(GetStep):Distinct();
+    for _, step in stepsChanged:GetEnumerator() do
+        step:ClearCache();
+    end
+
+    -- Notify watchers
+    local handlers = notifiers:SelectMany(function(notifier) return notifier.watchers or {}; end):Distinct();
+    for _, handler in handlers:GetEnumerator() do
         handler();
     end
-    -- TODO: ClearMemo();
-    -- TODO: Helpers:StartGarbageCollection();
+
+    -- Collect garbage
+    Helpers:StartGarbageCollection();
 end
 
 function Draghos_GuideStore:SendCustomEvent(event, ...)
@@ -163,8 +190,8 @@ end
 
 function Draghos_GuideStore:SendMesage(messageType, ...)
     -- TODO: ClearMemo();
-    local handlers = M(self.handlers[messageType] or {}):unique():value();
-    for _, handler in pairs(handlers) do
+    local handlers = Enumerable.From(self.handlers[messageType] or {}):Distinct();
+    for _, handler in handlers:GetEnumerator() do
         handler(...);
     end
     -- TODO: ClearMemo();

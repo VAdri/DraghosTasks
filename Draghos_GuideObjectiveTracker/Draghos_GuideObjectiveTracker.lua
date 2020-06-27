@@ -1,6 +1,12 @@
 local Callbacks = DraghosUtils.Callbacks;
+local Lambdas = DraghosUtils.Lambdas;
 
-local M = LibStub("Moses");
+local Linq = LibStub("Linq");
+
+--- @type Enumerable
+local Enumerable = Linq.Enumerable;
+--- @type HashSet|Enumerable
+local HashSet = Linq.HashSet;
 
 OBJECTIVE_TRACKER_UPDATE_MODULE_GUIDE = 0x200000;
 
@@ -240,8 +246,7 @@ end
 function GUIDE_TRACKER_MODULE:BuildStepWatchInfos()
     local infos = {};
 
-    local steps = Draghos_GuideStore:GetRemainingSteps();
-    for index, step in pairs(steps) do
+    for index, step in Draghos_GuideStore:GetRemainingSteps() do
         if step:IsAvailable() then
             -- Add the step on the tracker
             table.insert(infos, {step = step, index = index});
@@ -285,7 +290,7 @@ function GUIDE_TRACKER_MODULE:UpdateSingle(step, stepIndex)
 
     self:SetBlockHeader(block, step);
 
-    for stepIndexIndex, stepLine in pairs(step:GetStepLines()) do
+    for stepIndexIndex, stepLine in step:GetStepLines():GetEnumerator() do
         local baseColor = nil;
         local baseCompleteColor = OBJECTIVE_TRACKER_COLOR["Complete"];
 
@@ -386,7 +391,7 @@ function GUIDE_TRACKER_MODULE:OnFreeBlock(block)
 end
 
 function GUIDE_TRACKER_MODULE:GetUsedBlocksIDs()
-    return M(self.usedBlocks):map(M.property("id")):values():value();
+    return Enumerable.From(GUIDE_TRACKER_MODULE.usedBlocks):Select(Lambdas.Property("id")):ToArray();
 end
 
 function GUIDE_TRACKER_MODULE:Update()
@@ -408,8 +413,9 @@ function GUIDE_TRACKER_MODULE:Update()
     self:EndLayout();
 
     -- Show animation if the steps have changed
-    local displayedIDs = self:GetUsedBlocksIDs();
-    if M(previouslyDisplayedIDs):symmetricDifference(displayedIDs):count():value() > 0 then
+    local changedDisplayedIDs = HashSet.New(self:GetUsedBlocksIDs());
+    changedDisplayedIDs:SymmetricExceptWith(previouslyDisplayedIDs);
+    if (changedDisplayedIDs:Count() > 0) then
         if (not GUIDE_TRACKER_MODULE.header.animating) then
             GUIDE_TRACKER_MODULE.header.animating = true;
             GUIDE_TRACKER_MODULE.header.HeaderOpenAnim:Stop();

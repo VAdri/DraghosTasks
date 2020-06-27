@@ -1,5 +1,3 @@
-local M = LibStub("Moses");
-
 local StepProgressQuestObjectivesMixin = {};
 
 -- *********************************************************************************************************************
@@ -20,7 +18,7 @@ function StepProgressQuestObjectivesMixin:Init(step)
     self:StepInit(step);
     self:QuestInit(step.quest);
     -- self:LocationInit(step.location);
-    self:TargetInit(M.append(step.targets or {}, step.quest.targets or {}));
+    self:TargetInit(step.targets, step.quest.targets);
 
     self.questObjectivesIndexes = step.questObjectivesIndexes;
     self:AddMultipleStepLines(self:CreateQuestObjectives());
@@ -35,7 +33,7 @@ function StepProgressQuestObjectivesMixin:GetStepType()
 end
 
 function StepProgressQuestObjectivesMixin:GetLabel()
-    return PROGRESS_QUEST_OBJECTIVES:format(#self:GetStepLines(), self:GetQuestLabel());
+    return PROGRESS_QUEST_OBJECTIVES:format(self:GetStepLines():Count(), self:GetQuestLabel());
 end
 
 function StepProgressQuestObjectivesMixin:IsValid()

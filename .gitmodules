@@ -1,0 +1,3 @@
+[submodule "Draghos_GuideStore/Libs/Linq"]
+	path = Draghos_GuideStore/Libs/Linq
+	url = git@github.com:VAdri/linq.lua.git

@@ -6,9 +6,9 @@
 ## LoadOnDemand: 0
 ## SavedVariablesPerCharacter: DraghosTaxiNodesDB, DraghosStepsCompletedDB
 
+Libs.xml
 Utils.lua
 Locales.xml
-Libs.xml
 Data.xml
 Models.xml
 Draghos_GuideStore.xml

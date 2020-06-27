@@ -38,7 +38,7 @@ function CacheMixin:ClearCache(key)
 
     if (self.stepLines) then
         -- Clear cache on children
-        for _, stepLine in pairs(self.stepLines) do
+        for _, stepLine in self.stepLines:GetEnumerator() do
             stepLine:ClearCache();
         end
     end

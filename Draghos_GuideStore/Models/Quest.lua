@@ -1,4 +1,9 @@
-local M = LibStub("Moses");
+local Lambdas = DraghosUtils.Lambdas;
+
+local Linq = LibStub("Linq");
+
+--- @type Enumerable
+local Enumerable = Linq.Enumerable;
 
 local QuestMixin = {};
 
@@ -10,7 +15,7 @@ function QuestMixin:QuestInit(quest)
     self.questID = tonumber(quest.questID);
     C_QuestLog.RequestLoadQuestByID(self.questID);
 
-    self.requiredQuests = M(quest.requiredQuestIDs or {}):map(getQuest):value();
+    self.requiredQuests = Enumerable.From(quest.requiredQuestIDs or {}):Select(getQuest):ToList();
 
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_ACCEPTED");
     Draghos_GuideStore:RegisterForNotifications(self, "QUEST_POI_UPDATE");
@@ -25,20 +30,21 @@ function QuestMixin:QuestInit(quest)
 end
 
 function QuestMixin:GetQuestLabel()
-    return self.questID and C_QuestLog.GetQuestInfo(self.questID);
+    return self.questID and C_QuestLog.GetQuestInfo(self.questID); -- TODO: Test with "QuestUtils_GetQuestName(self.questID)"
 end
 
 function QuestMixin:IsQuestAvailable()
     return true; -- TODO: return false if faction/class/level/... requirements not met
 end
 
-local isNotValid = M.complement(M.partial(M.result, "_", "IsValid"));
+local isNotValid = Lambdas.Not(Lambdas.SelfResult("IsValid"));
+
 function QuestMixin:IsValidQuest()
     if (not self:HasCache("IsValidQuest")) then
         self:SetCache(
             "IsValidQuest",
-            self.questID and HaveQuestData(self.questID) and not M(self:GetQuestObjectives()):any(isNotValid):value() and
-                not M(self.requiredQuests):any(false):value()
+            self.questID and HaveQuestData(self.questID) and not self:GetQuestObjectives():Any(isNotValid) and
+                not self.requiredQuests:Any(function(quest) return quest == false; end)
         );
     end
     return self:GetCache("IsValidQuest");
@@ -58,7 +64,7 @@ function QuestMixin:IsQuestCompleted()
 end
 
 function QuestMixin:HasRequiredQuests()
-    return #self.requiredQuests > 0;
+    return self.requiredQuests:Any();
 end
 
 local isQuestCompleted = function(quest)
@@ -71,7 +77,7 @@ function QuestMixin:RequiredQuestsCompleted()
     end
 
     if (not self:HasCache("RequiredQuestsCompleted")) then
-        self:SetCache("RequiredQuestsCompleted", M(self.requiredQuests):all(isQuestCompleted):value());
+        self:SetCache("RequiredQuestsCompleted", self.requiredQuests:All(isQuestCompleted));
     end
     return self:GetCache("RequiredQuestsCompleted");
 end
@@ -94,16 +100,26 @@ function QuestMixin:IsQuestItemToUse()
     return true;
 end
 
+local isQuestObjectiveMixin = function(stepLine)
+    return stepLine.QuestObjectiveInit == DraghosMixins.QuestObjective.QuestObjectiveInit;
+end;
+
 function QuestMixin:GetQuestObjectives()
-    if (not self:HasCache("GetQuestObjectives")) then
-        -- ! Do not use self:GetStepLines() to avoid circular reference within Virtual_StepWithObjectivesMixin:GetStepLines()
-        self:SetCache(
-            "GetQuestObjectives", M(self.stepLines or {}):where(
-                {QuestObjectiveInit = DraghosMixins.QuestObjective.QuestObjectiveInit}
-            ):value()
-        );
-    end
-    return self:GetCache("GetQuestObjectives") or {};
+    -- if (not self.stepLines) then
+    --     return {};
+    -- end
+    -- if (not self:HasCache("GetQuestObjectives")) then
+    --     -- ! Do not use self:GetStepLines() to avoid circular reference within Virtual_StepWithObjectivesMixin:GetStepLines()
+    --     self:SetCache(
+    --         -- "GetQuestObjectives", M(self.stepLines and self.stepLines:ToArray() or {}):where(
+    --         --     {QuestObjectiveInit = DraghosMixins.QuestObjective.QuestObjectiveInit}
+    --         -- ):value()
+    --         "GetQuestObjectives", self.stepLines:Where(isQuestObjectiveMixin)
+    --     );
+    -- end
+    -- return self:GetCache("GetQuestObjectives");
+    -- ! Do not use self:GetStepLines() to avoid circular reference within Virtual_StepWithObjectivesMixin:GetStepLines()
+    return self.stepLines:Where(isQuestObjectiveMixin);
 end
 
 function QuestMixin:CreateQuestObjectives()
@@ -133,17 +149,16 @@ function QuestMixin:CreateQuestObjectives()
     end
 
     -- If no index was supplied we create all the objectives
-    local questObjectivesIndexes = self.questObjectivesIndexes;
-    if questObjectivesIndexes == nil then
-        questObjectivesIndexes = questObjectivesIndexes or M.keys(questObjectives);
-    end
+    local questObjectivesIndexes = self.questObjectivesIndexes
+        and Enumerable.From(self.questObjectivesIndexes)
+        or Enumerable.From(questObjectives):Select(Lambdas.SelectKey);
 
     local function CreateQuestObjective(questObjectiveIndex)
         return Draghos_GuideStore:CreateGuideItem(
                    DraghosMixins.StepLineQuestObjective, questObjectives[questObjectiveIndex]
                );
     end
-    return M(questObjectivesIndexes):map(CreateQuestObjective):value();
+    return questObjectivesIndexes:Select(CreateQuestObjective);
 end
 
 DraghosMixins.Quest = QuestMixin;

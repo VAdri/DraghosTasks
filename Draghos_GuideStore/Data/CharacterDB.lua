@@ -1,4 +1,9 @@
-local M = LibStub("Moses");
+local Lambdas = DraghosUtils.Lambdas;
+
+local Linq = LibStub("Linq");
+
+--- @type Enumerable
+local Enumerable = Linq.Enumerable;
 
 -- *********************************************************************************************************************
 -- ***** TAXI NODES DATABASE
@@ -24,7 +29,7 @@ local function TaxiNodesStore_OnEvent(self, event, ...)
         if message == ERR_NEWTAXIPATH then
             -- The player has just discovered a new taxi node but the taxi map is not opened, so we just assume that the
             -- taxi node for the current zone is discovered.
-            local currentTaxiNode = M(Draghos_GuideStore.taxiNodes):findWith(IsInCurrentZone):value();
+            local currentTaxiNode = Enumerable.From(Draghos_GuideStore.taxiNodes):FirstOrDefault(nil, IsInCurrentZone);
             if currentTaxiNode and currentTaxiNode.nodeID then
                 -- A taxi node has been found in the current player's zone so it is probably the one discovered
                 DraghosTaxiNodesDB = DraghosTaxiNodesDB or {};
@@ -38,11 +43,14 @@ local function TaxiNodesStore_OnEvent(self, event, ...)
         local mapID = FlightMapFrame:GetMapID();
         local taxiNodes = C_TaxiMap.GetAllTaxiNodes(mapID);
 
-        local taxiNodesDiscovered = M(taxiNodes):filter(IsTaxiDiscovered):value();
-        if taxiNodesDiscovered and #taxiNodesDiscovered > 0 then
+        local taxiNodesDiscovered = Enumerable.From(taxiNodes):Where(IsTaxiDiscovered);
+        if taxiNodesDiscovered:Any() then
             -- Set the nodes as discovered
-            local taxiNodesIDs = M(taxiNodesDiscovered):map(M.property("nodeID")):value();
-            DraghosTaxiNodesDB = M(DraghosTaxiNodesDB or {}):fillWith(taxiNodesIDs, true):value();
+            local taxiNodesIDs = taxiNodesDiscovered:Select(Lambdas.Property("nodeID"));
+            DraghosTaxiNodesDB = DraghosTaxiNodesDB or {};
+            for _, taxiNodeID in taxiNodesIDs:GetEnumerator() do
+                DraghosTaxiNodesDB[taxiNodeID] = true;
+            end
 
             Draghos_GuideStore:SendCustomEvent("DRAGHOS_NEWTAXIPATH");
         end

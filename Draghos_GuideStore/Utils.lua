@@ -4,6 +4,11 @@ DraghosEnums = {};
 DraghosFlags = {};
 Draghos_GuideStore = {};
 
+local Linq = LibStub("Linq");
+
+--- @type Dictionary
+local Dictionary = Linq.Dictionary;
+
 -- *********************************************************************************************************************
 -- ***** Enums and Flags
 -- *********************************************************************************************************************
@@ -172,22 +177,20 @@ EventHandler:SetScript("OnEvent", EventHandler.OnEvent);
 DraghosUtils.Helpers = {};
 
 --- @return table
-function DraghosUtils.Helpers:GetSupportedLocales()
-    return {
-        ["enUS"] = "English (United States)",
-        ["esMX"] = "Spanish (Mexico)",
-        ["ptBR"] = "Portuguese",
-        ["deDE"] = "German",
-        ["enGB"] = "English (Great Britain)",
-        ["esES"] = "Spanish (Spain)",
-        ["frFR"] = "French",
-        ["itIT"] = "Italian",
-        ["ruRU"] = "Russian",
-        ["koKR"] = "Korean",
-        ["zhTW"] = "Chinese (Traditional)",
-        ["zhCN"] = "Chinese (Simplified)",
-    };
-end
+DraghosUtils.Helpers.SupportedLocales = Dictionary.New({
+    ["enUS"] = "English (United States)",
+    ["esMX"] = "Spanish (Mexico)",
+    ["ptBR"] = "Portuguese",
+    ["deDE"] = "German",
+    ["enGB"] = "English (Great Britain)",
+    ["esES"] = "Spanish (Spain)",
+    ["frFR"] = "French",
+    ["itIT"] = "Italian",
+    ["ruRU"] = "Russian",
+    ["koKR"] = "Korean",
+    ["zhTW"] = "Chinese (Traditional)",
+    ["zhCN"] = "Chinese (Simplified)",
+});
 
 --- @param guid string
 --- @return number|nil
@@ -232,6 +235,54 @@ function DraghosUtils.Helpers:StartGarbageCollection()
                 self:StartGarbageCollection();
             end
         );
+    end
+end
+
+-- *********************************************************************************************************************
+-- ***** Lambdas
+-- *********************************************************************************************************************
+
+DraghosUtils.Lambdas = {};
+
+--- @param lambda function @The lambda whose result will be reversed using a `not` operator.
+function DraghosUtils.Lambdas.Not(lambda)
+    return function(item)
+        return not lambda(item);
+    end
+end
+
+function DraghosUtils.Lambdas.Property(propName)
+    return function(item)
+        return item[propName];
+    end
+end
+
+function DraghosUtils.Lambdas.PropsEqual(props)
+    return function(item)
+        for key in pairs(props) do
+            if (item[key] ~= props[key]) then
+                return false;
+            end
+        end
+        return true;
+    end
+end
+
+function DraghosUtils.Lambdas.Result(functionName, ...)
+    local args = pack(...);
+    return function(item)
+        return item[functionName](unpack(args));
+    end
+end
+
+function DraghosUtils.Lambdas.SelectKey(_, key)
+    return key;
+end
+
+function DraghosUtils.Lambdas.SelfResult(functionName, ...)
+    local args = pack(...);
+    return function(item)
+        return item[functionName](item, unpack(args));
     end
 end
 

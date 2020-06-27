@@ -8,7 +8,7 @@ function ObservableMixin:Watch(frame, handler)
     self.watchers[frame] = handler;
 
     -- Watch children
-    for _, stepLine in pairs(self:GetStepLines()) do
+    for _, stepLine in self:GetStepLines():GetEnumerator() do
         stepLine:Watch(frame, handler);
     end
 end
@@ -21,7 +21,7 @@ function ObservableMixin:Unwatch(frame)
     end
 
     -- Unwatch children
-    for _, stepLine in pairs(self:GetStepLines()) do
+    for _, stepLine in self:GetStepLines():GetEnumerator() do
         stepLine:Unwatch(frame);
     end
 end

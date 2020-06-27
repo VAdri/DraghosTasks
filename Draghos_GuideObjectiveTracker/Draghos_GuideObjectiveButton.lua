@@ -2,7 +2,10 @@ local Helpers = DraghosUtils.Helpers;
 local Hacks = DraghosUtils.Hacks;
 local Str = DraghosUtils.Str;
 
-local M = LibStub("Moses");
+local Linq = LibStub("Linq");
+
+--- @type Enumerable
+local Enumerable = Linq.Enumerable;
 
 local defaultInitialAnchorOffsets = {0, 0};
 
@@ -401,7 +404,7 @@ end
 -- TODO: Set the binding (CTRL-TAB) on the options
 local bindingKey = "CTRL-TAB";
 
-StaticPopupDialogs["DRAGHOS_GOT_KEYBIND_EXISTS"] = {
+StaticPopupDialogs["DRAGHOS_TRACKER_KEYBIND_EXISTS"] = {
     text = TARGET_KEYBIND_ALREADY_EXISTS_DIALOG,
     button1 = YES,
     button2 = NO,
@@ -440,7 +443,7 @@ local function CanSetBindingToTargetsButton(button)
 end
 
 function GuideObjectiveButton_InitializeTargets(targetsButton, step)
-    local macroTargets = M(step:GetTargetNames()):map(TargetUnitMacro):join("\n"):value();
+    local macroTargets = table.concat(Enumerable.From(step:GetTargetNames()):Select(TargetUnitMacro):ToArray(), "\n");
 
     -- targetsButton:SetID(?);
     targetsButton.targets = step:GetTargetIDs();
@@ -451,10 +454,10 @@ function GuideObjectiveButton_InitializeTargets(targetsButton, step)
     if bindingKey and CanSetBindingToTargetsButton(targetsButton) then
         local bindingAction = GetBindingAction(bindingKey);
         if not Str:IsBlankString(bindingAction) and not bindingAction:find(buttonActionPattern) then
-            if not StaticPopup_Visible("DRAGHOS_GOT_KEYBIND_EXISTS") then
+            if not StaticPopup_Visible("DRAGHOS_TRACKER_KEYBIND_EXISTS") then
                 local bindingActionName = _G["BINDING_NAME_" .. bindingAction];
                 bindingActionName = bindingActionName and "'" .. bindingActionName .. "'" or ANOTHER_ACTION;
-                StaticPopup_Show("DRAGHOS_GOT_KEYBIND_EXISTS", bindingKey, bindingActionName);
+                StaticPopup_Show("DRAGHOS_TRACKER_KEYBIND_EXISTS", bindingKey, bindingActionName);
             end
         else
             SetBindingClick(bindingKey, targetsButton:GetName());
@@ -480,8 +483,8 @@ local function IsTarget(targetID)
 end
 
 function GuideObjectiveButton_OnTargetClick(self, button)
-    -- Mark the target
-    if not GetRaidTargetIndex("target") and M.any(self.targets, IsTarget) then
+    if not GetRaidTargetIndex("target") and Enumerable.From(self.targets):Any(IsTarget) then
+        -- Mark the target
         if UnitIsFriend("player", "target") then
             -- With a star for friendly units
             SetRaidTarget("target", 1);

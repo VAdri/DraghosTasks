@@ -13,7 +13,7 @@ function TaxiNodeMixin:TaxiNodeInit(taxiNode)
         self.taxiNode = Draghos_GuideStore:GetTaxiNodeByID(self.nodeID);
 
         self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineSpeakTo, self.taxiNode));
-        self.flightMaster = self.stepLines[#self.stepLines];
+        self.flightMaster = self.stepLines:Last();
     end
 
     Draghos_GuideStore:RegisterForNotifications(self, "DRAGHOS_NEWTAXIPATH");

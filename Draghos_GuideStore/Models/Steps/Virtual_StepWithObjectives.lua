@@ -1,4 +1,4 @@
-local M = LibStub("Moses");
+local Lambdas = DraghosUtils.Lambdas;
 
 local Virtual_StepWithObjectivesMixin = {};
 
@@ -9,50 +9,57 @@ local Virtual_StepWithObjectivesMixin = {};
 function Virtual_StepWithObjectivesMixin:AllObjectivesHaveBeenFetched()
     local currentQuestObjectives = self:GetQuestObjectives();
 
-    if self.questObjectivesIndexes == nil and #currentQuestObjectives ~= C_QuestLog.GetNumQuestObjectives(self.questID) then
+    if self.questObjectivesIndexes == nil and currentQuestObjectives:Count() ~=
+        C_QuestLog.GetNumQuestObjectives(self.questID) then
         return false;
-    elseif self.questObjectivesIndexes ~= nil and #currentQuestObjectives ~= #self.questObjectivesIndexes then
+    elseif self.questObjectivesIndexes ~= nil and currentQuestObjectives:Count() ~= #self.questObjectivesIndexes then
         return false;
     else
         return true;
     end
 end
 
--- Sometimes (after login for instance), the objectives are not loaded so we need to check them after
+local isSameQuestObjective = function(obj1, obj2)
+    return obj1.index == obj2.index;
+end
+
+-- Sometimes (after login for instance), the objectives are not loaded so we need to add them after
 function Virtual_StepWithObjectivesMixin:GetStepLines()
     if not self:AllObjectivesHaveBeenFetched() then
         -- The last fetch couldn't get all the objectives
         local newQuestObjectives = self:CreateQuestObjectives();
-        self.stepLines = M(self.stepLines or {}):append(newQuestObjectives or {}):uniqueProp("index"):value();
+        self:AddMultipleStepLines(newQuestObjectives:Distinct(isSameQuestObjective));
+        -- self:ClearCache("GetStepLines");
     end
 
-    return self.stepLines or {};
+    return DraghosMixins.Step.GetStepLines(self);
 end
 
-local isCombat = M.partial(M.result, "_", "IsCombat");
-local isObjectInteraction = M.partial(M.result, "_", "IsObjectInteraction");
-local isLoot = M.partial(M.result, "_", "IsLoot");
+local isCombat = Lambdas.SelfResult("IsCombat");
+local isObjectInteraction = Lambdas.SelfResult("IsObjectInteraction");
+local isLoot = Lambdas.SelfResult("IsLoot");
+
 local function getObjectivesType(questObjectives)
     local questObjectivesCount = #questObjectives;
     if questObjectivesCount == 0 then
         return nil;
     else
-        local combatObjectivesCount = M(questObjectives):countf(isCombat):value();
+        local combatObjectivesCount = questObjectives:Count(isCombat);
         if combatObjectivesCount == questObjectivesCount then
             return "CombatObjective";
         end
 
-        local objectInteractObjectivesCount = M(questObjectives):countf(isObjectInteraction):value();
+        local objectInteractObjectivesCount = questObjectives:Count(isObjectInteraction);
         if objectInteractObjectivesCount == questObjectivesCount then
             return "ObjectInteractionObjective";
         end
 
-        local lootObjectivesCount = M(questObjectives):countf(isLoot):value();
+        local lootObjectivesCount = questObjectives:Count(isLoot);
         if lootObjectivesCount == questObjectivesCount then
             return "LootObjective";
         end
 
-        -- local setFreeObjectivesCount = M(questObjectives):countf(isSetFree):value();
+        -- local setFreeObjectivesCount = questObjectives:Count(isSetFree);
         -- if setFreeObjectivesCount == questObjectivesCount then
         --     return "SetFreeObjective";
         -- end
