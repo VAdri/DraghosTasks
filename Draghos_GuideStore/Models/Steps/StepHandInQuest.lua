@@ -10,9 +10,17 @@ Mixin(StepHandInQuestMixin, DraghosMixins.NPC);
 Mixin(StepHandInQuestMixin, DraghosMixins.Location);
 Mixin(StepHandInQuestMixin, DraghosMixins.Target);
 
+local StepHandInQuestMT = {__index = function(t, key, ...) return StepHandInQuestMixin[key]; end};
+
 -- *********************************************************************************************************************
 -- ***** Init
 -- *********************************************************************************************************************
+
+function StepHandInQuestMixin.New(step)
+    local item = setmetatable({}, StepHandInQuestMT);
+    item:Init(step);
+    return item;
+end
 
 function StepHandInQuestMixin:Init(step)
     self:StepInit(step);
@@ -21,7 +29,7 @@ function StepHandInQuestMixin:Init(step)
     self:TargetInit();
     self:LocationInit(step.location);
 
-    self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineSpeakTo, step));
+    self:AddOneStepLine(DraghosMixins.StepLineSpeakTo.New(step));
 end
 
 -- *********************************************************************************************************************

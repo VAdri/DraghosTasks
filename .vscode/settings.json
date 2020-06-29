@@ -1,6 +1,9 @@
 {
     "vscode-lua-format.configPath": ".lua-format",
     "Lua.runtime.version": "Lua 5.1",
+    "Lua.diagnostics.disable": [
+        "emmy-lua"
+    ],
     "Lua.diagnostics.globals": [
         "CreateFrame",
         "GetLocale",

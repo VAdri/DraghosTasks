@@ -7,9 +7,17 @@ local StepDiscoverTaxiNodeMixin = {}
 Mixin(StepDiscoverTaxiNodeMixin, DraghosMixins.Step);
 Mixin(StepDiscoverTaxiNodeMixin, DraghosMixins.TaxiNode);
 
+local StepDiscoverTaxiNodeMT = {__index = function(t, key, ...) return StepDiscoverTaxiNodeMixin[key]; end};
+
 -- *********************************************************************************************************************
 -- ***** Init
 -- *********************************************************************************************************************
+
+function StepDiscoverTaxiNodeMixin.New(step)
+    local item = setmetatable({}, StepDiscoverTaxiNodeMT);
+    item:Init(step);
+    return item;
+end
 
 function StepDiscoverTaxiNodeMixin:Init(step)
     self:StepInit(step);

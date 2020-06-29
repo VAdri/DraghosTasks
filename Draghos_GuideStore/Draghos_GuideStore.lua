@@ -15,27 +15,27 @@ local Enumerable = Linq.Enumerable;
 
 local function InitStep(step)
     if step.stepType == DraghosEnums.StepType.Note then
-        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepNote, step);
+        return DraghosMixins.StepNote.New(step);
     elseif step.stepType == DraghosEnums.StepType.PickupQuest then
-        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepPickUpQuest, step);
+        return DraghosMixins.StepPickUpQuest.New(step);
     elseif step.stepType == DraghosEnums.StepType.ProgressQuestObjectives then
-        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepProgressQuestObjectives, step);
+        return DraghosMixins.StepProgressQuestObjectives.New(step);
     elseif step.stepType == DraghosEnums.StepType.CompleteQuestObjectives then
-        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepCompleteQuestObjectives, step);
+        return DraghosMixins.StepCompleteQuestObjectives.New(step);
     elseif step.stepType == DraghosEnums.StepType.CompleteQuest then
-        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepCompleteQuest, step);
+        return DraghosMixins.StepCompleteQuest.New(step);
     elseif step.stepType == DraghosEnums.StepType.HandinQuest then
-        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepHandInQuest, step);
+        return DraghosMixins.StepHandInQuest.New(step);
     elseif step.stepType == DraghosEnums.StepType.Grind then
-        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepGrind, step);
+        return DraghosMixins.StepGrind.New(step);
     elseif step.stepType == DraghosEnums.StepType.UseHearthstone then
-        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepUseHearthstone, step);
+        return DraghosMixins.StepUseHearthstone.New(step);
     elseif step.stepType == DraghosEnums.StepType.SetHearth then
-        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepSetHearth, step);
+        return DraghosMixins.StepSetHearth.New(step);
     elseif step.stepType == DraghosEnums.StepType.Go then
-        -- TODO: return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepGo, step);
+        -- TODO: DraghosMixins.StepGo.New(step);
     elseif step.stepType == DraghosEnums.StepType.GetFlightPath then
-        return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepDiscoverTaxiNode, step);
+        return DraghosMixins.StepDiscoverTaxiNode.New(step);
     else
         -- ? return Draghos_GuideStore:CreateObject(StepUnknownMixin, step);
     end
@@ -76,37 +76,10 @@ end
 -- ***** OBJECTS CREATION
 -- *********************************************************************************************************************
 
--- local GuideItemMetatable = {};
-
--- -- TODO: Deactivate this on release builds
-
--- -- Trick from this conversation: http://lua-users.org/lists/lua-l/2011-05/msg00029.html
--- local function meta_tostring(object)
---     -- Disable the custom __tostring to get the original value
---     GuideItemMetatable.__tostring = nil;
---     local originalString = tostring(object);
-
---     -- Re-enable meta_tostring and return the result
---     GuideItemMetatable.__tostring = meta_tostring;
---     if object and type(object.GetLabel) == "function" then
---         return "guide_item: " .. originalString:sub(8) .. " (" .. object:GetLabel() .. ")";
---     else
---         return originalString;
---     end
--- end
--- GuideItemMetatable.__tostring = meta_tostring;
-
-function Draghos_GuideStore:CreateGuideItem(mixin, data)
-    local object = CreateAndInitFromMixin(mixin, data);
-    -- return setmetatable(object, GuideItemMetatable);
-    return object;
-end
-
 function Draghos_GuideStore:CreateBaseItem(mixin, data)
     local object = {};
     Mixin(object, mixin);
     object:InitBase(data);
-    -- return setmetatable(object, GuideItemMetatable);
     return object;
 end
 

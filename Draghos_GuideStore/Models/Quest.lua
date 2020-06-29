@@ -130,7 +130,7 @@ function QuestMixin:CreateQuestObjectives()
     self:ClearCache("GetObjectivesType");
 
     if (not isValidQuest) then
-        return {};
+        return Enumerable.Empty();
     end
 
     local questObjectives = Draghos_GuideStore:GetQuestByID(self.questID).questObjectives;
@@ -145,7 +145,7 @@ function QuestMixin:CreateQuestObjectives()
 
     -- No quest objective found
     if not questObjectives or #questObjectives == 0 then
-        return {};
+        return Enumerable.Empty();
     end
 
     -- If no index was supplied we create all the objectives
@@ -154,9 +154,7 @@ function QuestMixin:CreateQuestObjectives()
         or Enumerable.From(questObjectives):Select(Lambdas.SelectKey);
 
     local function CreateQuestObjective(questObjectiveIndex)
-        return Draghos_GuideStore:CreateGuideItem(
-                   DraghosMixins.StepLineQuestObjective, questObjectives[questObjectiveIndex]
-               );
+        return DraghosMixins.StepLineQuestObjective.New(questObjectives[questObjectiveIndex]);
     end
     return questObjectivesIndexes:Select(CreateQuestObjective);
 end

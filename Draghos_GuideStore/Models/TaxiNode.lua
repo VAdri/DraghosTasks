@@ -12,7 +12,7 @@ function TaxiNodeMixin:TaxiNodeInit(taxiNode)
     if self.nodeID then
         self.taxiNode = Draghos_GuideStore:GetTaxiNodeByID(self.nodeID);
 
-        self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineSpeakTo, self.taxiNode));
+        self:AddOneStepLine(DraghosMixins.StepLineSpeakTo.New(self.taxiNode));
         self.flightMaster = self.stepLines:Last();
     end
 

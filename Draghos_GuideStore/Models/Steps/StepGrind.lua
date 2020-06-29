@@ -7,16 +7,24 @@ local StepGrindMixin = {}
 Mixin(StepGrindMixin, DraghosMixins.Step);
 Mixin(StepGrindMixin, DraghosMixins.Experience);
 
+local StepGrindMT = {__index = function(t, key, ...) return StepGrindMixin[key]; end};
+
 -- *********************************************************************************************************************
 -- ***** Init
 -- *********************************************************************************************************************
+
+function StepGrindMixin.New(step)
+    local item = setmetatable({}, StepGrindMT);
+    item:Init(step);
+    return item;
+end
 
 function StepGrindMixin:Init(step)
     self:StepInit(step);
     self:ExperienceInit(step.experience);
     -- self:LocationInit(step.location);
 
-    self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineGrindProgress, step));
+    self:AddOneStepLine(DraghosMixins.StepLineGrindProgress.New(step));
 end
 
 -- *********************************************************************************************************************

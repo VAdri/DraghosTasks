@@ -7,9 +7,17 @@ local StepLineGrindProgressMixin = {};
 Mixin(StepLineGrindProgressMixin, DraghosMixins.StepLine);
 Mixin(StepLineGrindProgressMixin, DraghosMixins.Experience);
 
+local StepLineGrindProgressMT = {__index = function(t, key, ...) return StepLineGrindProgressMixin[key]; end};
+
 -- *********************************************************************************************************************
 -- ***** Init
 -- *********************************************************************************************************************
+
+function StepLineGrindProgressMixin.New(stepLine)
+    local item = setmetatable({}, StepLineGrindProgressMT);
+    item:Init(stepLine);
+    return item;
+end
 
 function StepLineGrindProgressMixin:Init(stepLine)
     self:StepLineInit();

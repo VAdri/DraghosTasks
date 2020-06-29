@@ -9,9 +9,17 @@ Mixin(StepUseHearthstoneMixin, DraghosMixins.Location);
 Mixin(StepUseHearthstoneMixin, DraghosMixins.Hearth);
 Mixin(StepUseHearthstoneMixin, DraghosMixins.UseItem);
 
+local StepUseHearthstoneMT = {__index = function(t, key, ...) return StepUseHearthstoneMixin[key]; end};
+
 -- *********************************************************************************************************************
 -- ***** Init
 -- *********************************************************************************************************************
+
+function StepUseHearthstoneMixin.New(step)
+    local item = setmetatable({}, StepUseHearthstoneMT);
+    item:Init(step);
+    return item;
+end
 
 local function GetHearthstoneSpellIDByItemID(hearthstoneID)
     local hearthstone = Draghos_GuideStore:GetHearthstoneItemByID(hearthstoneID);

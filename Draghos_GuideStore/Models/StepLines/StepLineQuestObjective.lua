@@ -9,9 +9,17 @@ Mixin(StepLineQuestObjectiveMixin, DraghosMixins.QuestObjective);
 Mixin(StepLineQuestObjectiveMixin, DraghosMixins.Location);
 Mixin(StepLineQuestObjectiveMixin, DraghosMixins.Target);
 
+local StepLineQuestObjectiveMT = {__index = function(t, key, ...) return StepLineQuestObjectiveMixin[key]; end};
+
 -- *********************************************************************************************************************
 -- ***** Init
 -- *********************************************************************************************************************
+
+function StepLineQuestObjectiveMixin.New(stepLine)
+    local item = setmetatable({}, StepLineQuestObjectiveMT);
+    item:Init(stepLine);
+    return item;
+end
 
 function StepLineQuestObjectiveMixin:Init(stepLine)
     self:StepLineInit();

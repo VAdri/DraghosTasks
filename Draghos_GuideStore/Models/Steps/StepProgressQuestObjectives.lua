@@ -10,9 +10,17 @@ Mixin(StepProgressQuestObjectivesMixin, DraghosMixins.Quest);
 -- Mixin(StepProgressQuestObjectiveMixin, LocationMixin);
 Mixin(StepProgressQuestObjectivesMixin, DraghosMixins.Target);
 
+local StepProgressQuestObjectivesMT = {__index = function(t, key, ...) return StepProgressQuestObjectivesMixin[key]; end};
+
 -- *********************************************************************************************************************
 -- ***** Init
 -- *********************************************************************************************************************
+
+function StepProgressQuestObjectivesMixin.New(step)
+    local item = setmetatable({}, StepProgressQuestObjectivesMT);
+    item:Init(step);
+    return item;
+end
 
 function StepProgressQuestObjectivesMixin:Init(step)
     self:StepInit(step);

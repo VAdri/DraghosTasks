@@ -9,9 +9,17 @@ Mixin(StepSetHearthMixin, DraghosMixins.Location);
 Mixin(StepSetHearthMixin, DraghosMixins.Hearth);
 Mixin(StepSetHearthMixin, DraghosMixins.Target);
 
+local StepSetHearthMT = {__index = function(t, key, ...) return StepSetHearthMixin[key]; end};
+
 -- *********************************************************************************************************************
 -- ***** Init
 -- *********************************************************************************************************************
+
+function StepSetHearthMixin.New(step)
+    local item = setmetatable({}, StepSetHearthMT);
+    item:Init(step);
+    return item;
+end
 
 function StepSetHearthMixin:Init(step)
     self:StepInit(step);
@@ -22,7 +30,7 @@ function StepSetHearthMixin:Init(step)
     if step.location.innkeeper then
         self.hasInnkeeper = true;
         step.npc = step.location.innkeeper;
-        self:AddOneStepLine(Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineSpeakTo, step));
+        self:AddOneStepLine(DraghosMixins.StepLineSpeakTo.New(step));
     end
 end
 

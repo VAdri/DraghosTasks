@@ -22,7 +22,7 @@ Mixin(StepMixin, DraghosMixins.Observable);
 -- *********************************************************************************************************************
 
 local function CreateNote(note)
-    return Draghos_GuideStore:CreateGuideItem(DraghosMixins.StepLineNote, note);
+    return DraghosMixins.StepLineNote.New(note);
 end
 
 function StepMixin:StepInit(step)

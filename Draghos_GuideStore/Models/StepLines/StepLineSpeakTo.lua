@@ -11,9 +11,17 @@ Mixin(StepLineSpeakToMixin, DraghosMixins.NPC);
 Mixin(StepLineSpeakToMixin, DraghosMixins.Location);
 Mixin(StepLineSpeakToMixin, DraghosMixins.Target);
 
+local StepLineSpeakToMT = {__index = function(t, key, ...) return StepLineSpeakToMixin[key]; end};
+
 -- *********************************************************************************************************************
 -- ***** Init
 -- *********************************************************************************************************************
+
+function StepLineSpeakToMixin.New(stepLine)
+    local item = setmetatable({}, StepLineSpeakToMT);
+    item:Init(stepLine);
+    return item;
+end
 
 function StepLineSpeakToMixin:Init(stepLine)
     self:StepLineInit();

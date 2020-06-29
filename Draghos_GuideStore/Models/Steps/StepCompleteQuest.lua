@@ -9,9 +9,17 @@ Mixin(StepCompleteQuestMixin, DraghosMixins.Virtual_StepWithObjectives);
 Mixin(StepCompleteQuestMixin, DraghosMixins.Quest);
 Mixin(StepCompleteQuestMixin, DraghosMixins.Target);
 
+local StepCompleteQuestMT = {__index = function(t, key, ...) return StepCompleteQuestMixin[key]; end};
+
 -- *********************************************************************************************************************
 -- ***** Init
 -- *********************************************************************************************************************
+
+function StepCompleteQuestMixin.New(step)
+    local item = setmetatable({}, StepCompleteQuestMT);
+    item:Init(step);
+    return item;
+end
 
 function StepCompleteQuestMixin:Init(step)
     self:StepInit(step);

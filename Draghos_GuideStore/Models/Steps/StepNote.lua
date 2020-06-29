@@ -8,9 +8,17 @@ Mixin(StepNoteMixin, DraghosMixins.Step);
 Mixin(StepNoteMixin, DraghosMixins.Note);
 Mixin(StepNoteMixin, DraghosMixins.ManualCompletion);
 
+local StepNoteMT = {__index = function(t, key, ...) return StepNoteMixin[key]; end};
+
 -- *********************************************************************************************************************
 -- ***** Init
 -- *********************************************************************************************************************
+
+function StepNoteMixin.New(step)
+    local item = setmetatable({}, StepNoteMT);
+    item:Init(step);
+    return item;
+end
 
 function StepNoteMixin:Init(step)
     self:StepInit(step);
