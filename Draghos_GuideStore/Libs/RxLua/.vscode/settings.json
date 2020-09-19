@@ -1,0 +1,14 @@
+{
+    "vscode-lua-format.configPath": ".lua-format",
+    "Lua.runtime.version": "Lua 5.1",
+    "Lua.diagnostics.globals": [
+        // World of Warctaft API
+        "wipe",
+        "time",
+        "LibStub",
+
+        // busted API
+        "describe",
+        "it"
+    ]
+}
